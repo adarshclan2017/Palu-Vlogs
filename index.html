@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Palu Vlogs — Vegetable Gang | Official Website</title>
+  
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description" content="Four friends, one camera, and a running joke that got out of hand. Road trips, street food, random detours, and the legendary Vegetable Gang. Watch weekly Malayalam vlogs!">
+  <meta name="keywords" content="Palu Vlogs, Vegetable Gang, Kerala Vlogs, Malayalam Comedy, Road Trip Vlogs, Potato Star, Brinjal Star">
+  <meta property="og:title" content="Palu Vlogs — Vegetable Gang | Fun · Vibes · Memories · Chaos">
+  <meta property="og:description" content="Meet the Vegetable Gang squad! Real face, real vibes, and weekly road trip drops.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/images/hero_team.jpg">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ==================== NAVIGATION ==================== -->
+  <nav class="nav" id="navbar">
+    <div class="nav-inner">
+      <a class="nav-brand" href="#top" aria-label="Palu Vlogs Home">
+        <img src="assets/images/logo.jpg" alt="Palu Vlogs logo">
+        <div class="nav-brand-text">
+          <span>PALU VLOGS</span>
+          <small>Vegetable Gang</small>
+        </div>
+      </a>
+
+      <div class="nav-links">
+        <a href="#gang" class="nav-link">The Gang</a>
+        <a href="#episodes" class="nav-link">Episodes</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#reel" class="nav-link">Reel</a>
+      </div>
+
+      <div class="nav-right">
+        <button class="audio-toggle-btn" id="soundToggleBtn" title="Toggle Sound Feedback" aria-label="Toggle sound feedback">
+          🔊
+        </button>
+        <a class="nav-cta" href="#cta">
+          <span>Subscribe</span>
+          <span>▶</span>
+        </a>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open mobile navigation">
+          ☰
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Mobile Navigation">
+    <div class="mobile-drawer-header">
+      <div class="nav-brand">
+        <img src="assets/images/logo.jpg" alt="Palu Vlogs logo">
+        <span>PALU VLOGS</span>
+      </div>
+      <button class="mobile-drawer-close" id="drawerCloseBtn" aria-label="Close menu">✕</button>
+    </div>
+    <div class="mobile-drawer-links">
+      <a href="#gang" class="mobile-link">The Gang</a>
+      <a href="#episodes" class="mobile-link">Episodes</a>
+      <a href="#about" class="mobile-link">About</a>
+      <a href="#reel" class="mobile-link">Reel</a>
+      <a href="#cta" class="mobile-link" style="color:var(--gold);">Subscribe on YouTube</a>
+    </div>
+  </aside>
+
+  <!-- ==================== HERO SECTION ==================== -->
+  <header class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="hero-eyebrow">
+            <span class="pulse-dot"></span>
+            New episode drops every Sunday
+          </span>
+          <h1>ORU PALU<br><span class="accent">VLOGS.</span></h1>
+          <p class="hero-tag">
+            Four friends, one camera, and a running joke that got completely out of hand. Road trips, street food, random detours, and a vegetable-costume bit that somehow became the whole channel.
+          </p>
+          
+          <div class="hero-actions">
+            <button class="btn-primary" id="watchLatestVlogBtn">
+              ▶ Watch latest vlog
+            </button>
+            <a class="btn-ghost" href="#gang">
+              Meet the squad ↓
+            </a>
+          </div>
+
+          <div class="hero-stats">
+            <div><b>4</b><span>Core Members</span></div>
+            <div><b>11+</b><span>Vegetable Stars</span></div>
+            <div><b>100%</b><span>Real Face · Real Vibes</span></div>
+          </div>
+        </div>
+
+        <div class="hero-art">
+          <div class="hero-badge-wrap">
+            <img class="hero-badge" src="assets/images/hero_team.jpg" alt="Palu Vlogs Squad in Vegetable Costumes">
+          </div>
+          <div class="hero-floating-tag">
+            <span class="tag-icon">🎬</span>
+            <div>
+              <h4>Season 2 Live</h4>
+              <p>Fresh episodes weekly</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Marquee Banner -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>FUN</span><span>·</span><span>VIBES</span><span>·</span><span>MEMORIES</span><span>·</span><span>CHAOS</span><span>·</span>
+        <span>ORU PALU VLOGS</span><span>·</span><span>VEGETABLE GANG</span><span>·</span><span>REAL FACE REAL VIBES</span><span>·</span>
+        <span>FUN</span><span>·</span><span>VIBES</span><span>·</span><span>MEMORIES</span><span>·</span><span>CHAOS</span><span>·</span>
+        <span>ORU PALU VLOGS</span><span>·</span><span>VEGETABLE GANG</span><span>·</span><span>REAL FACE REAL VIBES</span><span>·</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==================== GANG SECTION ==================== -->
+    <section class="section" id="gang">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">The Vegetable Gang</span>
+          <h2>Meet the squad, one costume at a time.</h2>
+          <p>
+            Every member gets crowned with a vegetable persona for the bit — it started as a one-off joke and never stopped. Click on any star to view their full bio and stats!
+          </p>
+        </div>
+
+        <!-- Filter & Search Controls -->
+        <div class="gang-controls">
+          <div class="gang-filter-tabs" role="tablist">
+            <button class="filter-tab active" data-filter="all">All Stars (11)</button>
+            <button class="filter-tab" data-filter="admin">Admins</button>
+            <button class="filter-tab" data-filter="gang">The Gang</button>
+            <button class="filter-tab" data-filter="cameo">Cameos & Friends</button>
+          </div>
+
+          <div class="gang-search-box">
+            <span class="gang-search-icon">🔍</span>
+            <input type="text" id="gangSearchInput" placeholder="Search by name or vegetable..." aria-label="Search stars">
+          </div>
+
+          <div class="gang-results-count" id="gangResultsCount">
+            Showing all 11 stars
+          </div>
+        </div>
+
+        <!-- Gang Cards Grid -->
+        <div class="gang-grid" id="gangGrid">
+
+          <!-- 1. Brinjal Star -->
+          <article class="gang-card" data-category="admin" data-id="brinjal" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_brinjal.jpg" alt="Brinjal Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Brinjal Star</div>
+              <div class="gang-role">Admin · Palu Vlogs</div>
+              <p class="gang-line">Small brinjal, big vibes. Runs the channel and still shows up to film in a purple eggplant suit without complaint.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 2. Cauliflower Star -->
+          <article class="gang-card" data-category="gang" data-id="cauliflower" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_cauliflower.jpg" alt="Cauliflower Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Cauliflower Star</div>
+              <div class="gang-role">Praying Father</div>
+              <p class="gang-line">Blesses every upload before it goes out. Daily prayers, spiritual support, and unreasonably good views luck.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 3. Drumstick Star -->
+          <article class="gang-card" data-category="gang" data-id="drumstick" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_drumstick.jpg" alt="Drumstick Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Drumstick Star</div>
+              <div class="gang-role">Real Face · Real Vibes</div>
+              <p class="gang-line">Longer than your expectations, faster than your scooter. Rides in, drops the punchline, rides off.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 4. Ladies Finger Star -->
+          <article class="gang-card" data-category="gang" data-id="ladiesfinger" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_ladiesfinger.jpg" alt="Ladies Finger Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Ladies Finger Star</div>
+              <div class="gang-role">Security · Palu Vlogs</div>
+              <p class="gang-line">Small ladies finger, big duty. Guards the gear, the snacks, and keeps the group chat under control.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 5. Watermelon Star -->
+          <article class="gang-card" data-category="admin" data-id="watermelon" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_watermelon.jpg" alt="Watermelon Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Watermelon Star</div>
+              <div class="gang-role">Admin · Palu Vlogs</div>
+              <p class="gang-line">It's watermelon time whenever he's on camera. Juicy talks, zero filter, and 100% summer road trip energy.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 6. Cabbage Star -->
+          <article class="gang-card" data-category="cameo" data-id="cabbage" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_cabbage.jpg" alt="Cabbage Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Cabbage Star</div>
+              <div class="gang-role">Funny Friend</div>
+              <p class="gang-line">Cooler than you think, wrapped in more leaves than a forest. Always the first one up for the next dare.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 7. Coconut Star -->
+          <article class="gang-card" data-category="admin" data-id="coconut" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_coconut.jpg" alt="Coconut Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Coconut Star</div>
+              <div class="gang-role">Admin · Palu Vlogs</div>
+              <p class="gang-line">Coconut power, beach-chair energy. Books the destination, then refuses to leave the hammock.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 8. Pumpkin Star -->
+          <article class="gang-card" data-category="gang" data-id="pumpkin" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_pumpkin.jpg" alt="Pumpkin Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Pumpkin Star</div>
+              <div class="gang-role">Vegetable Gang</div>
+              <p class="gang-line">Not an ordinary pumpkin — he's a star. Behind the camera as often as in front of it.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 9. Tomato Star -->
+          <article class="gang-card" data-category="cameo" data-id="tomato" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_tomato.jpg" alt="Tomato Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Tomato Star</div>
+              <div class="gang-role">Cameo Star</div>
+              <p class="gang-line">He may not be the main character, but he steals the scene every single time. Makes every vlog juicier.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 10. Onion Star -->
+          <article class="gang-card" data-category="cameo" data-id="onion" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_onion.jpg" alt="Onion Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Onion Star</div>
+              <div class="gang-role">Official Onion Star</div>
+              <p class="gang-line">Small onion, big dreams. Somehow possesses the most mysterious layers of anyone in the group.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- 11. Potato Star -->
+          <article class="gang-card" data-category="admin" data-id="potato" tabindex="0">
+            <div class="gang-photo-frame">
+              <img class="gang-photo" src="assets/images/gang_potato.jpg" alt="Potato Star" loading="lazy">
+              <div class="gang-pin">★</div>
+            </div>
+            <div class="gang-ribbon">
+              <div class="gang-title">Potato Star</div>
+              <div class="gang-role">Admin · The Face of Oru Palu</div>
+              <p class="gang-line">Life-ne oru Palu style-il. Jumps into the river first, thinks about it later, and somehow that's the whole brand.</p>
+              <div class="gang-card-btn">Profile & Stats →</div>
+            </div>
+          </article>
+
+          <!-- Empty search container -->
+          <div class="gang-empty-state" id="gangEmptyState">
+            <h3>No Vegetable Stars Found!</h3>
+            <p>Try searching for "Potato", "Watermelon", or click "All Stars".</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== LATEST EPISODES SECTION ==================== -->
+    <section class="section episodes-section" id="episodes">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="kicker">Fresh Drops</span>
+          <h2>Latest Episodes & Road Trips</h2>
+          <p>Unscripted road journeys across Kerala, impromptu food challenges, and vegetable costume chaos.</p>
+        </div>
+
+        <div class="episodes-grid">
+          <!-- Ep 1 -->
+          <div class="episode-card">
+            <div class="episode-thumb-wrap" data-video="ep44">
+              <img class="episode-thumb" src="assets/images/reel_4.jpg" alt="Eggplant Heist Episode">
+              <div class="episode-badge">Prank Challenge</div>
+              <div class="episode-duration">19:24</div>
+              <div class="episode-play-overlay">
+                <div class="play-icon-circle">▶</div>
+              </div>
+            </div>
+            <div class="episode-body">
+              <div class="episode-meta">
+                <span>📅 Season 2 · Ep 44</span>
+                <span>•</span>
+                <span>👀 284K Views</span>
+              </div>
+              <h3 class="episode-title">The Great Eggplant Market Heist</h3>
+              <p class="episode-desc">Brinjal Star walks into a crowded vegetable market in full costume to buy actual brinjals. Chaos immediately follows.</p>
+              <div class="episode-footer">
+                <span style="color:var(--stone);">Malayalam w/ English Subs</span>
+                <button class="episode-watch-link" data-video="ep44">Watch Episode →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ep 2 -->
+          <div class="episode-card">
+            <div class="episode-thumb-wrap" data-video="ep43">
+              <img class="episode-thumb" src="assets/images/reel_6.jpg" alt="Munnar Roadtrip Episode">
+              <div class="episode-badge">Road Trip</div>
+              <div class="episode-duration">24:10</div>
+              <div class="episode-play-overlay">
+                <div class="play-icon-circle">▶</div>
+              </div>
+            </div>
+            <div class="episode-body">
+              <div class="episode-meta">
+                <span>📅 Season 2 · Ep 43</span>
+                <span>•</span>
+                <span>👀 412K Views</span>
+              </div>
+              <h3 class="episode-title">Munnar Fog & The Lost Drumstick Suit</h3>
+              <p class="episode-desc">Four friends, two scooters, and raincoats over vegetable costumes. We lost the drumstick outfit at the viewpoint.</p>
+              <div class="episode-footer">
+                <span style="color:var(--stone);">Travel & Detours</span>
+                <button class="episode-watch-link" data-video="ep43">Watch Episode →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ep 3 -->
+          <div class="episode-card">
+            <div class="episode-thumb-wrap" data-video="ep42">
+              <img class="episode-thumb" src="assets/images/reel_7.jpg" alt="Thatte Kadai Food Run">
+              <div class="episode-badge">Street Food</div>
+              <div class="episode-duration">16:45</div>
+              <div class="episode-play-overlay">
+                <div class="play-icon-circle">▶</div>
+              </div>
+            </div>
+            <div class="episode-body">
+              <div class="episode-meta">
+                <span>📅 Season 2 · Ep 42</span>
+                <span>•</span>
+                <span>👀 350K Views</span>
+              </div>
+              <h3 class="episode-title">Midnight Thatte Kadai Food Run</h3>
+              <p class="episode-desc">Watermelon Star challenges Potato Star to eat the hottest beef fry and porotta without taking a sip of lime juice.</p>
+              <div class="episode-footer">
+                <span style="color:var(--stone);">Spicy Challenge</span>
+                <button class="episode-watch-link" data-video="ep42">Watch Episode →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ABOUT SECTION ==================== -->
+    <section class="section about" id="about">
+      <div class="wrap">
+        <div class="about-grid">
+          <div class="about-photo-wrap">
+            <div class="about-tape"></div>
+            <div class="about-photo">
+              <img src="assets/images/about_roadtrip.jpg" alt="Palu Vlogs gang on the road">
+            </div>
+          </div>
+
+          <div class="about-copy">
+            <span class="kicker">About the channel</span>
+            <h2>Four friends. One camera. Zero plan.</h2>
+            <p>
+              Palu Vlogs started as a group of friends filming their own road trips and never stopped. No script, no crew — just whoever's free that weekend, a scooter, and whatever roadside costume shop happens to be open.
+            </p>
+            <p>
+              <strong>Every episode is real face, real vibes.</strong> Trips to the backwaters, street food runs, random challenges, and a running vegetable-star bit that the audience now asks for by name.
+            </p>
+
+            <ul class="about-list">
+              <li>Weekly vlogs — road trips, food runs, and full-on unscripted chaos</li>
+              <li>Malayalam-first dialogue, subtitled in English for everyone else</li>
+              <li>Every "star" costume is 100% real on location — zero green screens</li>
+              <li>Built by four friends, grown by the amazing people who watch</li>
+            </ul>
+
+            <!-- Interactive Fan Reaction Counter -->
+            <div class="reaction-bar-wrap">
+              <div class="reaction-bar-title">Drop your vibes for the squad:</div>
+              <div class="reaction-buttons">
+                <button class="reaction-btn" data-reaction="fire">
+                  <span>🔥</span>
+                  <span>Mass Vibes</span>
+                  <span class="reaction-count" id="count-fire">1,420</span>
+                </button>
+                <button class="reaction-btn" data-reaction="laugh">
+                  <span>😂</span>
+                  <span>Pure Chaos</span>
+                  <span class="reaction-count" id="count-laugh">984</span>
+                </button>
+                <button class="reaction-btn" data-reaction="love">
+                  <span>❤️</span>
+                  <span>Oru Love</span>
+                  <span class="reaction-count" id="count-love">2,150</span>
+                </button>
+                <button class="reaction-btn" data-reaction="veggie">
+                  <span>🍆</span>
+                  <span>Kosthum Power</span>
+                  <span class="reaction-count" id="count-veggie">3,310</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== REEL GALLERY STRIP ==================== -->
+    <section class="strip-wrap" id="reel">
+      <div class="wrap strip-head section-head">
+        <div>
+          <span class="kicker">From the reel</span>
+          <h2>This week's chaos, in ten frames.</h2>
+          <p>Behind-the-scenes candid shots from our latest road adventures. Click any polaroid to view full-screen!</p>
+        </div>
+        <div class="strip-controls">
+          <button class="strip-nav-btn" id="stripPrevBtn" aria-label="Previous reel photos">‹</button>
+          <button class="strip-nav-btn" id="stripNextBtn" aria-label="Next reel photos">›</button>
+        </div>
+      </div>
+
+      <div class="strip" id="photoStrip">
+        <!-- 10 Frames -->
+        <div class="strip-item" data-index="0">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_1.jpg" alt="Frame 01" loading="lazy">
+          <div class="strip-item-caption">Frame 01 · Onion Star Debut</div>
+        </div>
+        <div class="strip-item" data-index="1">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_2.jpg" alt="Frame 02" loading="lazy">
+          <div class="strip-item-caption">Frame 02 · Cabbage Road Trip</div>
+        </div>
+        <div class="strip-item" data-index="2">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_3.jpg" alt="Frame 03" loading="lazy">
+          <div class="strip-item-caption">Frame 03 · Security on Duty</div>
+        </div>
+        <div class="strip-item" data-index="3">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_4.jpg" alt="Frame 04" loading="lazy">
+          <div class="strip-item-caption">Frame 04 · The Market Heist</div>
+        </div>
+        <div class="strip-item" data-index="4">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_5.jpg" alt="Frame 05" loading="lazy">
+          <div class="strip-item-caption">Frame 05 · Coconut Chill Mode</div>
+        </div>
+        <div class="strip-item" data-index="5">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_6.jpg" alt="Frame 06" loading="lazy">
+          <div class="strip-item-caption">Frame 06 · Pre-Trip Prayers</div>
+        </div>
+        <div class="strip-item" data-index="6">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_7.jpg" alt="Frame 07" loading="lazy">
+          <div class="strip-item-caption">Frame 07 · Watermelon Time</div>
+        </div>
+        <div class="strip-item" data-index="7">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_8.jpg" alt="Frame 08" loading="lazy">
+          <div class="strip-item-caption">Frame 08 · Cameo Tomato Run</div>
+        </div>
+        <div class="strip-item" data-index="8">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_9.jpg" alt="Frame 09" loading="lazy">
+          <div class="strip-item-caption">Frame 09 · Pumpkin Behind Camera</div>
+        </div>
+        <div class="strip-item" data-index="9">
+          <div class="strip-item-pin"></div>
+          <img src="assets/images/reel_10.jpg" alt="Frame 10" loading="lazy">
+          <div class="strip-item-caption">Frame 10 · The Face of Palu</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== CTA SECTION ==================== -->
+    <section class="cta" id="cta">
+      <div class="wrap">
+        <h2>Don't miss the<br>next drop.</h2>
+        <p>New vlog every Sunday — road trips, pranks, thatte kada food runs, and whichever vegetable draws the short straw next.</p>
+        
+        <form class="cta-box" id="subscribeForm" onsubmit="return false;">
+          <input type="email" id="subEmail" placeholder="Enter your email for episode alerts..." required>
+          <button type="submit" id="subBtn">Notify Me 🔔</button>
+        </form>
+
+        <div class="cta-socials">
+          <a class="cta-social-link" href="https://youtube.com" target="_blank" rel="noopener" title="YouTube">📺</a>
+          <a class="cta-social-link" href="https://instagram.com" target="_blank" rel="noopener" title="Instagram">📸</a>
+          <a class="cta-social-link" href="https://whatsapp.com" target="_blank" rel="noopener" title="WhatsApp Channel">💬</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <a class="footer-brand" href="#top">
+          <img src="assets/images/logo.jpg" alt="Palu Vlogs">
+          <span>PALU VLOGS</span>
+        </a>
+
+        <div class="footer-links">
+          <a href="#gang">The Gang</a>
+          <a href="#episodes">Episodes</a>
+          <a href="#about">About</a>
+          <a href="#reel">Reel</a>
+          <a href="#cta">Subscribe</a>
+        </div>
+
+        <button class="back-to-top-btn" id="backToTopBtn">
+          <span>Back to top</span>
+          <span>↑</span>
+        </button>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 Palu Vlogs. Fun · Vibes · Memories · Chaos.</span>
+        <span>Kerala, India · Malayalam First · Subtitled Worldwide</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. Video Trailer Modal -->
+  <div class="modal-backdrop" id="videoModal" aria-hidden="true" role="dialog">
+    <div class="modal-dialog video-modal-dialog">
+      <button class="modal-close-btn" id="videoModalClose" aria-label="Close video">✕</button>
+      <div class="video-container">
+        <!-- Safe embedded trailer demo -->
+        <iframe id="videoIframe" 
+                src="https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=0&rel=0&modestbranding=1" 
+                title="Palu Vlogs Video Player" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+        </iframe>
+      </div>
+      <div class="video-modal-info">
+        <h3 id="videoModalTitle">Palu Vlogs: Season 2 Trailer</h3>
+        <p id="videoModalDesc">Watch the Vegetable Gang conquer the twists and turns of Kerala's backwaters and hill stations.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Character Detail Modal -->
+  <div class="modal-backdrop" id="charModal" aria-hidden="true" role="dialog">
+    <div class="modal-dialog char-modal-dialog">
+      <button class="modal-close-btn" id="charModalClose" aria-label="Close profile">✕</button>
+      <div class="char-modal-grid">
+        <div class="char-modal-photo-wrap">
+          <img class="char-modal-photo" id="charModalImg" src="assets/images/gang_potato.jpg" alt="Character Photo">
+          <div class="char-modal-badge" id="charModalBadge">Vegetable Star</div>
+        </div>
+        <div class="char-modal-info">
+          <h2 id="charModalName">Potato Star</h2>
+          <div class="char-role" id="charModalRole">Admin · The Face of Oru Palu</div>
+          <p class="char-modal-bio" id="charModalBio">
+            Life-ne oru Palu style-il. Jumps in the water first, thinks about it later, and somehow that's the whole brand.
+          </p>
+
+          <div class="char-stats-grid">
+            <div class="char-stat-box">
+              <h5>Superpower</h5>
+              <p id="charStatPower">Infinite Starch Energy</p>
+            </div>
+            <div class="char-stat-box">
+              <h5>Favorite Road Snack</h5>
+              <p id="charStatSnack">Nannari Sarbath & Banana Chips</p>
+            </div>
+            <div class="char-stat-box">
+              <h5>Iconic Line</h5>
+              <p id="charStatQuote">"Enthinaa tension adikkunne, podey!"</p>
+            </div>
+            <div class="char-stat-box">
+              <h5>Debut Episode</h5>
+              <p id="charStatDebut">Ep 01: The Scooter Experiment</p>
+            </div>
+          </div>
+
+          <!-- Character Meters -->
+          <div class="char-meter-wrap">
+            <div class="char-meter-label">
+              <span>Chaos Meter</span>
+              <span id="charChaosVal">95%</span>
+            </div>
+            <div class="char-meter-bar">
+              <div class="char-meter-fill" id="charChaosBar" style="width: 95%;"></div>
+            </div>
+          </div>
+
+          <div class="char-meter-wrap">
+            <div class="char-meter-label">
+              <span>Vibe Rating</span>
+              <span id="charVibeVal">100%</span>
+            </div>
+            <div class="char-meter-bar">
+              <div class="char-meter-fill" id="charVibeBar" style="width: 100%;"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Reel Lightbox Modal -->
+  <div class="lightbox-backdrop" id="lightboxModal" aria-hidden="true" role="dialog">
+    <button class="modal-close-btn" id="lightboxClose" style="top:24px; right:24px;" aria-label="Close lightbox">✕</button>
+    <div class="lightbox-container">
+      <button class="lightbox-arrow lightbox-prev" id="lightboxPrev" aria-label="Previous image">‹</button>
+      <img class="lightbox-img" id="lightboxImg" src="" alt="Enlarged photo frame">
+      <button class="lightbox-arrow lightbox-next" id="lightboxNext" aria-label="Next image">›</button>
+      <div class="lightbox-caption" id="lightboxCaption">Frame 01</div>
+      <div class="lightbox-counter" id="lightboxCounter">1 / 10</div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="app.js"></script>
+</body>
+</html>

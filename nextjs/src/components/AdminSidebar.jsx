@@ -1,0 +1,86 @@
+'use client';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { api } from '@/lib/api';
+
+export default function AdminSidebar() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('palu_user');
+      if (stored) {
+        try { setUser(JSON.parse(stored)); } catch (e) {}
+      }
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await api.logout();
+    } catch (e) {}
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('palu_token');
+      localStorage.removeItem('palu_user');
+      document.cookie = 'palu_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
+    router.push('/admin/login');
+  };
+
+  const navItems = [
+    { href: '/admin', label: 'Dashboard Overview', icon: '📊', exact: true },
+    { href: '/admin/vlogs', label: 'Manage Vlogs', icon: '🎬' },
+    { href: '/admin/gallery', label: 'Photo Gallery', icon: '🖼️' },
+    { href: '/admin/locations', label: 'Adventures & Maps', icon: '📍' },
+    { href: '/admin/messages', label: 'Contact Inquiries', icon: '📬' },
+  ];
+
+  return (
+    <aside className="admin-sidebar">
+      <div className="admin-sidebar-header">
+        <img src="/assets/images/logo.jpg" alt="Palu Vlogs" style={{ width: 38, height: 38, borderRadius: '50%', border: '2px solid var(--gold)' }} />
+        <div>
+          <div style={{ fontFamily: 'Anton', fontSize: '18px', color: 'var(--cream)', lineHeight: 1 }}>PALU VLOGS</div>
+          <div style={{ fontSize: '11px', color: 'var(--gold)', fontWeight: 700, textTransform: 'uppercase' }}>Admin Portal</div>
+        </div>
+      </div>
+
+      <div style={{ padding: '0 8px' }}>
+        <div style={{ fontSize: '12px', color: 'var(--stone)' }}>Logged in as:</div>
+        <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--cream)' }}>{user?.name || 'Administrator'}</div>
+      </div>
+
+      <nav className="admin-nav-list">
+        {navItems.map((item) => {
+          const isActive = item.exact ? pathname === item.href : pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`admin-nav-item ${isActive ? 'active' : ''}`}
+            >
+              <span>{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <Link href="/" className="btn-ghost" style={{ justifyContent: 'center', fontSize: '13px', padding: '10px' }}>
+          👁️ View Public Site
+        </Link>
+        <button
+          onClick={handleLogout}
+          className="btn-primary"
+          style={{ justifyContent: 'center', fontSize: '13px', padding: '10px', background: 'rgba(229, 64, 42, 0.2)', border: '1px solid rgba(229, 64, 42, 0.4)', color: '#ff604c', boxShadow: 'none' }}
+        >
+          🚪 Sign Out
+        </button>
+      </div>
+    </aside>
+  );
+}

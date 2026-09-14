@@ -11,13 +11,14 @@ router.post('/', protect, authorize('admin'), upload.single('image'), (req, res)
     });
   }
 
-  const fileUrl = `/uploads/${req.file.filename}`;
+  const filename = req.file.filename || `palu-${Date.now()}-${Math.round(Math.random() * 1E9)}.jpg`;
+  const fileUrl = `/uploads/${filename}`;
 
   res.status(200).json({
     success: true,
     message: 'File uploaded successfully',
     url: fileUrl,
-    filename: req.file.filename
+    filename
   });
 });
 

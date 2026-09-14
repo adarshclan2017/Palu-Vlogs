@@ -72,12 +72,16 @@ function initLocalStore() {
 }
 
 function saveLocalStore() {
+  if (process.env.VERCEL) {
+    // In Vercel serverless environment, local filesystem is read-only.
+    return;
+  }
   try {
     const dir = path.dirname(DB_FILE);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(DB_FILE, JSON.stringify(localDb, null, 2), 'utf8');
   } catch (err) {
-    console.error('Error saving local_db.json:', err.message);
+    console.warn('[DataStore] Notice saving local_db.json:', err.message);
   }
 }
 

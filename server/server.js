@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { connectDB } = require('./config/db');
+const fs = require('fs');
+const { connectDB, getStatus } = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 // Initialize database
@@ -12,7 +13,7 @@ const app = express();
 
 // Enable CORS
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000'],
+  origin: true,
   credentials: true
 }));
 
@@ -20,9 +21,53 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static assets & uploaded images
-app.use('/assets/images', express.static(path.join(__dirname, '../assets/images')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve static assets & uploaded images safely
+const imagesDir = path.join(__dirname, '../assets/images');
+const uploadsDir = path.join(__dirname, 'uploads');
+try {
+  if (fs.existsSync(imagesDir)) {
+    app.use('/assets/images', express.static(imagesDir));
+  }
+  if (fs.existsSync(uploadsDir)) {
+    app.use('/uploads', express.static(uploadsDir));
+  }
+} catch (e) {
+  // Ignore filesystem check errors on serverless
+}
+
+// Favicon handler to prevent 500/ENOENT errors
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
+// Root endpoint: displays status, API health, and available routes
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'online',
+    service: 'Palu Vlogs Server API',
+    version: '1.0.0',
+    database: getStatus() ? 'connected' : 'mock/offline',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/api/health',
+      vlogs: '/api/vlogs',
+      gallery: '/api/gallery',
+      locations: '/api/locations',
+      contact: '/api/contact',
+      newsletter: '/api/newsletter',
+      settings: '/api/settings',
+      auth: '/api/auth'
+    }
+  });
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'online',
+    service: 'Palu Vlogs MERN API',
+    database: getStatus() ? 'connected' : 'mock/offline',
+    timestamp: new Date().toISOString()
+  });
+});
 
 // Mount API routes
 app.use('/api/auth', require('./routes/authRoutes'));
@@ -34,12 +79,11 @@ app.use('/api/newsletter', require('./routes/newsletterRoutes'));
 app.use('/api/settings', require('./routes/settingsRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'online',
-    service: 'Palu Vlogs MERN API',
-    timestamp: new Date().toISOString()
+// 404 handler for undefined routes
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    message: `Route ${req.method} ${req.originalUrl} not found`
   });
 });
 
@@ -47,18 +91,24 @@ app.get('/api/health', (req, res) => {
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
+let server = null;
 
-const server = app.listen(PORT, () => {
-  console.log(`=========================================`);
-  console.log(`🚀 Palu Vlogs Server running on port ${PORT}`);
-  console.log(`📡 API Base: http://localhost:${PORT}/api`);
-  console.log(`⚙️  Mode: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`=========================================`);
-});
+// Only spin up local HTTP listener if not executing inside Vercel serverless functions
+if (!process.env.VERCEL) {
+  server = app.listen(PORT, () => {
+    console.log(`=========================================`);
+    console.log(`🚀 Palu Vlogs Server running on port ${PORT}`);
+    console.log(`📡 API Base: http://localhost:${PORT}/api`);
+    console.log(`⚙️  Mode: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`=========================================`);
+  });
+}
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
   console.error(`Unhandled Error: ${err.message}`);
 });
 
-module.exports = { app, server };
+module.exports = app;
+module.exports.app = app;
+module.exports.server = server;

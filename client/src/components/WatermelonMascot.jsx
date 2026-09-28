@@ -8,6 +8,12 @@ import React, { useState, useEffect, useRef } from 'react';
  * - Right Edge (3 characters): Onion (20%), Coconut (50%), Watermelon (80%)
  * - Bottom Edge (3 characters): Beetroot (25%), Pumpkin (50%), Brinjal (75%)
  *
+ * SCROLL-AUTO-CLOSE:
+ * - WHILE SCROLLING SCREEN: ALL items (mascots + dialogues) are CLOSED immediately!
+ *   They smoothly tuck away into outer screen bezels with opacity 0 and pointer-events none.
+ *   Screen is 100% clean and unobstructed during scroll.
+ * - When scrolling stops, they smoothly glide back into their perimeter slots.
+ *
  * ABSOLUTE SEPARATION, AVOID EXTRA SPACE & ZERO OVERLAY:
  * - Every character is separated by 240px to 380px from all other characters.
  * - Corners have 370px+ clearance: no mascot stands near any other mascot.
@@ -274,9 +280,10 @@ const playPopSound = () => {
 /**
  * Individual Interactive Mascot Item
  * Wide spacing (240px to 380px distance), corners completely clear.
+ * Closes automatically while screen is scrolling.
  * Ultra-compact dialogue avoids wasting screen space, zero overlay.
  */
-const SingleMascot = ({ char, index }) => {
+const SingleMascot = ({ char, index, isScrolling }) => {
   const [visible, setVisible] = useState(false);
   const [isPoofing, setIsPoofing] = useState(false);
   const [position, setPosition] = useState({ x: -999, y: -999 });
@@ -412,7 +419,7 @@ const SingleMascot = ({ char, index }) => {
   };
 
   const handleTouchDismiss = (e) => {
-    if (hasMovedRef.current || !visible) return;
+    if (hasMovedRef.current || !visible || isScrolling) return;
 
     playPopSound();
     setIsPoofing(true);
@@ -435,6 +442,7 @@ const SingleMascot = ({ char, index }) => {
   };
 
   const onDragStart = (clientX, clientY) => {
+    if (isScrolling) return;
     setIsDragging(true);
     hasMovedRef.current = false;
     dragStartRef.current = { x: clientX, y: clientY };
@@ -617,7 +625,7 @@ const SingleMascot = ({ char, index }) => {
   return (
     <div
       ref={mascotRef}
-      className={`veggie-mascot-card mascot-${char.id} dock-${dockSide} ${isPoofing ? 'poofing' : ''} ${isDragging ? 'dragging' : ''}`}
+      className={`veggie-mascot-card mascot-${char.id} dock-${dockSide} ${isPoofing ? 'poofing' : ''} ${isDragging ? 'dragging' : ''} ${isScrolling ? 'scrolling-closed' : ''}`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -646,11 +654,12 @@ const SingleMascot = ({ char, index }) => {
 
       {/* 
         COMPACT 6-WORD 2-LINE DIALOGUE:
+        - Automatically CLOSED while scrolling screen or dragging!
         - Avoids extra space (snug against mascot edge, max 95px wide).
         - ZERO overlay (transparent, no box/border/shadow overlay).
         - pointer-events: none ensures it never blocks clicks to website elements!
       */}
-      {!isDragging && (
+      {!isDragging && !isScrolling && (
         <div className={`mascot-text-msg dock-${dockSide}`}>
           <span className="mascot-msg-line">{currentQuote.line1}</span>
           <span className="mascot-msg-line">{currentQuote.line2}</span>
@@ -697,13 +706,37 @@ const SingleMascot = ({ char, index }) => {
 /**
  * Vegetable Gang Mascots Root Component
  * Displays 12 mascots line-by-line every 2 seconds docked at screen edges.
+ * Auto-closes all mascots and dialogues whenever the screen is scrolled!
  */
 const VeggieGangMascots = () => {
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolling(true);
+
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+
+      scrollTimeoutRef.current = setTimeout(() => {
+        setIsScrolling(false);
+      }, 700);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
+  }, []);
+
   return (
     <>
-      <div className="veggie-gang-mascots-root" aria-live="polite">
+      <div className={`veggie-gang-mascots-root ${isScrolling ? 'is-scrolling' : ''}`} aria-live="polite">
         {GANG_CHARACTERS.map((char, index) => (
-          <SingleMascot key={char.id} char={char} index={index} />
+          <SingleMascot key={char.id} char={char} index={index} isScrolling={isScrolling} />
         ))}
       </div>
 
@@ -725,8 +758,36 @@ const VeggieGangMascots = () => {
           touch-action: none;
           cursor: grab;
           filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
-          transition: left 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s ease-out, transform 0.2s ease-out;
+          transition: left 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s ease-out, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease-out;
           animation: mascotEntrance 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, mascotFloat 3.4s ease-in-out infinite 0.65s;
+        }
+
+        /* 
+          WHILE SCROLLING SCREEN: ALL ITEMS ARE CLOSED!
+          Smoothly folded into outer screen bezels with 0 opacity and pointer-events disabled.
+          Leaves screen 100% clean and unobstructed while browsing!
+        */
+        .veggie-mascot-card.scrolling-closed {
+          opacity: 0 !important;
+          pointer-events: none !important;
+          animation: none !important;
+          transition: transform 0.28s ease-in, opacity 0.24s ease-in !important;
+        }
+
+        .veggie-mascot-card.scrolling-closed.dock-left {
+          transform: translateX(-140%) scale(0.8) !important;
+        }
+
+        .veggie-mascot-card.scrolling-closed.dock-right {
+          transform: translateX(140%) scale(0.8) !important;
+        }
+
+        .veggie-mascot-card.scrolling-closed.dock-top {
+          transform: translateY(-140%) scale(0.8) !important;
+        }
+
+        .veggie-mascot-card.scrolling-closed.dock-bottom {
+          transform: translateY(140%) scale(0.8) !important;
         }
 
         .veggie-mascot-card.dragging {
@@ -785,6 +846,7 @@ const VeggieGangMascots = () => {
 
         /* 
           COMPACT 6-WORD 2-LINE DIALOGUE:
+          - Automatically CLOSED while scrolling screen!
           - Avoids unnecessary space (max 95px wide, 10px text, 1.15 line-height).
           - ZERO overlay: transparent, no box, no border, no background, no blur overlay.
           - pointer-events: none ensures it NEVER blocks clicks to website elements!

@@ -712,170 +712,530 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // 13. FLOATING WATERMELON MASCOT (Interactive)
+  // 13. FLOATING VEGGIE GANG MASCOTS (Interactive)
   // ==========================================
-  const mascot = document.getElementById('watermelonMascot');
-  const mascotArrowBadge = document.getElementById('mascotArrowBadge');
-  const mascotImgWrap = document.getElementById('mascotImgWrap');
+  const mascotsRoot = document.getElementById('veggieGangMascotsRoot');
 
-  if (mascot) {
-    let posX = window.innerWidth - 160;
-    let posY = window.innerHeight - 270;
-    let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let initialX = posX;
-    let initialY = posY;
-    let hasMoved = false;
-    let isVisible = true;
-    let reappearanceTimer = null;
+  if (mascot || mascotsRoot) {
+    const GANG_CHARACTERS = [
+      {
+        id: 'watermelon',
+        name: 'Watermelon Star',
+        image: 'assets/images/watermelon_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #ff3838, #2ecc71)',
+        glowColor: 'rgba(46, 204, 113, 0.45)',
+        emojis: ['🍉', '💦', '💥', '✨', '🍉'],
+        quotes: [
+          'Hii guys! 🍉 Welcome to Palu Vlogs! Subscribed alle?',
+          'How can I help you today? Looking for travel chaos? 🍉',
+          'Bro, hit that subscribe bell icon right now! 🔔',
+          'Vibe check passed! Ready for our next Kerala road trip? 🚗'
+        ],
+        defaultEdge: 'right',
+        offsetPct: 75,
+        delayMs: 0
+      },
+      {
+        id: 'cabbage',
+        name: 'Cabbage Star',
+        image: 'assets/images/cabbage_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #2ecc71, #27ae60)',
+        glowColor: 'rgba(46, 204, 113, 0.45)',
+        emojis: ['🥬', '🌿', '✨', '🍃', '🥬'],
+        quotes: [
+          'Hii fraands! 🥬 Leaf Commander here! How can I help you?',
+          'Do I look like a cabbage or a superhero? Be honest! 😂',
+          '100% organic vlogger! Like & share our videos! 🥬',
+          'Fresh vibes straight from the garden! What can I do for you?'
+        ],
+        defaultEdge: 'left',
+        offsetPct: 15,
+        delayMs: 2000
+      },
+      {
+        id: 'tomato',
+        name: 'Cameo Star Tomato',
+        image: 'assets/images/tomato_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #ff4757, #ffa502)',
+        glowColor: 'rgba(255, 71, 87, 0.55)',
+        emojis: ['🍅', '⭐', '🔥', '✨', '🍅'],
+        quotes: [
+          'Hello superstar! 🍅 Cameo Star is here! How can I help you?',
+          'Need an autograph or a spicy gossip vlog from today? 😎',
+          'Today\'s episode is 100% pure swag! Did you like it? ⭐',
+          'Wait for the climax twist in our latest video! 🎬'
+        ],
+        defaultEdge: 'right',
+        offsetPct: 15,
+        delayMs: 4000
+      },
+      {
+        id: 'ladiesfinger',
+        name: 'Okra Security',
+        image: 'assets/images/ladiesfinger_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #2ed573, #1e90ff)',
+        glowColor: 'rgba(46, 213, 115, 0.55)',
+        emojis: ['🥒', '🛡️', '⚡', '✨', '🥒'],
+        quotes: [
+          'Halt! 🥒 Okra Security on duty! Have you subscribed yet? 🛡️',
+          'Hii visitor! How can I help you safely tour the website?',
+          'Keep your hands inside the vlog jeep at all times! 🚨',
+          'No trespassing without watching our latest Kerala vlog! 🎥'
+        ],
+        defaultEdge: 'left',
+        offsetPct: 75,
+        delayMs: 6000
+      },
+      {
+        id: 'pumpkin',
+        name: 'Pumpkin Star',
+        image: 'assets/images/pumpkin_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #ff7f50, #ffa502)',
+        glowColor: 'rgba(255, 165, 2, 0.6)',
+        emojis: ['🎃', '📹', '🕶️', '✨', '🎃'],
+        quotes: [
+          'Wassup Gang! 🎃 Pumpkin Star rolling 4K! How can I help you?',
+          'Hii guys! Say cheese for the GoPro camera! 📹',
+          'Comment below your favourite snack while watching us! 🍿',
+          'Vegetable Gang in the building! Smash that like button! 💥'
+        ],
+        defaultEdge: 'bottom',
+        offsetPct: 50,
+        delayMs: 8000
+      },
+      {
+        id: 'brinjal',
+        name: 'Brinjal Star',
+        image: 'assets/images/brinjal_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #8854d0, #3867d6)',
+        glowColor: 'rgba(136, 84, 208, 0.6)',
+        emojis: ['🍆', '👑', '⚡', '✨', '🍆'],
+        quotes: [
+          'Yo Boss! 🍆 Brinjal Star pointing at YOU! How can I help?',
+          'Hii friend! Ready to explore scenic spots across Kerala? 🌴',
+          'Purple royalty is here! Turn notifications on! 🔔',
+          'Looking for top hidden gems? Check our Locations page! 📍'
+        ],
+        defaultEdge: 'top',
+        offsetPct: 65,
+        delayMs: 10000
+      },
+      {
+        id: 'onion',
+        name: 'Onion Star',
+        image: 'assets/images/onion_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #9b59b6, #e056fd)',
+        glowColor: 'rgba(155, 89, 182, 0.55)',
+        emojis: ['🧅', '💪', '👑', '✨', '🧅'],
+        quotes: [
+          'Hii gym bros! 🧅 Onion Star flexing! How can I help you build vibes?',
+          'No crying allowed today, only laughing with Palu Vlogs! 😂',
+          'Layer by layer, we uncover the best Kerala road trips! 🧅',
+          'Need some extra energy? Hit subscribe and join the gang! 💪'
+        ],
+        defaultEdge: 'left',
+        offsetPct: 45,
+        delayMs: 12000
+      },
+      {
+        id: 'carrot',
+        name: 'Carrot Coder Star',
+        image: 'assets/images/carrot_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #ff9f43, #ee5253)',
+        glowColor: 'rgba(255, 159, 67, 0.55)',
+        emojis: ['🥕', '💻', '🚀', '✨', '🥕'],
+        quotes: [
+          'Hii geeks & viewers! 🥕 Good Code Good Vibes! How can I help you?',
+          'Debugging bugs while coding Palu Vlogs website! Notice my stickers? 💻',
+          '100% bug-free vlog enjoyment guaranteed! Did you like our UI? 🚀',
+          'Console.log("Subscribe to Palu Vlogs now!") 🥕'
+        ],
+        defaultEdge: 'right',
+        offsetPct: 45,
+        delayMs: 14000
+      },
+      {
+        id: 'cauliflower',
+        name: 'Cauliflower Joy',
+        image: 'assets/images/cauliflower_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #f1c40f, #27ae60)',
+        glowColor: 'rgba(241, 196, 15, 0.55)',
+        emojis: ['🥦', '🙏', '⛪', '✨', '🥦'],
+        quotes: [
+          'Blessings to all viewers! 🥦 JOY here! How can I pray / help you today?',
+          'May your Wi-Fi be fast and your vlog buffering be zero! 🙏',
+          'Keep the peace and watch episode after episode in harmony! ✨',
+          'A holy recommendation: subscribe to Palu Vlogs today! 🥦'
+        ],
+        defaultEdge: 'top',
+        offsetPct: 35,
+        delayMs: 16000
+      },
+      {
+        id: 'beetroot',
+        name: 'Beetroot Star',
+        image: 'assets/images/beetroot_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #b71540, #eb2f06)',
+        glowColor: 'rgba(183, 21, 64, 0.6)',
+        emojis: ['🔴', '📱', '👑', '✨', '🔴'],
+        quotes: [
+          'Hii bro! 🔴 Not a normal veggie, I am BEETROOT STAR! How can I help?',
+          'Checking our YouTube analytics on my iPhone right now! 📱',
+          'Our red juice is 100% pure cinema! Have you shared the vlog yet?',
+          'Swipe up or click subscribe to see behind the scenes! 👑'
+        ],
+        defaultEdge: 'bottom',
+        offsetPct: 25,
+        delayMs: 18000
+      },
+      {
+        id: 'coconut',
+        name: 'Coconut Admin',
+        image: 'assets/images/coconut_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #00d2d3, #10ac84)',
+        glowColor: 'rgba(0, 210, 211, 0.6)',
+        emojis: ['🥥', '🌴', '🏖️', '🕶️', '🥥'],
+        quotes: [
+          'Hii people! 🥥 Admin of Palu Vlogs here! Real Face Real Vibes! How can I help?',
+          'Chilling with tender coconut water on the beach! Living the dream! 🌴',
+          'Admin announcement: whoever subscribes gets a free tender coconut! 🥥',
+          'Relax, take a sip, and enjoy the ride with Vegetable Gang! 🕶️'
+        ],
+        defaultEdge: 'bottom',
+        offsetPct: 78,
+        delayMs: 20000
+      },
+      {
+        id: 'cucumber',
+        name: 'Cucumber Editor Star',
+        image: 'assets/images/cucumber_gang.png',
+        badgeGradient: 'linear-gradient(135deg, #10ac84, #1dd1a1)',
+        glowColor: 'rgba(29, 209, 161, 0.55)',
+        emojis: ['🥒', '🎧', '💻', '🎬', '✨', '🥒'],
+        quotes: [
+          'Hii squad! 🥒 Edit Mode ON! How can I help you cut through the chaos?',
+          'Exporting our 4K Kerala road trip vlog right now! Notice my headphones? 🎧',
+          'Color grading is 100% crispy fresh! Did you like the latest cut? 🎬',
+          'Zero lag, 60fps, maximum vibes! Hit subscribe to keep me editing! 💻'
+        ],
+        defaultEdge: 'top',
+        offsetPct: 50,
+        delayMs: 22000
+      }
+    ];
 
-    function applyPosition(x, y) {
-      posX = x;
-      posY = y;
-      mascot.style.left = `${posX}px`;
-      mascot.style.top = `${posY}px`;
-    }
+    const root = mascotsRoot || document.body;
 
-    applyPosition(posX, posY);
+    GANG_CHARACTERS.forEach((char, idx) => {
+      // Build mascot card element
+      const el = document.createElement('div');
+      el.className = `veggie-mascot-card mascot-${char.id} hidden`;
+      el.id = `mascot_${char.id}`;
+      el.title = `${char.name} — Touch to hide or drag around screen ends!`;
+      el.style.filter = `drop-shadow(0 14px 26px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 16px ${char.glowColor})`;
+      el.style.zIndex = `${99990 + idx}`;
 
-    window.addEventListener('resize', () => {
-      const maxX = window.innerWidth - mascot.offsetWidth - 10;
-      const maxY = window.innerHeight - mascot.offsetHeight - 10;
-      applyPosition(Math.max(10, Math.min(maxX, posX)), Math.max(10, Math.min(maxY, posY)));
-    });
+      let quoteIndex = 0;
 
-    function scheduleReappearance() {
-      if (reappearanceTimer) clearTimeout(reappearanceTimer);
-      reappearanceTimer = setTimeout(() => {
-        mascot.classList.remove('poofing', 'hidden');
-        const defaultX = Math.max(20, window.innerWidth - 160);
-        const defaultY = Math.max(20, window.innerHeight - 270);
-        applyPosition(defaultX, defaultY);
-        if (mascotImgWrap) mascotImgWrap.style.transform = 'scaleX(1)';
-        if (mascotArrowBadge) mascotArrowBadge.style.transform = 'rotate(180deg)';
+      el.innerHTML = `
+        <div class="mascot-arrow-badge" style="background: ${char.badgeGradient}">
+          <span class="mascot-arrow-icon">➔</span>
+        </div>
+        <div class="mascot-speech-bubble" title="Click to hear another funny vlog line!">
+          <div class="speech-sender-tag" style="background: ${char.badgeGradient}">${char.name}</div>
+          <div class="speech-text">${char.quotes[0]}</div>
+          <div class="speech-hint">💬 tap quote / touch body to hide</div>
+        </div>
+        <div class="mascot-img-wrap">
+          <img src="${char.image}" alt="${char.name}" class="mascot-character-img" draggable="false">
+        </div>
+      `;
+
+      root.appendChild(el);
+
+      const arrowBadge = el.querySelector('.mascot-arrow-badge');
+      const imgWrap = el.querySelector('.mascot-img-wrap');
+      const speechBubble = el.querySelector('.mascot-speech-bubble');
+      const speechText = el.querySelector('.speech-text');
+
+      if (speechBubble) {
+        speechBubble.addEventListener('click', (e) => {
+          e.stopPropagation();
+          quoteIndex = (quoteIndex + 1) % char.quotes.length;
+          speechText.textContent = char.quotes[quoteIndex];
+        });
+      }
+
+      // Auto cycle quotes periodically
+      setInterval(() => {
+        quoteIndex = (quoteIndex + 1) % char.quotes.length;
+        if (speechText) speechText.textContent = char.quotes[quoteIndex];
+      }, 8000);
+
+      let posX = -999;
+      let posY = -999;
+      let isDragging = false;
+      let dragStartX = 0;
+      let dragStartY = 0;
+      let initialX = 0;
+      let initialY = 0;
+      let hasMoved = false;
+      let isVisible = false;
+      let reappearTimer = null;
+      let facing = 'left';
+
+      let dockSide = char.defaultEdge;
+
+      function updateDockSide(side) {
+        dockSide = side;
+        if (speechBubble) {
+          speechBubble.className = `mascot-speech-bubble dock-${dockSide}`;
+        }
+      }
+
+      function getDims() {
+        const isMobile = window.innerWidth < 640;
+        return {
+          w: isMobile ? 85 : 120,
+          h: isMobile ? 135 : 185
+        };
+      }
+
+      function computeDock() {
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const { w: mw, h: mh } = getDims();
+
+        let x = 8;
+        let y = 8;
+        let f = 'left';
+        let a = 180;
+        let s = char.defaultEdge;
+
+        switch (char.defaultEdge) {
+          case 'left':
+            x = 8;
+            y = Math.max(8, Math.min(h - mh - 8, (h * char.offsetPct) / 100 - mh / 2));
+            f = 'right';
+            a = 0;
+            s = 'left';
+            break;
+          case 'right':
+            x = Math.max(8, w - mw - 8);
+            y = Math.max(8, Math.min(h - mh - 8, (h * char.offsetPct) / 100 - mh / 2));
+            f = 'left';
+            a = 180;
+            s = 'right';
+            break;
+          case 'top':
+            y = 8;
+            x = Math.max(8, Math.min(w - mw - 8, (w * char.offsetPct) / 100 - mw / 2));
+            f = x < w / 2 ? 'right' : 'left';
+            a = 90;
+            s = 'top';
+            break;
+          case 'bottom':
+            y = Math.max(8, h - mh - 8);
+            x = Math.max(8, Math.min(w - mw - 8, (w * char.offsetPct) / 100 - mw / 2));
+            f = x < w / 2 ? 'right' : 'left';
+            a = 270;
+            s = 'bottom';
+            break;
+        }
+        return { x, y, f, a, s };
+      }
+
+      function setPos(x, y) {
+        posX = x;
+        posY = y;
+        el.style.left = `${posX}px`;
+        el.style.top = `${posY}px`;
+      }
+
+      function setFacing(newFacing) {
+        facing = newFacing;
+        if (imgWrap) {
+          imgWrap.style.transform = facing === 'left' ? 'scaleX(1)' : 'scaleX(-1)';
+        }
+      }
+
+      function setArrow(angle) {
+        if (arrowBadge) {
+          arrowBadge.style.transform = `rotate(${angle}deg)`;
+        }
+      }
+
+      // Initial sequential entrance (Watermelon at 0s, others every 2s)
+      setTimeout(() => {
+        const dock = computeDock();
+        setPos(dock.x, dock.y);
+        setFacing(dock.f);
+        setArrow(dock.a);
+        updateDockSide(dock.s);
+        el.classList.remove('hidden');
         isVisible = true;
-      }, 10000);
-    }
+      }, char.delayMs);
 
-    function dismissMascot() {
-      if (hasMoved || !isVisible) return;
-      isVisible = false;
-      mascot.classList.add('poofing');
-
-      const emojis = ['🍉', '💦', '💥', '✨', '🍉'];
-      emojis.forEach((emoji) => {
-        const p = document.createElement('span');
-        p.className = 'mascot-particle';
-        p.textContent = emoji;
-        p.style.setProperty('--dx', `${(Math.random() - 0.5) * 140}px`);
-        p.style.setProperty('--dy', `${(Math.random() - 0.5) * 140}px`);
-        p.style.setProperty('--rot', `${Math.random() * 360}deg`);
-        mascot.appendChild(p);
-        setTimeout(() => p.remove(), 450);
+      // Window resize adjustment (docked flush to edge)
+      window.addEventListener('resize', () => {
+        if (!isDragging && isVisible) {
+          const { w: mw, h: mh } = getDims();
+          const maxX = window.innerWidth - mw - 8;
+          const maxY = window.innerHeight - mh - 8;
+          setPos(Math.max(8, Math.min(maxX, posX)), Math.max(8, Math.min(maxY, posY)));
+        }
       });
 
-      playClick();
+      // Dismissal on touch/click with particles & 10s reappearance
+      function dismiss(e) {
+        if (e && e.target.closest('.mascot-speech-bubble')) return;
+        if (hasMoved || !isVisible) return;
+        isVisible = false;
+        el.classList.add('poofing');
 
-      setTimeout(() => {
-        mascot.classList.add('hidden');
-        mascot.classList.remove('poofing');
-        scheduleReappearance();
-      }, 450);
-    }
+        char.emojis.forEach((emoji) => {
+          const p = document.createElement('span');
+          p.className = 'mascot-particle';
+          p.textContent = emoji;
+          p.style.setProperty('--dx', `${(Math.random() - 0.5) * 160}px`);
+          p.style.setProperty('--dy', `${(Math.random() - 0.5) * 160}px`);
+          p.style.setProperty('--rot', `${Math.random() * 360}deg`);
+          el.appendChild(p);
+          setTimeout(() => p.remove(), 450);
+        });
 
-    mascot.addEventListener('click', dismissMascot);
+        playClick();
 
-    function startDrag(clientX, clientY) {
-      isDragging = true;
-      hasMoved = false;
-      dragStartX = clientX;
-      dragStartY = clientY;
-      initialX = posX;
-      initialY = posY;
-      mascot.classList.add('dragging');
-    }
+        setTimeout(() => {
+          el.classList.add('hidden');
+          el.classList.remove('poofing');
 
-    function moveDrag(clientX, clientY) {
-      if (!isDragging) return;
-      const dx = clientX - dragStartX;
-      const dy = clientY - dragStartY;
-
-      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
-        hasMoved = true;
+          if (reappearTimer) clearTimeout(reappearTimer);
+          reappearTimer = setTimeout(() => {
+            const dock = computeDock();
+            setPos(dock.x, dock.y);
+            setFacing(dock.f);
+            setArrow(dock.a);
+            updateDockSide(dock.s);
+            el.classList.remove('hidden');
+            isVisible = true;
+          }, 10000);
+        }, 450);
       }
 
-      const maxX = window.innerWidth - mascot.offsetWidth - 10;
-      const maxY = window.innerHeight - mascot.offsetHeight - 10;
-      const newX = Math.max(10, Math.min(maxX, initialX + dx));
-      const newY = Math.max(10, Math.min(maxY, initialY + dy));
+      el.addEventListener('click', dismiss);
 
-      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
-        const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
-        if (mascotArrowBadge) {
-          mascotArrowBadge.style.transform = `rotate(${angle}deg)`;
+      // Drag start (hides speech bubble while dragging to prevent face cover)
+      function startDrag(cx, cy) {
+        isDragging = true;
+        hasMoved = false;
+        dragStartX = cx;
+        dragStartY = cy;
+        initialX = posX;
+        initialY = posY;
+        el.classList.add('dragging');
+        if (speechBubble) speechBubble.style.opacity = '0';
+      }
+
+      // Drag move
+      function moveDrag(cx, cy) {
+        if (!isDragging) return;
+        const dx = cx - dragStartX;
+        const dy = cy - dragStartY;
+
+        if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+          hasMoved = true;
         }
 
-        if (mascotImgWrap) {
+        const { w: mw, h: mh } = getDims();
+        const maxX = window.innerWidth - mw - 5;
+        const maxY = window.innerHeight - mh - 5;
+        const newX = Math.max(5, Math.min(maxX, initialX + dx));
+        const newY = Math.max(5, Math.min(maxY, initialY + dy));
+
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+          const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+          setArrow(angle);
+
           if (dx < -2) {
-            mascotImgWrap.style.transform = 'scaleX(1)';
+            setFacing('left');
           } else if (dx > 2) {
-            mascotImgWrap.style.transform = 'scaleX(-1)';
+            setFacing('right');
           } else {
-            mascotImgWrap.style.transform = newX < window.innerWidth / 2 ? 'scaleX(-1)' : 'scaleX(1)';
+            setFacing(newX < window.innerWidth / 2 ? 'right' : 'left');
           }
         }
+
+        setPos(newX, newY);
       }
 
-      applyPosition(newX, newY);
-    }
+      // Drag end with magnetic 4-edge snap (NEVER stays in center! Flush to screen ends)
+      function endDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        el.classList.remove('dragging');
+        if (speechBubble) speechBubble.style.opacity = '1';
 
-    function endDrag() {
-      if (!isDragging) return;
-      isDragging = false;
-      mascot.classList.remove('dragging');
+        const { w: mw, h: mh } = getDims();
+        const w = window.innerWidth;
+        const h = window.innerHeight;
 
-      // Magnetic edge snap (never stay in center)
-      const mascotW = mascot.offsetWidth || 135;
-      const mascotH = mascot.offsetHeight || 215;
-      const centerX = posX + mascotW / 2;
-      const isLeft = centerX < window.innerWidth / 2;
+        const distLeft = posX;
+        const distRight = w - (posX + mw);
+        const distTop = posY;
+        const distBottom = h - (posY + mh);
 
-      const snapX = isLeft ? 10 : window.innerWidth - mascotW - 10;
-      const snapY = Math.max(20, Math.min(window.innerHeight - mascotH - 40, posY));
+        const minDist = Math.min(distLeft, distRight, distTop, distBottom);
 
-      if (mascotImgWrap) {
-        mascotImgWrap.style.transform = isLeft ? 'scaleX(-1)' : 'scaleX(1)';
+        let snapX = posX;
+        let snapY = posY;
+
+        if (minDist === distLeft) {
+          snapX = 8;
+          snapY = Math.max(8, Math.min(h - mh - 8, posY));
+          setFacing('right');
+          setArrow(0);
+          updateDockSide('left');
+        } else if (minDist === distRight) {
+          snapX = w - mw - 8;
+          snapY = Math.max(8, Math.min(h - mh - 8, posY));
+          setFacing('left');
+          setArrow(180);
+          updateDockSide('right');
+        } else if (minDist === distTop) {
+          snapY = 8;
+          snapX = Math.max(8, Math.min(w - mw - 8, posX));
+          setFacing(snapX < w / 2 ? 'right' : 'left');
+          setArrow(90);
+          updateDockSide('top');
+        } else {
+          snapY = h - mh - 8;
+          snapX = Math.max(8, Math.min(w - mw - 8, posX));
+          setFacing(snapX < w / 2 ? 'right' : 'left');
+          setArrow(270);
+          updateDockSide('bottom');
+        }
+
+        setPos(snapX, snapY);
       }
-      if (mascotArrowBadge) {
-        mascotArrowBadge.style.transform = isLeft ? 'rotate(0deg)' : 'rotate(180deg)';
-      }
 
-      applyPosition(snapX, snapY);
-    }
+      el.addEventListener('mousedown', (e) => startDrag(e.clientX, e.clientY));
+      window.addEventListener('mousemove', (e) => moveDrag(e.clientX, e.clientY));
+      window.addEventListener('mouseup', endDrag);
 
-    mascot.addEventListener('mousedown', (e) => {
-      startDrag(e.clientX, e.clientY);
+      el.addEventListener('touchstart', (e) => {
+        if (e.touches && e.touches[0]) {
+          startDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: true });
+
+      window.addEventListener('touchmove', (e) => {
+        if (isDragging && e.touches && e.touches[0]) {
+          moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      window.addEventListener('touchend', endDrag);
     });
-
-    window.addEventListener('mousemove', (e) => {
-      moveDrag(e.clientX, e.clientY);
-    });
-
-    window.addEventListener('mouseup', endDrag);
-
-    mascot.addEventListener('touchstart', (e) => {
-      if (e.touches && e.touches[0]) {
-        startDrag(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    }, { passive: true });
-
-    window.addEventListener('touchmove', (e) => {
-      if (isDragging && e.touches && e.touches[0]) {
-        moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    }, { passive: false });
-
-    window.addEventListener('touchend', endDrag);
   }
 });

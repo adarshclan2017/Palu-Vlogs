@@ -731,8 +731,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Tomato stop blushing,', line2: 'look at Pumpkin! 🍅💃' },
           { line1: 'Onion stop crying,', line2: 'nobody cut you! 🧅😭' }
         ],
+        naturalFacing: 'left',
         defaultEdge: 'right',
-        offsetPct: 50,
+        offsetPct: 68,
         delayMs: 0
       },
       {
@@ -748,8 +749,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Beetroot you are', line2: 'not iPhone model! 📱🤣' },
           { line1: 'Watermelon big head,', line2: 'empty inside bro! 🍉💥' }
         ],
+        naturalFacing: 'left',
         defaultEdge: 'left',
-        offsetPct: 18,
+        offsetPct: 68,
         delayMs: 2000
       },
       {
@@ -765,8 +767,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Pumpkin move away,', line2: 'blocking vlog camera! 🎃📸' },
           { line1: 'Onion your smell', line2: 'knocks everyone down! 🧅😵' }
         ],
-        defaultEdge: 'right',
-        offsetPct: 18,
+        naturalFacing: 'right',
+        defaultEdge: 'left',
+        offsetPct: 32,
         delayMs: 4000
       },
       {
@@ -782,8 +785,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Brinjal you are', line2: 'only side dish! 🍆😂' },
           { line1: 'Cucumber make my', line2: 'vlog biceps bigger! 💪🥒' }
         ],
-        defaultEdge: 'left',
-        offsetPct: 82,
+        naturalFacing: 'left',
+        defaultEdge: 'bottom',
+        offsetPct: 15,
         delayMs: 6000
       },
       {
@@ -799,8 +803,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Cauliflower shock haircut', line2: 'looks super funny! 🥦⚡' },
           { line1: 'Catch rolling Tomato', line2: 'into hot sambar! 🍅🍲' }
         ],
+        naturalFacing: 'left',
         defaultEdge: 'bottom',
-        offsetPct: 50,
+        offsetPct: 62,
         delayMs: 8000
       },
       {
@@ -816,8 +821,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Ladiesfinger looks like', line2: 'tiny green toothpick! 🥒😆' },
           { line1: 'Viewers watch vlog', line2: 'only for me! 🍆👑' }
         ],
+        naturalFacing: 'left',
         defaultEdge: 'bottom',
-        offsetPct: 80,
+        offsetPct: 85,
         delayMs: 10000
       },
       {
@@ -833,8 +839,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Cucumber stop watching', line2: 'anime until midnight! 🥒📺' },
           { line1: 'I make everyone', line2: 'cry so easily! 💪🧅' }
         ],
-        defaultEdge: 'left',
-        offsetPct: 50,
+        naturalFacing: 'right',
+        defaultEdge: 'right',
+        offsetPct: 32,
         delayMs: 12000
       },
       {
@@ -850,8 +857,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Beetroot phone battery', line2: 'dropped to one! 📱🪫' },
           { line1: 'Cabbage has more', line2: 'layers than CSS! 🥬💻' }
         ],
+        naturalFacing: 'left',
         defaultEdge: 'top',
-        offsetPct: 80,
+        offsetPct: 62,
         delayMs: 14000
       },
       {
@@ -867,8 +875,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Pumpkin stop eating', line2: 'all shoot snacks! 🎃🍩' },
           { line1: 'Cucumber laptop fan', line2: 'sounds like jet! ✈️💻' }
         ],
+        naturalFacing: 'left',
         defaultEdge: 'top',
-        offsetPct: 20,
+        offsetPct: 15,
         delayMs: 16000
       },
       {
@@ -884,8 +893,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Coconut we know', line2: 'you are bald! 🕶️🥥' },
           { line1: 'Watermelon upgrade to', line2: 'ultra HD now! 🍉📱' }
         ],
+        naturalFacing: 'left',
         defaultEdge: 'bottom',
-        offsetPct: 20,
+        offsetPct: 38,
         delayMs: 18000
       },
       {
@@ -901,8 +911,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Onion step away', line2: 'camera is crying! 🧅😭' },
           { line1: 'I pay bills', line2: 'while kids fight! 🌴👑' }
         ],
-        defaultEdge: 'right',
-        offsetPct: 82,
+        naturalFacing: 'left',
+        defaultEdge: 'top',
+        offsetPct: 85,
         delayMs: 20000
       },
       {
@@ -918,8 +929,9 @@ document.addEventListener('DOMContentLoaded', () => {
           { line1: 'Beetroot shaky shots', line2: 'make team dizzy! 📱🤢' },
           { line1: 'Pumpkin no slow-mo', line2: 'for bouncing belly! 🎃✂️' }
         ],
+        naturalFacing: 'left',
         defaultEdge: 'top',
-        offsetPct: 50,
+        offsetPct: 38,
         delayMs: 22000
       }
     ];
@@ -1063,7 +1075,9 @@ document.addEventListener('DOMContentLoaded', () => {
       function setFacing(newFacing) {
         facing = newFacing;
         if (imgWrap) {
-          imgWrap.style.transform = facing === 'left' ? 'scaleX(1)' : 'scaleX(-1)';
+          const naturalFacing = char.naturalFacing || 'left';
+          const scale = facing === naturalFacing ? 1 : -1;
+          imgWrap.style.transform = `scaleX(${scale})`;
         }
       }
 
@@ -1188,10 +1202,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const w = window.innerWidth;
         const h = window.innerHeight;
 
-        const distLeft = posX;
-        const distRight = w - (posX + mw);
-        const distTop = posY;
-        const distBottom = h - (posY + mh);
+        const centerX = posX + mw / 2;
+        const centerY = posY + mh / 2;
+
+        const distLeft = centerX;
+        const distRight = w - centerX;
+        const distTop = centerY;
+        const distBottom = h - centerY;
 
         const minDist = Math.min(distLeft, distRight, distTop, distBottom);
 
@@ -1200,25 +1217,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (minDist === distLeft) {
           snapX = 8;
-          snapY = Math.max(8, Math.min(h - mh - 8, posY));
+          const slot1 = (h * 0.32) - mh / 2;
+          const slot2 = (h * 0.68) - mh / 2;
+          snapY = Math.abs(posY - slot1) < Math.abs(posY - slot2) ? slot1 : slot2;
+          snapY = Math.max(8, Math.min(h - mh - 8, snapY));
           setFacing('right');
           setArrow(0);
           updateDockSide('left');
         } else if (minDist === distRight) {
-          snapX = w - mw - 8;
-          snapY = Math.max(8, Math.min(h - mh - 8, posY));
+          snapX = Math.max(8, w - mw - 8);
+          const slot1 = (h * 0.32) - mh / 2;
+          const slot2 = (h * 0.68) - mh / 2;
+          snapY = Math.abs(posY - slot1) < Math.abs(posY - slot2) ? slot1 : slot2;
+          snapY = Math.max(8, Math.min(h - mh - 8, snapY));
           setFacing('left');
           setArrow(180);
           updateDockSide('right');
         } else if (minDist === distTop) {
           snapY = 8;
-          snapX = Math.max(8, Math.min(w - mw - 8, posX));
+          const topSlots = [0.15, 0.38, 0.62, 0.85].map((pct) => (w * pct) - mw / 2);
+          let bestSlot = topSlots[0];
+          let minDiff = Math.abs(posX - bestSlot);
+          for (let i = 1; i < topSlots.length; i++) {
+            const diff = Math.abs(posX - topSlots[i]);
+            if (diff < minDiff) {
+              minDiff = diff;
+              bestSlot = topSlots[i];
+            }
+          }
+          snapX = Math.max(8, Math.min(w - mw - 8, bestSlot));
           setFacing(snapX < w / 2 ? 'right' : 'left');
           setArrow(90);
           updateDockSide('top');
         } else {
-          snapY = h - mh - 8;
-          snapX = Math.max(8, Math.min(w - mw - 8, posX));
+          snapY = Math.max(8, h - mh - 8);
+          const bottomSlots = [0.15, 0.38, 0.62, 0.85].map((pct) => (w * pct) - mw / 2);
+          let bestSlot = bottomSlots[0];
+          let minDiff = Math.abs(posX - bestSlot);
+          for (let i = 1; i < bottomSlots.length; i++) {
+            const diff = Math.abs(posX - bottomSlots[i]);
+            if (diff < minDiff) {
+              minDiff = diff;
+              bestSlot = bottomSlots[i];
+            }
+          }
+          snapX = Math.max(8, Math.min(w - mw - 8, bestSlot));
           setFacing(snapX < w / 2 ? 'right' : 'left');
           setArrow(270);
           updateDockSide('bottom');

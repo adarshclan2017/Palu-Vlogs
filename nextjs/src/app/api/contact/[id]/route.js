@@ -8,8 +8,9 @@ export async function PUT(request, { params }) {
     await connectDB().catch(() => {});
     const user = getUserFromRequest(request);
     if (!user || user.role !== 'admin') return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    // params.id might be "ID/read" — handle both
-    const id = params.id;
+
+    const resolvedParams = await params;
+    const id = resolvedParams?.id;
     const msg = await dataStore.toggleMessageRead(id);
     if (!msg) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: msg });
@@ -23,7 +24,10 @@ export async function DELETE(request, { params }) {
     await connectDB().catch(() => {});
     const user = getUserFromRequest(request);
     if (!user || user.role !== 'admin') return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    const deleted = await dataStore.deleteContactMessage(params.id);
+
+    const resolvedParams = await params;
+    const id = resolvedParams?.id;
+    const deleted = await dataStore.deleteContactMessage(id);
     if (!deleted) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
     return NextResponse.json({ success: true, message: 'Deleted' });
   } catch (err) {

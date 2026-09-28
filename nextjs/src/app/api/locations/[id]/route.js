@@ -8,8 +8,11 @@ export async function PUT(request, { params }) {
     await connectDB().catch(() => {});
     const user = getUserFromRequest(request);
     if (!user || user.role !== 'admin') return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+
+    const resolvedParams = await params;
+    const id = resolvedParams?.id;
     const body = await request.json();
-    const updated = await dataStore.updateLocation(params.id, body);
+    const updated = await dataStore.updateLocation(id, body);
     if (!updated) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: updated });
   } catch (err) {
@@ -22,7 +25,10 @@ export async function DELETE(request, { params }) {
     await connectDB().catch(() => {});
     const user = getUserFromRequest(request);
     if (!user || user.role !== 'admin') return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    const deleted = await dataStore.deleteLocation(params.id);
+
+    const resolvedParams = await params;
+    const id = resolvedParams?.id;
+    const deleted = await dataStore.deleteLocation(id);
     if (!deleted) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
     return NextResponse.json({ success: true, message: 'Deleted' });
   } catch (err) {

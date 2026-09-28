@@ -328,13 +328,17 @@ export const dataStore = {
   updateSettings: async (data) => {
     if (getStatus()) {
       const { default: SSModel } = await import('../models/SiteSettings.js');
-      let s = await SSModel.findOne();
-      if (!s) return SSModel.create(data);
-      Object.assign(s, data); s.updatedAt = Date.now(); return s.save();
+      const updated = await SSModel.findOneAndUpdate(
+        {},
+        { $set: data, updatedAt: new Date() },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+      return updated;
     }
     const db = initLocalStore();
     db.settings = { ...db.settings, ...data, updatedAt: new Date().toISOString() };
-    saveLocalStore(); return db.settings;
+    saveLocalStore();
+    return db.settings;
   },
 
   getStats: async () => {

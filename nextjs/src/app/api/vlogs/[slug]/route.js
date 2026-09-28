@@ -7,7 +7,8 @@ import dataStore from '@/lib/dataStore';
 export async function GET(request, { params }) {
   try {
     await connectDB().catch(() => {});
-    const { slug } = params;
+    const resolvedParams = await params;
+    const slug = resolvedParams?.slug;
     const vlog = await dataStore.getVlogBySlug(slug);
     if (!vlog) return NextResponse.json({ success: false, message: 'Vlog not found' }, { status: 404 });
 
@@ -21,18 +22,22 @@ export async function GET(request, { params }) {
   }
 }
 
-// PUT /api/vlogs/[slug] — update by ID (slug param is actually ID in admin)
+// PUT /api/vlogs/[slug] — update by ID or slug
 export async function PUT(request, { params }) {
   try {
     await connectDB().catch(() => {});
     const user = getUserFromRequest(request);
     if (!user || user.role !== 'admin') return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
 
+    const resolvedParams = await params;
+    const idOrSlug = resolvedParams?.slug;
     const body = await request.json();
+
     if (body.tags && typeof body.tags === 'string') {
       body.tags = body.tags.split(',').map(t => t.trim()).filter(Boolean);
     }
-    const updated = await dataStore.updateVlog(params.slug, body);
+
+    const updated = await dataStore.updateVlog(idOrSlug, body);
     if (!updated) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
     return NextResponse.json({ success: true, data: updated });
   } catch (err) {
@@ -46,7 +51,10 @@ export async function DELETE(request, { params }) {
     await connectDB().catch(() => {});
     const user = getUserFromRequest(request);
     if (!user || user.role !== 'admin') return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
-    const deleted = await dataStore.deleteVlog(params.slug);
+
+    const resolvedParams = await params;
+    const idOrSlug = resolvedParams?.slug;
+    const deleted = await dataStore.deleteVlog(idOrSlug);
     if (!deleted) return NextResponse.json({ success: false, message: 'Not found' }, { status: 404 });
     return NextResponse.json({ success: true, message: 'Deleted' });
   } catch (err) {

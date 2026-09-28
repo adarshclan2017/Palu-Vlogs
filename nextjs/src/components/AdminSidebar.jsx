@@ -36,6 +36,7 @@ export default function AdminSidebar() {
     { href: '/admin/gallery', label: 'Photo Gallery', icon: '🖼️' },
     { href: '/admin/locations', label: 'Adventures & Maps', icon: '📍' },
     { href: '/admin/messages', label: 'Contact Inquiries', icon: '📬' },
+    { href: '/admin/settings', label: 'Site Settings', icon: '⚙️' },
   ];
 
   return (

@@ -1,12 +1,42 @@
 import { NextResponse } from 'next/server';
-import { connectDB } from '@/lib/db';
+import { connectDB, getStatus } from '@/lib/db';
 import { signToken } from '@/lib/auth';
 import dataStore from '@/lib/dataStore';
 import bcrypt from 'bcryptjs';
 
+/**
+ * AUTO-SEED ADMIN:
+ * On Vercel (MongoDB connected), if no admin user exists in Atlas yet,
+ * we auto-create one on the first login attempt so deployment never breaks.
+ */
+async function ensureAdminExists() {
+  if (!getStatus()) return; // local mode, local_db.json handles it
+  try {
+    const { default: UserModel } = await import('@/models/User.js');
+    const exists = await UserModel.findOne({ role: 'admin' });
+    if (!exists) {
+      const hashed = await bcrypt.hash('Admin@123', 10);
+      await UserModel.create({
+        name: 'Palu Vlogs Admin',
+        email: 'admin@paluvlogs.com',
+        password: hashed,
+        role: 'admin',
+        avatar: '/assets/images/logo.jpg'
+      });
+      console.log('[setup] Admin user auto-created in MongoDB Atlas.');
+    }
+  } catch (e) {
+    console.warn('[setup] Could not auto-create admin:', e.message);
+  }
+}
+
 export async function POST(request) {
   try {
     await connectDB().catch(() => {});
+
+    // Ensure admin exists in MongoDB Atlas on first login
+    await ensureAdminExists();
+
     const { email, password } = await request.json();
 
     if (!email || !password) {

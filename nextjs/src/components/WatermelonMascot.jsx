@@ -5,11 +5,14 @@ import React, { useState, useEffect, useRef } from 'react';
 /**
  * Vegetable Gang Mascot Configuration for Next.js
  * 12 Characters docked strictly at the outer ends/edges of the screen (3 per edge: Left, Right, Top, Bottom).
- * Never sticks in the center area.
- * Speech bubble is positioned completely to the side (never covering the character's face!).
- * Each character asks funny YouTuber greetings ("Hii guys!", "How can I help you today?", etc.)
+ * Strict Rule: Never allowed to stay in the center area! Only stays along perimeter edges.
+ * If moved from left, right, or center, it ALWAYS snaps smoothly to the nearest edge upon release.
+ * Every mascot has funny teasing YouTuber roasts formatted as EXACTLY 6 WORDS across TWO LINES (3 words on line 1, 3 words on line 2).
+ * Pure floating text message with comic text shadow — NO text box container, and NEVER covers the character's face.
+ * Uniform size across all 12 characters matching Pumpkin and Onion.
  * Sequential line-by-line entrance every 2 seconds after the first character.
  */
+
 const GANG_CHARACTERS = [
   {
     id: 'watermelon',
@@ -20,13 +23,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(46, 204, 113, 0.45)',
     emojis: ['🍉', '💦', '💥', '✨', '🍉'],
     quotes: [
-      'Hii guys! 🍉 Welcome to Palu Vlogs! Subscribed alle?',
-      'How can I help you today? Looking for travel chaos? 🍉',
-      'Bro, hit that subscribe bell icon right now! 🔔',
-      'Vibe check passed! Ready for our next Kerala road trip? 🚗'
+      { line1: 'Dai Cucumber edit,', line2: 'stop sleeping now! 🥒😴' },
+      { line1: 'Cabbage fifty layers,', line2: 'zero brain bro! 🥬🤣' },
+      { line1: 'Tomato stop blushing,', line2: 'look at Pumpkin! 🍅💃' },
+      { line1: 'Onion stop crying,', line2: 'nobody cut you! 🧅😭' }
     ],
+    initialPos: { edge: 'right', offsetPct: 50 },
     defaultEdge: 'right',
-    offsetPct: 82,
     delayMs: 0
   },
   {
@@ -38,13 +41,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(46, 204, 113, 0.45)',
     emojis: ['🥬', '🌿', '✨', '🍃', '🥬'],
     quotes: [
-      'Hii fraands! 🥬 Leaf Commander here! How can I help you?',
-      'Do I look like a cabbage or a superhero? Be honest! 😂',
-      '100% organic vlogger! Like & share our videos! 🥬',
-      'Fresh vibes straight from the garden! What can I do for you?'
+      { line1: 'Tomato rolls fast,', line2: 'totally zero brain! 🍅💨' },
+      { line1: 'Carrot your code', line2: 'has many bugs! 🐛💻' },
+      { line1: 'Beetroot you are', line2: 'not iPhone model! 📱🤣' },
+      { line1: 'Watermelon big head,', line2: 'empty inside bro! 🍉💥' }
     ],
+    initialPos: { edge: 'left', offsetPct: 18 },
     defaultEdge: 'left',
-    offsetPct: 18,
     delayMs: 2000
   },
   {
@@ -56,13 +59,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(255, 71, 87, 0.55)',
     emojis: ['🍅', '⭐', '🔥', '✨', '🍅'],
     quotes: [
-      'Hello superstar! 🍅 Cameo Star is here! How can I help you?',
-      'Need an autograph or a spicy gossip vlog from today? 😎',
-      'Today\'s episode is 100% pure swag! Did you like it? ⭐',
-      'Wait for the climax twist in our latest video! 🎬'
+      { line1: 'Cabbage walking slowly', line2: 'with fifty layers! 🥬👗' },
+      { line1: 'Ladiesfinger did you', line2: 'fast ten years? 🥒💀' },
+      { line1: 'Pumpkin move away,', line2: 'blocking vlog camera! 🎃📸' },
+      { line1: 'Onion your smell', line2: 'knocks everyone down! 🧅😵' }
     ],
+    initialPos: { edge: 'right', offsetPct: 18 },
     defaultEdge: 'right',
-    offsetPct: 18,
     delayMs: 4000
   },
   {
@@ -74,13 +77,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(46, 213, 115, 0.55)',
     emojis: ['🥒', '🛡️', '⚡', '✨', '🥒'],
     quotes: [
-      'Halt! 🥒 Okra Security on duty! Have you subscribed yet? 🛡️',
-      'Hii visitor! How can I help you safely tour the website?',
-      'Keep your hands inside the vlog jeep at all times! 🚨',
-      'No trespassing without watching our latest Kerala vlog! 🎥'
+      { line1: 'Beetroot put down', line2: 'that scary phone! 🤳😱' },
+      { line1: 'Coconut one hammer', line2: 'breaks you completely! 🔨🥥' },
+      { line1: 'Brinjal you are', line2: 'only side dish! 🍆😂' },
+      { line1: 'Cucumber make my', line2: 'vlog biceps bigger! 💪🥒' }
     ],
+    initialPos: { edge: 'left', offsetPct: 82 },
     defaultEdge: 'left',
-    offsetPct: 82,
     delayMs: 6000
   },
   {
@@ -92,13 +95,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(255, 165, 2, 0.6)',
     emojis: ['🎃', '📹', '🕶️', '✨', '🎃'],
     quotes: [
-      'Wassup Gang! 🎃 Pumpkin Star rolling 4K! How can I help you?',
-      'Hii guys! Say cheese for the GoPro camera! 📹',
-      'Comment below your favourite snack while watching us! 🍿',
-      'Vegetable Gang in the building! Smash that like button! 💥'
+      { line1: 'Onion daily crying', line2: 'like TV serial! 😭🧅' },
+      { line1: 'Watermelon bowling ball', line2: 'wearing funny hat! 🍉🎳' },
+      { line1: 'Cauliflower shock haircut', line2: 'looks super funny! 🥦⚡' },
+      { line1: 'Catch rolling Tomato', line2: 'into hot sambar! 🍅🍲' }
     ],
+    initialPos: { edge: 'bottom', offsetPct: 50 },
     defaultEdge: 'bottom',
-    offsetPct: 50,
     delayMs: 8000
   },
   {
@@ -110,13 +113,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(136, 84, 208, 0.6)',
     emojis: ['🍆', '👑', '⚡', '✨', '🍆'],
     quotes: [
-      'Yo Boss! 🍆 Brinjal Star pointing at YOU! How can I help?',
-      'Hii friend! Ready to explore scenic spots across Kerala? 🌴',
-      'Purple royalty is here! Turn notifications on! 🔔',
-      'Looking for top hidden gems? Check our Locations page! 📍'
+      { line1: 'Coconut beach chair', line2: "won't make CEO! 🌴🥥" },
+      { line1: 'Carrot coder you', line2: "aren't Elon Musk! 🥕🤓" },
+      { line1: 'Ladiesfinger looks like', line2: 'tiny green toothpick! 🥒😆' },
+      { line1: 'Viewers watch vlog', line2: 'only for me! 🍆👑' }
     ],
-    defaultEdge: 'top',
-    offsetPct: 78,
+    initialPos: { edge: 'bottom', offsetPct: 80 },
+    defaultEdge: 'bottom',
     delayMs: 10000
   },
   {
@@ -128,13 +131,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(155, 89, 182, 0.55)',
     emojis: ['🧅', '💪', '👑', '✨', '🧅'],
     quotes: [
-      'Hii gym bros! 🧅 Onion Star flexing! How can I help you build vibes?',
-      'No crying allowed today, only laughing with Palu Vlogs! 😂',
-      'Layer by layer, we uncover the best Kerala road trips! 🧅',
-      'Need some extra energy? Hit subscribe and join the gang! 💪'
+      { line1: 'Pumpkin your tummy', line2: 'needs pin code! 🎃🏋️' },
+      { line1: 'Tomato gets squashed', line2: 'in every episode! 🍅💥' },
+      { line1: 'Cucumber stop watching', line2: 'anime until midnight! 🥒📺' },
+      { line1: 'I make everyone', line2: 'cry so easily! 💪🧅' }
     ],
+    initialPos: { edge: 'left', offsetPct: 50 },
     defaultEdge: 'left',
-    offsetPct: 50,
     delayMs: 12000
   },
   {
@@ -146,13 +149,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(255, 159, 67, 0.55)',
     emojis: ['🥕', '💻', '🚀', '✨', '🥕'],
     quotes: [
-      'Hii geeks & viewers! 🥕 Good Code Good Vibes! How can I help you?',
-      'Debugging bugs while coding Palu Vlogs website! Notice my stickers? 💻',
-      '100% bug-free vlog enjoyment guaranteed! Did you like our UI? 🚀',
-      'Console.log("Subscribe to Palu Vlogs now!") 🥕'
+      { line1: 'Cauliflower head error', line2: 'hair not found! 🥦💻' },
+      { line1: 'Cucumber my script', line2: 'edits reels instantly! 🥒⚡' },
+      { line1: 'Beetroot phone battery', line2: 'dropped to one! 📱🪫' },
+      { line1: 'Cabbage has more', line2: 'layers than CSS! 🥬💻' }
     ],
-    defaultEdge: 'right',
-    offsetPct: 50,
+    initialPos: { edge: 'top', offsetPct: 80 },
+    defaultEdge: 'top',
     delayMs: 14000
   },
   {
@@ -164,13 +167,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(241, 196, 15, 0.55)',
     emojis: ['🥦', '🙏', '⛪', '✨', '🥦'],
     quotes: [
-      'Blessings to all viewers! 🥦 JOY here! How can I pray / help you today?',
-      'May your Wi-Fi be fast and your vlog buffering be zero! 🙏',
-      'Keep the peace and watch episode after episode in harmony! ✨',
-      'A holy recommendation: subscribe to Palu Vlogs today! 🥦'
+      { line1: 'Praying for Carrot', line2: 'buggy broken code! 🙏🥕' },
+      { line1: 'Brinjal why that', line2: 'sad purple face? 🍆💔' },
+      { line1: 'Pumpkin stop eating', line2: 'all shoot snacks! 🎃🍩' },
+      { line1: 'Cucumber laptop fan', line2: 'sounds like jet! ✈️💻' }
     ],
+    initialPos: { edge: 'top', offsetPct: 20 },
     defaultEdge: 'top',
-    offsetPct: 22,
     delayMs: 16000
   },
   {
@@ -182,13 +185,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(183, 21, 64, 0.6)',
     emojis: ['🔴', '📱', '👑', '✨', '🔴'],
     quotes: [
-      'Hii bro! 🔴 Not a normal veggie, I am BEETROOT STAR! How can I help?',
-      'Checking our YouTube analytics on my iPhone right now! 📱',
-      'Our red juice is 100% pure cinema! Have you shared the vlog yet?',
-      'Swipe up or click subscribe to see behind the scenes! 👑'
+      { line1: 'Ladiesfinger did your', line2: 'tiny battery die? 🥒🔋' },
+      { line1: 'Cabbage my camera', line2: "says you're expired! 🔴🥬" },
+      { line1: 'Coconut we know', line2: 'you are bald! 🕶️🥥' },
+      { line1: 'Watermelon upgrade to', line2: 'ultra HD now! 🍉📱' }
     ],
+    initialPos: { edge: 'bottom', offsetPct: 20 },
     defaultEdge: 'bottom',
-    offsetPct: 22,
     delayMs: 18000
   },
   {
@@ -200,13 +203,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(0, 210, 211, 0.6)',
     emojis: ['🥥', '🌴', '🏖️', '🕶️', '🥥'],
     quotes: [
-      'Hii people! 🥥 Admin of Palu Vlogs here! Real Face Real Vibes! How can I help?',
-      'Chilling with tender coconut water on the beach! Living the dream! 🌴',
-      'Admin announcement: whoever subscribes gets a free tender coconut! 🥥',
-      'Relax, take a sip, and enjoy the ride with Vegetable Gang! 🕶️'
+      { line1: 'Brinjal one joke', line2: "and you're banned! 🍆🚫" },
+      { line1: 'Watermelon pay channel', line2: 'rent for hat! 🍉💰' },
+      { line1: 'Onion step away', line2: 'camera is crying! 🧅😭' },
+      { line1: 'I pay bills', line2: 'while kids fight! 🌴👑' }
     ],
-    defaultEdge: 'bottom',
-    offsetPct: 78,
+    initialPos: { edge: 'right', offsetPct: 82 },
+    defaultEdge: 'right',
     delayMs: 20000
   },
   {
@@ -218,13 +221,13 @@ const GANG_CHARACTERS = [
     glowColor: 'rgba(29, 209, 161, 0.55)',
     emojis: ['🥒', '🎧', '💻', '🎬', '✨', '🥒'],
     quotes: [
-      'Hii squad! 🥒 Edit Mode ON! How can I help you cut through the chaos?',
-      'Exporting our 4K Kerala road trip vlog right now! Notice my headphones? 🎧',
-      'Color grading is 100% crispy fresh! Did you like the latest cut? 🎬',
-      'Zero lag, 60fps, maximum vibes! Hit subscribe to keep me editing! 💻'
+      { line1: 'Watermelon bring biryani', line2: 'or get cut! 🍉🍛' },
+      { line1: 'Carrot website broke,', line2: 'go fix bugs! 🥕💥' },
+      { line1: 'Beetroot shaky shots', line2: 'make team dizzy! 📱🤢' },
+      { line1: 'Pumpkin no slow-mo', line2: 'for bouncing belly! 🎃✂️' }
     ],
+    initialPos: { edge: 'top', offsetPct: 50 },
     defaultEdge: 'top',
-    offsetPct: 50,
     delayMs: 22000
   }
 ];
@@ -249,7 +252,9 @@ const playPopSound = () => {
 };
 
 /**
- * Individual Interactive Mascot Item for Next.js
+ * Individual Interactive Mascot Item (Next.js)
+ * Docked strictly to perimeter edges. Snaps to edge if moved from anywhere, never stays in center.
+ * Speech formatted as 6 words in two lines (3 words per line, no box, uncovered face).
  */
 const SingleMascot = ({ char, index }) => {
   const [visible, setVisible] = useState(false);
@@ -261,7 +266,6 @@ const SingleMascot = ({ char, index }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [splashes, setSplashes] = useState([]);
   const [quoteIndex, setQuoteIndex] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
 
   const mascotRef = useRef(null);
   const dragStartRef = useRef({ x: 0, y: 0 });
@@ -271,11 +275,12 @@ const SingleMascot = ({ char, index }) => {
   const entranceTimerRef = useRef(null);
   const quoteCycleTimerRef = useRef(null);
 
+  // Exact uniform size for ALL characters matching Pumpkin & Onion
   const getDimensions = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     return {
-      width: isMobile ? 80 : 115,
-      height: isMobile ? 130 : 180
+      width: isMobile ? 75 : 110,
+      height: isMobile ? 115 : 165
     };
   };
 
@@ -289,40 +294,42 @@ const SingleMascot = ({ char, index }) => {
     let y = 8;
     let face = 'left';
     let angle = 180;
-    let side = char.defaultEdge;
+    const edge = char.initialPos?.edge || char.defaultEdge;
+    const offsetPct = char.initialPos?.offsetPct ?? 50;
+    let side = edge;
 
-    switch (char.defaultEdge) {
+    switch (edge) {
       case 'left':
         x = 8;
-        y = Math.max(8, Math.min(h - height - 8, (h * char.offsetPct) / 100 - height / 2));
+        y = Math.max(8, Math.min(h - height - 8, (h * offsetPct) / 100 - height / 2));
         face = 'right';
         angle = 0;
         side = 'left';
         break;
       case 'right':
         x = Math.max(8, w - width - 8);
-        y = Math.max(8, Math.min(h - height - 8, (h * char.offsetPct) / 100 - height / 2));
+        y = Math.max(8, Math.min(h - height - 8, (h * offsetPct) / 100 - height / 2));
         face = 'left';
         angle = 180;
         side = 'right';
         break;
       case 'top':
         y = 8;
-        x = Math.max(8, Math.min(w - width - 8, (w * char.offsetPct) / 100 - width / 2));
+        x = Math.max(8, Math.min(w - width - 8, (w * offsetPct) / 100 - width / 2));
         face = x < w / 2 ? 'right' : 'left';
         angle = 90;
         side = 'top';
         break;
       case 'bottom':
         y = Math.max(8, h - height - 8);
-        x = Math.max(8, Math.min(w - width - 8, (w * char.offsetPct) / 100 - width / 2));
+        x = Math.max(8, Math.min(w - width - 8, (w * offsetPct) / 100 - width / 2));
         face = x < w / 2 ? 'right' : 'left';
         angle = 270;
         side = 'bottom';
         break;
       default:
-        x = w - width - 8;
-        y = h - height - 80;
+        x = Math.max(8, w - width - 8);
+        y = Math.max(8, Math.min(h - height - 8, (h * 50) / 100 - height / 2));
         face = 'left';
         angle = 180;
         side = 'right';
@@ -385,7 +392,7 @@ const SingleMascot = ({ char, index }) => {
   };
 
   const handleTouchDismiss = (e) => {
-    if (e.target.closest('.mascot-speech-bubble')) {
+    if (e.target.closest('.mascot-text-msg')) {
       e.stopPropagation();
       setQuoteIndex((prev) => (prev + 1) % char.quotes.length);
       return;
@@ -453,6 +460,11 @@ const SingleMascot = ({ char, index }) => {
     setPosition({ x: newX, y: newY });
   };
 
+  /**
+   * When drag ends:
+   * STRICT EDGE DOCKING: Images are NEVER allowed to stay in the center area!
+   * Moving from left, right, or center snaps smoothly to the nearest edge (Left, Right, Top, or Bottom).
+   */
   const onDragEnd = () => {
     if (!isDragging) return;
     setIsDragging(false);
@@ -465,10 +477,13 @@ const SingleMascot = ({ char, index }) => {
       const currX = prev.x;
       const currY = prev.y;
 
-      const distLeft = currX;
-      const distRight = w - (currX + width);
-      const distTop = currY;
-      const distBottom = h - (currY + height);
+      const centerX = currX + width / 2;
+      const centerY = currY + height / 2;
+
+      const distLeft = centerX;
+      const distRight = w - centerX;
+      const distTop = centerY;
+      const distBottom = h - centerY;
 
       const minDist = Math.min(distLeft, distRight, distTop, distBottom);
 
@@ -478,6 +493,7 @@ const SingleMascot = ({ char, index }) => {
       let newAngle = arrowAngle;
       let newSide = dockSide;
 
+      // NEVER STAY IN CENTER! ALWAYS SNAP TO NEAREST EDGE!
       if (minDist === distLeft) {
         snapX = 8;
         snapY = Math.max(8, Math.min(h - height - 8, currY));
@@ -485,7 +501,7 @@ const SingleMascot = ({ char, index }) => {
         newAngle = 0;
         newSide = 'left';
       } else if (minDist === distRight) {
-        snapX = w - width - 8;
+        snapX = Math.max(8, w - width - 8);
         snapY = Math.max(8, Math.min(h - height - 8, currY));
         newFacing = 'left';
         newAngle = 180;
@@ -497,7 +513,7 @@ const SingleMascot = ({ char, index }) => {
         newAngle = 90;
         newSide = 'top';
       } else {
-        snapY = h - height - 8;
+        snapY = Math.max(8, h - height - 8);
         snapX = Math.max(8, Math.min(w - width - 8, currX));
         newFacing = snapX < w / 2 ? 'right' : 'left';
         newAngle = 270;
@@ -552,8 +568,6 @@ const SingleMascot = ({ char, index }) => {
         zIndex: isDragging ? 100005 : 99990 + index,
         filter: `drop-shadow(0 14px 26px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 16px ${char.glowColor})`
       }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       onMouseDown={(e) => onDragStart(e.clientX, e.clientY)}
       onTouchStart={(e) => {
         if (e.touches && e.touches[0]) {
@@ -561,8 +575,9 @@ const SingleMascot = ({ char, index }) => {
         }
       }}
       onClick={handleTouchDismiss}
-      title={`${char.name} — Touch to hide or drag around screen ends!`}
+      title={`${char.name} — Touch to hide or drag around screen edges!`}
     >
+      {/* Direction Arrow Badge */}
       <div
         className="mascot-arrow-badge"
         style={{
@@ -574,25 +589,26 @@ const SingleMascot = ({ char, index }) => {
         <span className="mascot-arrow-icon">➔</span>
       </div>
 
+      {/* 
+        DIALOGUE OF EXACTLY 6 WORDS IN TWO LINES (NO TEXT BOX!)
+        Positioned strictly outside to the side/edge so it NEVER covers the character's face.
+        Hidden while dragging so there is zero screen clutter during movement.
+      */}
       {!isDragging && (
         <div
-          className={`mascot-speech-bubble dock-${dockSide} ${isHovered ? 'hovered' : ''}`}
+          className={`mascot-text-msg dock-${dockSide}`}
           onClick={(e) => {
             e.stopPropagation();
             setQuoteIndex((prev) => (prev + 1) % char.quotes.length);
           }}
-          title="Click to hear another funny vlog line!"
+          title="Click to hear another funny roast!"
         >
-          <div className="speech-sender-tag" style={{ background: char.badgeGradient }}>
-            {char.name}
-          </div>
-          <div className="speech-text">
-            {currentQuote}
-          </div>
-          <div className="speech-hint">💬 tap quote / touch body to hide</div>
+          <span className="mascot-msg-line">{currentQuote.line1}</span>
+          <span className="mascot-msg-line">{currentQuote.line2}</span>
         </div>
       )}
 
+      {/* Character Image with Flip Transform - FACE IS 100% UNCOVERED */}
       <div
         className="mascot-img-wrap"
         style={{
@@ -607,6 +623,7 @@ const SingleMascot = ({ char, index }) => {
         />
       </div>
 
+      {/* Particle Splash on Touch Dismiss */}
       {isPoofing && (
         <div className="mascot-splash-layer">
           {splashes.map((s) => (
@@ -628,6 +645,9 @@ const SingleMascot = ({ char, index }) => {
   );
 };
 
+/**
+ * Vegetable Gang Mascots Root Component (Next.js)
+ */
 const VeggieGangMascots = () => {
   return (
     <>
@@ -637,7 +657,7 @@ const VeggieGangMascots = () => {
         ))}
       </div>
 
-      <style jsx global>{`
+      <style>{`
         .veggie-gang-mascots-root {
           position: fixed;
           inset: 0;
@@ -645,10 +665,11 @@ const VeggieGangMascots = () => {
           z-index: 99990;
         }
 
+        /* Exact uniform size for all 12 characters like Pumpkin & Onion */
         .veggie-mascot-card {
           position: fixed;
-          width: 115px;
-          height: 180px;
+          width: 110px !important;
+          height: 165px !important;
           pointer-events: auto;
           user-select: none;
           touch-action: none;
@@ -687,6 +708,7 @@ const VeggieGangMascots = () => {
           display: block;
         }
 
+        /* Direction Arrow Badge */
         .mascot-arrow-badge {
           position: absolute;
           top: -10px;
@@ -710,127 +732,102 @@ const VeggieGangMascots = () => {
           line-height: 1;
         }
 
-        .mascot-speech-bubble {
+        /* 
+          6 WORDS IN TWO LINES DIALOGUE (NO TEXT BOX!)
+          No background card, no borders, no box-shadow, no speech bubble tail.
+          High-contrast comic text shadow for crisp legibility over any website content.
+          Positioned strictly to the side/edge to NEVER cover the character's face!
+        */
+        .mascot-text-msg {
           position: absolute;
-          width: 195px;
-          background: rgba(14, 12, 10, 0.96);
-          border: 1.5px solid #ffd32a;
-          color: #ffffff;
-          padding: 8px 11px;
-          border-radius: 12px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 14px rgba(255, 211, 42, 0.3);
+          z-index: 25;
           pointer-events: auto;
           cursor: pointer;
-          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s, opacity 0.2s;
-          z-index: 25;
-          backdrop-filter: blur(10px);
-          animation: bubbleFloat 2.6s ease-in-out infinite;
+          user-select: none;
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          width: max-content;
+          max-width: none;
+          transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
+          animation: mascotTextBob 3s ease-in-out infinite;
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
         }
 
-        .mascot-speech-bubble.dock-right {
-          right: calc(100% + 14px);
-          top: 15px;
-        }
-        .mascot-speech-bubble.dock-right::after {
-          content: '';
-          position: absolute;
-          right: -8px;
-          top: 22px;
-          width: 0;
-          height: 0;
-          border-top: 6px solid transparent;
-          border-bottom: 6px solid transparent;
-          border-left: 8px solid #ffd32a;
-        }
-
-        .mascot-speech-bubble.dock-left {
-          left: calc(100% + 14px);
-          top: 15px;
-        }
-        .mascot-speech-bubble.dock-left::after {
-          content: '';
-          position: absolute;
-          left: -8px;
-          top: 22px;
-          width: 0;
-          height: 0;
-          border-top: 6px solid transparent;
-          border-bottom: 6px solid transparent;
-          border-right: 8px solid #ffd32a;
-        }
-
-        .mascot-speech-bubble.dock-top {
-          top: calc(100% + 14px);
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        .mascot-speech-bubble.dock-top::after {
-          content: '';
-          position: absolute;
-          top: -8px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 0;
-          height: 0;
-          border-left: 6px solid transparent;
-          border-right: 6px solid transparent;
-          border-bottom: 8px solid #ffd32a;
-        }
-
-        .mascot-speech-bubble.dock-bottom {
-          bottom: calc(100% + 14px);
-          left: 50%;
-          transform: translateX(-50%);
-        }
-        .mascot-speech-bubble.dock-bottom::after {
-          content: '';
-          position: absolute;
-          bottom: -8px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: 0;
-          height: 0;
-          border-left: 6px solid transparent;
-          border-right: 6px solid transparent;
-          border-top: 8px solid #ffd32a;
-        }
-
-        .mascot-speech-bubble:hover,
-        .mascot-speech-bubble.hovered {
-          transform: scale(1.04);
-          background: rgba(22, 18, 14, 0.98);
-          border-color: #fffa65;
-          box-shadow: 0 10px 28px rgba(0, 0, 0, 0.85), 0 0 18px rgba(255, 211, 42, 0.45);
-        }
-
-        .speech-sender-tag {
-          display: inline-block;
-          font-size: 9px;
+        .mascot-msg-line {
+          display: block;
+          white-space: nowrap !important;
+          font-family: 'Outfit', 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: 0.05em;
-          padding: 2px 7px;
-          border-radius: 9999px;
+          font-size: 13.5px;
+          line-height: 1.25;
           color: #ffffff;
-          margin-bottom: 4px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+          text-shadow: 
+            -1.5px -1.5px 0 #000,
+            1.5px -1.5px 0 #000,
+            -1.5px 1.5px 0 #000,
+            1.5px 1.5px 0 #000,
+            0 2px 6px rgba(0, 0, 0, 0.95),
+            0 4px 14px rgba(0, 0, 0, 0.9);
+          letter-spacing: 0.02em;
         }
 
-        .speech-text {
-          font-size: 11px;
-          font-weight: 600;
-          line-height: 1.35;
-          color: #f1f2f6;
-          margin-bottom: 3px;
+        /* Docked on RIGHT edge: Dialogue floats strictly to the LEFT of the mascot */
+        .mascot-text-msg.dock-right {
+          right: calc(100% + 12px);
+          top: 20px;
+          text-align: right;
+          align-items: flex-end;
         }
 
-        .speech-hint {
-          font-size: 8.5px;
-          color: #ffd32a;
-          font-style: italic;
-          opacity: 0.9;
+        /* Docked on LEFT edge: Dialogue floats strictly to the RIGHT of the mascot */
+        .mascot-text-msg.dock-left {
+          left: calc(100% + 12px);
+          top: 20px;
+          text-align: left;
+          align-items: flex-start;
         }
 
+        /* Docked on TOP edge: Dialogue floats strictly BELOW the mascot */
+        .mascot-text-msg.dock-top {
+          top: calc(100% + 10px);
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          align-items: center;
+        }
+
+        /* Docked on BOTTOM edge: Dialogue floats strictly ABOVE the mascot */
+        .mascot-text-msg.dock-bottom {
+          bottom: calc(100% + 10px);
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          align-items: center;
+        }
+
+        .mascot-text-msg:hover {
+          transform: scale(1.08);
+        }
+        .mascot-text-msg.dock-top:hover,
+        .mascot-text-msg.dock-bottom:hover {
+          transform: translateX(-50%) scale(1.08);
+        }
+
+        @keyframes mascotTextBob {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-5px);
+          }
+        }
+
+        /* Splash Particle Layer */
         .mascot-splash-layer {
           position: absolute;
           inset: 0;
@@ -870,15 +867,6 @@ const VeggieGangMascots = () => {
           }
         }
 
-        @keyframes bubbleFloat {
-          0%, 100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-3px);
-          }
-        }
-
         @keyframes mascotPoof {
           0% {
             opacity: 1;
@@ -908,8 +896,8 @@ const VeggieGangMascots = () => {
 
         @media (max-width: 640px) {
           .veggie-mascot-card {
-            width: 80px;
-            height: 130px;
+            width: 75px !important;
+            height: 115px !important;
           }
           .mascot-arrow-badge {
             width: 24px;
@@ -920,15 +908,9 @@ const VeggieGangMascots = () => {
           .mascot-arrow-icon {
             font-size: 11px;
           }
-          .mascot-speech-bubble {
-            width: 140px;
-            padding: 5px 8px;
-          }
-          .speech-text {
-            font-size: 9.5px;
-          }
-          .speech-hint {
-            display: none;
+          .mascot-msg-line {
+            font-size: 11px;
+            line-height: 1.2;
           }
         }
       `}</style>

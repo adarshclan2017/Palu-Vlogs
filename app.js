@@ -726,13 +726,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(46, 204, 113, 0.45)',
         emojis: ['🍉', '💦', '💥', '✨', '🍉'],
         quotes: [
-          'Hii guys! 🍉 Welcome to Palu Vlogs! Subscribed alle?',
-          'How can I help you today? Looking for travel chaos? 🍉',
-          'Bro, hit that subscribe bell icon right now! 🔔',
-          'Vibe check passed! Ready for our next Kerala road trip? 🚗'
+          { line1: 'Dai Cucumber edit,', line2: 'stop sleeping now! 🥒😴' },
+          { line1: 'Cabbage fifty layers,', line2: 'zero brain bro! 🥬🤣' },
+          { line1: 'Tomato stop blushing,', line2: 'look at Pumpkin! 🍅💃' },
+          { line1: 'Onion stop crying,', line2: 'nobody cut you! 🧅😭' }
         ],
         defaultEdge: 'right',
-        offsetPct: 75,
+        offsetPct: 50,
         delayMs: 0
       },
       {
@@ -743,13 +743,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(46, 204, 113, 0.45)',
         emojis: ['🥬', '🌿', '✨', '🍃', '🥬'],
         quotes: [
-          'Hii fraands! 🥬 Leaf Commander here! How can I help you?',
-          'Do I look like a cabbage or a superhero? Be honest! 😂',
-          '100% organic vlogger! Like & share our videos! 🥬',
-          'Fresh vibes straight from the garden! What can I do for you?'
+          { line1: 'Tomato rolls fast,', line2: 'totally zero brain! 🍅💨' },
+          { line1: 'Carrot your code', line2: 'has many bugs! 🐛💻' },
+          { line1: 'Beetroot you are', line2: 'not iPhone model! 📱🤣' },
+          { line1: 'Watermelon big head,', line2: 'empty inside bro! 🍉💥' }
         ],
         defaultEdge: 'left',
-        offsetPct: 15,
+        offsetPct: 18,
         delayMs: 2000
       },
       {
@@ -760,13 +760,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(255, 71, 87, 0.55)',
         emojis: ['🍅', '⭐', '🔥', '✨', '🍅'],
         quotes: [
-          'Hello superstar! 🍅 Cameo Star is here! How can I help you?',
-          'Need an autograph or a spicy gossip vlog from today? 😎',
-          'Today\'s episode is 100% pure swag! Did you like it? ⭐',
-          'Wait for the climax twist in our latest video! 🎬'
+          { line1: 'Cabbage walking slowly', line2: 'with fifty layers! 🥬👗' },
+          { line1: 'Ladiesfinger did you', line2: 'fast ten years? 🥒💀' },
+          { line1: 'Pumpkin move away,', line2: 'blocking vlog camera! 🎃📸' },
+          { line1: 'Onion your smell', line2: 'knocks everyone down! 🧅😵' }
         ],
         defaultEdge: 'right',
-        offsetPct: 15,
+        offsetPct: 18,
         delayMs: 4000
       },
       {
@@ -777,13 +777,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(46, 213, 115, 0.55)',
         emojis: ['🥒', '🛡️', '⚡', '✨', '🥒'],
         quotes: [
-          'Halt! 🥒 Okra Security on duty! Have you subscribed yet? 🛡️',
-          'Hii visitor! How can I help you safely tour the website?',
-          'Keep your hands inside the vlog jeep at all times! 🚨',
-          'No trespassing without watching our latest Kerala vlog! 🎥'
+          { line1: 'Beetroot put down', line2: 'that scary phone! 🤳😱' },
+          { line1: 'Coconut one hammer', line2: 'breaks you completely! 🔨🥥' },
+          { line1: 'Brinjal you are', line2: 'only side dish! 🍆😂' },
+          { line1: 'Cucumber make my', line2: 'vlog biceps bigger! 💪🥒' }
         ],
         defaultEdge: 'left',
-        offsetPct: 75,
+        offsetPct: 82,
         delayMs: 6000
       },
       {
@@ -794,10 +794,10 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(255, 165, 2, 0.6)',
         emojis: ['🎃', '📹', '🕶️', '✨', '🎃'],
         quotes: [
-          'Wassup Gang! 🎃 Pumpkin Star rolling 4K! How can I help you?',
-          'Hii guys! Say cheese for the GoPro camera! 📹',
-          'Comment below your favourite snack while watching us! 🍿',
-          'Vegetable Gang in the building! Smash that like button! 💥'
+          { line1: 'Onion daily crying', line2: 'like TV serial! 😭🧅' },
+          { line1: 'Watermelon bowling ball', line2: 'wearing funny hat! 🍉🎳' },
+          { line1: 'Cauliflower shock haircut', line2: 'looks super funny! 🥦⚡' },
+          { line1: 'Catch rolling Tomato', line2: 'into hot sambar! 🍅🍲' }
         ],
         defaultEdge: 'bottom',
         offsetPct: 50,
@@ -811,13 +811,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(136, 84, 208, 0.6)',
         emojis: ['🍆', '👑', '⚡', '✨', '🍆'],
         quotes: [
-          'Yo Boss! 🍆 Brinjal Star pointing at YOU! How can I help?',
-          'Hii friend! Ready to explore scenic spots across Kerala? 🌴',
-          'Purple royalty is here! Turn notifications on! 🔔',
-          'Looking for top hidden gems? Check our Locations page! 📍'
+          { line1: 'Coconut beach chair', line2: "won't make CEO! 🌴🥥" },
+          { line1: 'Carrot coder you', line2: "aren't Elon Musk! 🥕🤓" },
+          { line1: 'Ladiesfinger looks like', line2: 'tiny green toothpick! 🥒😆' },
+          { line1: 'Viewers watch vlog', line2: 'only for me! 🍆👑' }
         ],
-        defaultEdge: 'top',
-        offsetPct: 65,
+        defaultEdge: 'bottom',
+        offsetPct: 80,
         delayMs: 10000
       },
       {
@@ -828,13 +828,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(155, 89, 182, 0.55)',
         emojis: ['🧅', '💪', '👑', '✨', '🧅'],
         quotes: [
-          'Hii gym bros! 🧅 Onion Star flexing! How can I help you build vibes?',
-          'No crying allowed today, only laughing with Palu Vlogs! 😂',
-          'Layer by layer, we uncover the best Kerala road trips! 🧅',
-          'Need some extra energy? Hit subscribe and join the gang! 💪'
+          { line1: 'Pumpkin your tummy', line2: 'needs pin code! 🎃🏋️' },
+          { line1: 'Tomato gets squashed', line2: 'in every episode! 🍅💥' },
+          { line1: 'Cucumber stop watching', line2: 'anime until midnight! 🥒📺' },
+          { line1: 'I make everyone', line2: 'cry so easily! 💪🧅' }
         ],
         defaultEdge: 'left',
-        offsetPct: 45,
+        offsetPct: 50,
         delayMs: 12000
       },
       {
@@ -845,13 +845,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(255, 159, 67, 0.55)',
         emojis: ['🥕', '💻', '🚀', '✨', '🥕'],
         quotes: [
-          'Hii geeks & viewers! 🥕 Good Code Good Vibes! How can I help you?',
-          'Debugging bugs while coding Palu Vlogs website! Notice my stickers? 💻',
-          '100% bug-free vlog enjoyment guaranteed! Did you like our UI? 🚀',
-          'Console.log("Subscribe to Palu Vlogs now!") 🥕'
+          { line1: 'Cauliflower head error', line2: 'hair not found! 🥦💻' },
+          { line1: 'Cucumber my script', line2: 'edits reels instantly! 🥒⚡' },
+          { line1: 'Beetroot phone battery', line2: 'dropped to one! 📱🪫' },
+          { line1: 'Cabbage has more', line2: 'layers than CSS! 🥬💻' }
         ],
-        defaultEdge: 'right',
-        offsetPct: 45,
+        defaultEdge: 'top',
+        offsetPct: 80,
         delayMs: 14000
       },
       {
@@ -862,13 +862,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(241, 196, 15, 0.55)',
         emojis: ['🥦', '🙏', '⛪', '✨', '🥦'],
         quotes: [
-          'Blessings to all viewers! 🥦 JOY here! How can I pray / help you today?',
-          'May your Wi-Fi be fast and your vlog buffering be zero! 🙏',
-          'Keep the peace and watch episode after episode in harmony! ✨',
-          'A holy recommendation: subscribe to Palu Vlogs today! 🥦'
+          { line1: 'Praying for Carrot', line2: 'buggy broken code! 🙏🥕' },
+          { line1: 'Brinjal why that', line2: 'sad purple face? 🍆💔' },
+          { line1: 'Pumpkin stop eating', line2: 'all shoot snacks! 🎃🍩' },
+          { line1: 'Cucumber laptop fan', line2: 'sounds like jet! ✈️💻' }
         ],
         defaultEdge: 'top',
-        offsetPct: 35,
+        offsetPct: 20,
         delayMs: 16000
       },
       {
@@ -879,13 +879,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(183, 21, 64, 0.6)',
         emojis: ['🔴', '📱', '👑', '✨', '🔴'],
         quotes: [
-          'Hii bro! 🔴 Not a normal veggie, I am BEETROOT STAR! How can I help?',
-          'Checking our YouTube analytics on my iPhone right now! 📱',
-          'Our red juice is 100% pure cinema! Have you shared the vlog yet?',
-          'Swipe up or click subscribe to see behind the scenes! 👑'
+          { line1: 'Ladiesfinger did your', line2: 'tiny battery die? 🥒🔋' },
+          { line1: 'Cabbage my camera', line2: "says you're expired! 🔴🥬" },
+          { line1: 'Coconut we know', line2: 'you are bald! 🕶️🥥' },
+          { line1: 'Watermelon upgrade to', line2: 'ultra HD now! 🍉📱' }
         ],
         defaultEdge: 'bottom',
-        offsetPct: 25,
+        offsetPct: 20,
         delayMs: 18000
       },
       {
@@ -896,13 +896,13 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(0, 210, 211, 0.6)',
         emojis: ['🥥', '🌴', '🏖️', '🕶️', '🥥'],
         quotes: [
-          'Hii people! 🥥 Admin of Palu Vlogs here! Real Face Real Vibes! How can I help?',
-          'Chilling with tender coconut water on the beach! Living the dream! 🌴',
-          'Admin announcement: whoever subscribes gets a free tender coconut! 🥥',
-          'Relax, take a sip, and enjoy the ride with Vegetable Gang! 🕶️'
+          { line1: 'Brinjal one joke', line2: "and you're banned! 🍆🚫" },
+          { line1: 'Watermelon pay channel', line2: 'rent for hat! 🍉💰' },
+          { line1: 'Onion step away', line2: 'camera is crying! 🧅😭' },
+          { line1: 'I pay bills', line2: 'while kids fight! 🌴👑' }
         ],
-        defaultEdge: 'bottom',
-        offsetPct: 78,
+        defaultEdge: 'right',
+        offsetPct: 82,
         delayMs: 20000
       },
       {
@@ -913,10 +913,10 @@ document.addEventListener('DOMContentLoaded', () => {
         glowColor: 'rgba(29, 209, 161, 0.55)',
         emojis: ['🥒', '🎧', '💻', '🎬', '✨', '🥒'],
         quotes: [
-          'Hii squad! 🥒 Edit Mode ON! How can I help you cut through the chaos?',
-          'Exporting our 4K Kerala road trip vlog right now! Notice my headphones? 🎧',
-          'Color grading is 100% crispy fresh! Did you like the latest cut? 🎬',
-          'Zero lag, 60fps, maximum vibes! Hit subscribe to keep me editing! 💻'
+          { line1: 'Watermelon bring biryani', line2: 'or get cut! 🍉🍛' },
+          { line1: 'Carrot website broke,', line2: 'go fix bugs! 🥕💥' },
+          { line1: 'Beetroot shaky shots', line2: 'make team dizzy! 📱🤢' },
+          { line1: 'Pumpkin no slow-mo', line2: 'for bouncing belly! 🎃✂️' }
         ],
         defaultEdge: 'top',
         offsetPct: 50,
@@ -931,7 +931,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const el = document.createElement('div');
       el.className = `veggie-mascot-card mascot-${char.id} hidden`;
       el.id = `mascot_${char.id}`;
-      el.title = `${char.name} — Touch to hide or drag around screen ends!`;
+      el.title = `${char.name} — Touch to hide or drag around screen edges!`;
       el.style.filter = `drop-shadow(0 14px 26px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 16px ${char.glowColor})`;
       el.style.zIndex = `${99990 + idx}`;
 
@@ -941,10 +941,9 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="mascot-arrow-badge" style="background: ${char.badgeGradient}">
           <span class="mascot-arrow-icon">➔</span>
         </div>
-        <div class="mascot-speech-bubble" title="Click to hear another funny vlog line!">
-          <div class="speech-sender-tag" style="background: ${char.badgeGradient}">${char.name}</div>
-          <div class="speech-text">${char.quotes[0]}</div>
-          <div class="speech-hint">💬 tap quote / touch body to hide</div>
+        <div class="mascot-text-msg dock-${char.defaultEdge}" title="Click to hear another funny roast!">
+          <span class="mascot-msg-line line-1">${char.quotes[0].line1}</span>
+          <span class="mascot-msg-line line-2">${char.quotes[0].line2}</span>
         </div>
         <div class="mascot-img-wrap">
           <img src="${char.image}" alt="${char.name}" class="mascot-character-img" draggable="false">
@@ -955,21 +954,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const arrowBadge = el.querySelector('.mascot-arrow-badge');
       const imgWrap = el.querySelector('.mascot-img-wrap');
-      const speechBubble = el.querySelector('.mascot-speech-bubble');
-      const speechText = el.querySelector('.speech-text');
+      const textMsg = el.querySelector('.mascot-text-msg');
+      const line1 = el.querySelector('.mascot-msg-line.line-1');
+      const line2 = el.querySelector('.mascot-msg-line.line-2');
 
-      if (speechBubble) {
-        speechBubble.addEventListener('click', (e) => {
+      const updateQuoteDisplay = () => {
+        const q = char.quotes[quoteIndex];
+        if (line1 && line2) {
+          line1.textContent = q.line1;
+          line2.textContent = q.line2;
+        }
+      };
+
+      if (textMsg) {
+        textMsg.addEventListener('click', (e) => {
           e.stopPropagation();
           quoteIndex = (quoteIndex + 1) % char.quotes.length;
-          speechText.textContent = char.quotes[quoteIndex];
+          updateQuoteDisplay();
         });
       }
 
       // Auto cycle quotes periodically
       setInterval(() => {
         quoteIndex = (quoteIndex + 1) % char.quotes.length;
-        if (speechText) speechText.textContent = char.quotes[quoteIndex];
+        updateQuoteDisplay();
       }, 8000);
 
       let posX = -999;
@@ -988,16 +996,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
       function updateDockSide(side) {
         dockSide = side;
-        if (speechBubble) {
-          speechBubble.className = `mascot-speech-bubble dock-${dockSide}`;
+        if (textMsg) {
+          textMsg.className = `mascot-text-msg dock-${dockSide}`;
         }
       }
 
       function getDims() {
         const isMobile = window.innerWidth < 640;
         return {
-          w: isMobile ? 85 : 120,
-          h: isMobile ? 135 : 185
+          w: isMobile ? 75 : 110,
+          h: isMobile ? 115 : 165
         };
       }
 
@@ -1088,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Dismissal on touch/click with particles & 10s reappearance
       function dismiss(e) {
-        if (e && e.target.closest('.mascot-speech-bubble')) return;
+        if (e && e.target.closest('.mascot-text-msg')) return;
         if (hasMoved || !isVisible) return;
         isVisible = false;
         el.classList.add('poofing');
@@ -1125,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       el.addEventListener('click', dismiss);
 
-      // Drag start (hides speech bubble while dragging to prevent face cover)
+      // Drag start (hides text message while dragging to prevent face cover)
       function startDrag(cx, cy) {
         isDragging = true;
         hasMoved = false;
@@ -1134,7 +1142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initialX = posX;
         initialY = posY;
         el.classList.add('dragging');
-        if (speechBubble) speechBubble.style.opacity = '0';
+        if (textMsg) textMsg.style.opacity = '0';
       }
 
       // Drag move
@@ -1174,7 +1182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!isDragging) return;
         isDragging = false;
         el.classList.remove('dragging');
-        if (speechBubble) speechBubble.style.opacity = '1';
+        if (textMsg) textMsg.style.opacity = '1';
 
         const { w: mw, h: mh } = getDims();
         const w = window.innerWidth;

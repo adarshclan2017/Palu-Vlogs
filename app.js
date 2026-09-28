@@ -710,4 +710,172 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 3000);
     });
   }
+
+  // ==========================================
+  // 13. FLOATING WATERMELON MASCOT (Interactive)
+  // ==========================================
+  const mascot = document.getElementById('watermelonMascot');
+  const mascotArrowBadge = document.getElementById('mascotArrowBadge');
+  const mascotImgWrap = document.getElementById('mascotImgWrap');
+
+  if (mascot) {
+    let posX = window.innerWidth - 160;
+    let posY = window.innerHeight - 270;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let initialX = posX;
+    let initialY = posY;
+    let hasMoved = false;
+    let isVisible = true;
+    let reappearanceTimer = null;
+
+    function applyPosition(x, y) {
+      posX = x;
+      posY = y;
+      mascot.style.left = `${posX}px`;
+      mascot.style.top = `${posY}px`;
+    }
+
+    applyPosition(posX, posY);
+
+    window.addEventListener('resize', () => {
+      const maxX = window.innerWidth - mascot.offsetWidth - 10;
+      const maxY = window.innerHeight - mascot.offsetHeight - 10;
+      applyPosition(Math.max(10, Math.min(maxX, posX)), Math.max(10, Math.min(maxY, posY)));
+    });
+
+    function scheduleReappearance() {
+      if (reappearanceTimer) clearTimeout(reappearanceTimer);
+      reappearanceTimer = setTimeout(() => {
+        mascot.classList.remove('poofing', 'hidden');
+        const defaultX = Math.max(20, window.innerWidth - 160);
+        const defaultY = Math.max(20, window.innerHeight - 270);
+        applyPosition(defaultX, defaultY);
+        if (mascotImgWrap) mascotImgWrap.style.transform = 'scaleX(1)';
+        if (mascotArrowBadge) mascotArrowBadge.style.transform = 'rotate(180deg)';
+        isVisible = true;
+      }, 10000);
+    }
+
+    function dismissMascot() {
+      if (hasMoved || !isVisible) return;
+      isVisible = false;
+      mascot.classList.add('poofing');
+
+      const emojis = ['🍉', '💦', '💥', '✨', '🍉'];
+      emojis.forEach((emoji) => {
+        const p = document.createElement('span');
+        p.className = 'mascot-particle';
+        p.textContent = emoji;
+        p.style.setProperty('--dx', `${(Math.random() - 0.5) * 140}px`);
+        p.style.setProperty('--dy', `${(Math.random() - 0.5) * 140}px`);
+        p.style.setProperty('--rot', `${Math.random() * 360}deg`);
+        mascot.appendChild(p);
+        setTimeout(() => p.remove(), 450);
+      });
+
+      playClick();
+
+      setTimeout(() => {
+        mascot.classList.add('hidden');
+        mascot.classList.remove('poofing');
+        scheduleReappearance();
+      }, 450);
+    }
+
+    mascot.addEventListener('click', dismissMascot);
+
+    function startDrag(clientX, clientY) {
+      isDragging = true;
+      hasMoved = false;
+      dragStartX = clientX;
+      dragStartY = clientY;
+      initialX = posX;
+      initialY = posY;
+      mascot.classList.add('dragging');
+    }
+
+    function moveDrag(clientX, clientY) {
+      if (!isDragging) return;
+      const dx = clientX - dragStartX;
+      const dy = clientY - dragStartY;
+
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        hasMoved = true;
+      }
+
+      const maxX = window.innerWidth - mascot.offsetWidth - 10;
+      const maxY = window.innerHeight - mascot.offsetHeight - 10;
+      const newX = Math.max(10, Math.min(maxX, initialX + dx));
+      const newY = Math.max(10, Math.min(maxY, initialY + dy));
+
+      if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+        const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
+        if (mascotArrowBadge) {
+          mascotArrowBadge.style.transform = `rotate(${angle}deg)`;
+        }
+
+        if (mascotImgWrap) {
+          if (dx < -2) {
+            mascotImgWrap.style.transform = 'scaleX(1)';
+          } else if (dx > 2) {
+            mascotImgWrap.style.transform = 'scaleX(-1)';
+          } else {
+            mascotImgWrap.style.transform = newX < window.innerWidth / 2 ? 'scaleX(-1)' : 'scaleX(1)';
+          }
+        }
+      }
+
+      applyPosition(newX, newY);
+    }
+
+    function endDrag() {
+      if (!isDragging) return;
+      isDragging = false;
+      mascot.classList.remove('dragging');
+
+      // Magnetic edge snap (never stay in center)
+      const mascotW = mascot.offsetWidth || 135;
+      const mascotH = mascot.offsetHeight || 215;
+      const centerX = posX + mascotW / 2;
+      const isLeft = centerX < window.innerWidth / 2;
+
+      const snapX = isLeft ? 10 : window.innerWidth - mascotW - 10;
+      const snapY = Math.max(20, Math.min(window.innerHeight - mascotH - 40, posY));
+
+      if (mascotImgWrap) {
+        mascotImgWrap.style.transform = isLeft ? 'scaleX(-1)' : 'scaleX(1)';
+      }
+      if (mascotArrowBadge) {
+        mascotArrowBadge.style.transform = isLeft ? 'rotate(0deg)' : 'rotate(180deg)';
+      }
+
+      applyPosition(snapX, snapY);
+    }
+
+    mascot.addEventListener('mousedown', (e) => {
+      startDrag(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      moveDrag(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mouseup', endDrag);
+
+    mascot.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches[0]) {
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      if (isDragging && e.touches && e.touches[0]) {
+        moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: false });
+
+    window.addEventListener('touchend', endDrag);
+  }
 });

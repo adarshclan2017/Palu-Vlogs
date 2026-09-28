@@ -1,6 +1,7 @@
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import WatermelonMascot from '@/components/WatermelonMascot';
 
 export const metadata = {
   title: 'Palu Vlogs — Official YouTube Vlogger Portal',
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         <main>{children}</main>
         <Footer />
+        <WatermelonMascot />
       </body>
     </html>
   );

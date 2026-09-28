@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
+import WatermelonMascot from './components/WatermelonMascot';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Lazy-load pages for code splitting
@@ -64,6 +65,7 @@ const App = () => {
     <AuthProvider>
       <BrowserRouter>
         <Toast />
+        <WatermelonMascot />
         <Suspense fallback={<PageLoader />}>
           <Routes>
 

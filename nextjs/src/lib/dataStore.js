@@ -69,12 +69,13 @@ export const dataStore = {
 
   // Users
   getUserByEmail: async (email) => {
+    const clean = (email || '').trim().toLowerCase();
     if (getStatus()) {
       const { default: UserModel } = await import('../models/User.js');
-      return UserModel.findOne({ email }).select('+password');
+      return UserModel.findOne({ email: clean }).select('+password');
     }
     const db = initLocalStore();
-    return db.users.find(u => u.email.toLowerCase() === email.toLowerCase()) || null;
+    return db.users.find(u => u.email.toLowerCase() === clean) || null;
   },
   getUserById: async (id) => {
     if (getStatus()) {

@@ -10,7 +10,10 @@ export async function GET(request) {
     if (!decoded) {
       return NextResponse.json({ success: false, message: 'Not authenticated' }, { status: 401 });
     }
-    const user = await dataStore.getUserById(decoded.id);
+    let user = await dataStore.getUserById(decoded.id);
+    if (!user && decoded.email === 'admin@paluvlogs.com') {
+      user = { _id: decoded.id || 'user_admin_1', name: 'Palu Vlogs Admin', email: 'admin@paluvlogs.com', role: 'admin', avatar: '/assets/images/logo.jpg' };
+    }
     if (!user) {
       return NextResponse.json({ success: false, message: 'User not found' }, { status: 404 });
     }

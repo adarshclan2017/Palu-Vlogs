@@ -15,12 +15,14 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await api.login(email, password);
+      const res = await api.login(email.trim().toLowerCase(), password.trim());
       if (res?.success && res.token) {
         if (typeof window !== 'undefined') {
           localStorage.setItem('palu_token', res.token);
           localStorage.setItem('palu_user', JSON.stringify(res.user));
-          document.cookie = `palu_token=${res.token}; path=/; max-age=2592000`;
+          document.cookie = `palu_token=${res.token}; path=/; max-age=2592000; SameSite=Lax`;
+          window.location.href = '/admin';
+          return;
         }
         router.push('/admin');
       }
@@ -66,6 +68,9 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck="false"
               className="form-input"
             />
           </div>

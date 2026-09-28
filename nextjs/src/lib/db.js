@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/paluvlogs';
+const ATLAS_URI = 'mongodb+srv://adarshclan2017_db_user:uVLJhjR3gGURRPnc@cluster0.mov2h9n.mongodb.net/paluvlogs?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI || ATLAS_URI;
 
 let cached = global.mongoose;
 

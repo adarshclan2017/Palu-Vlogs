@@ -11,11 +11,22 @@ async function request(endpoint, options = {}) {
   if (token) headers['Authorization'] = `Bearer ${token}`;
   if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
 
-  const res = await fetch(`${BASE}${endpoint}`, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
 
-  if (!res.ok) throw new Error(data.message || `Request failed: ${res.status}`);
-  return data;
+  try {
+    const res = await fetch(`${BASE}${endpoint}`, { ...options, headers, signal: controller.signal });
+    clearTimeout(timeoutId);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.message || `Request failed: ${res.status}`);
+    return data;
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      throw new Error('Connection timed out. Please check your network and try again.');
+    }
+    throw err;
+  }
 }
 
 export const api = {

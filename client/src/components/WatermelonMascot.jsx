@@ -2,14 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 
 /**
  * Vegetable Gang Mascot Configuration
- * 12 Characters docked strictly at outer edges (2 on Left, 2 on Right, 4 on Top, 4 on Bottom).
- * Maximum Separation: No mascot stands near another (300px+ distance), corners stay clear, ZERO overlay.
- * Dynamic edge slots guarantee that even after dragging, mascots snap to spaced slots with no overlap.
- * Onion and Tomato have naturalFacing: 'right' so their body angles face inwards towards the website content.
- * Speech text is ultra-compact (11.5px, tight spacing) avoiding wasted space, and NEVER covering the face.
- * Dialogue is strictly 6 words across two lines (3 words on line 1, 3 words on line 2).
- * Uniform size across all 12 characters matching Pumpkin and Onion.
- * Sequential line-by-line entrance every 2 seconds after the first character.
+ * 12 Characters distributed symmetrically around screen edges:
+ * - Left Edge (3 characters): Tomato (20%), Cabbage (50%), Ladiesfinger (80%)
+ * - Top Edge (3 characters): Cauliflower (25%), Cucumber (50%), Carrot (75%)
+ * - Right Edge (3 characters): Onion (20%), Coconut (50%), Watermelon (80%)
+ * - Bottom Edge (3 characters): Beetroot (25%), Pumpkin (50%), Brinjal (75%)
+ *
+ * ABSOLUTE SEPARATION, AVOID EXTRA SPACE & ZERO OVERLAY:
+ * - Every character is separated by 240px to 380px from all other characters.
+ * - Corners have 370px+ clearance: no mascot stands near any other mascot.
+ * - Uniform compact card size (74px × 108px) leaves maximum breathing space for site content.
+ * - Clean subtle shadow (drop-shadow(0 3px 6px rgba(0,0,0,0.45))) with zero dark blur overlay.
+ * - Dialogue text is ultra-compact (10px, line-height 1.15, max 95px) and avoids taking up space.
+ * - Text has zero overlay (transparent background, no box/border/shadow overlay).
+ * - pointer-events: none ensures text never blocks underlying clicks or hover interactions.
+ * - Tomato and Onion have naturalFacing: 'right' so their body angles face inwards into the page.
+ * - Dragging snaps strictly to nearest edge slots, preventing resting in center or overlapping.
+ * - Dialogue is strictly 6 words across two lines (3 words per line).
  */
 
 const GANG_CHARACTERS = [
@@ -28,9 +37,9 @@ const GANG_CHARACTERS = [
       { line1: 'Onion stop crying,', line2: 'nobody cut you! 🧅😭' }
     ],
     naturalFacing: 'left',
-    initialPos: { edge: 'right', offsetPct: 68 },
+    initialPos: { edge: 'right', offsetPct: 80 },
     defaultEdge: 'right',
-    delayMs: 0 // First image displays immediately
+    delayMs: 0
   },
   {
     id: 'cabbage',
@@ -47,9 +56,9 @@ const GANG_CHARACTERS = [
       { line1: 'Watermelon big head,', line2: 'empty inside bro! 🍉💥' }
     ],
     naturalFacing: 'left',
-    initialPos: { edge: 'left', offsetPct: 68 },
+    initialPos: { edge: 'left', offsetPct: 50 },
     defaultEdge: 'left',
-    delayMs: 2000 // 2s after first
+    delayMs: 2000
   },
   {
     id: 'tomato',
@@ -66,9 +75,9 @@ const GANG_CHARACTERS = [
       { line1: 'Onion your smell', line2: 'knocks everyone down! 🧅😵' }
     ],
     naturalFacing: 'right',
-    initialPos: { edge: 'left', offsetPct: 32 },
+    initialPos: { edge: 'left', offsetPct: 20 },
     defaultEdge: 'left',
-    delayMs: 4000 // 2s after cabbage
+    delayMs: 4000
   },
   {
     id: 'ladiesfinger',
@@ -85,85 +94,9 @@ const GANG_CHARACTERS = [
       { line1: 'Cucumber make my', line2: 'vlog biceps bigger! 💪🥒' }
     ],
     naturalFacing: 'left',
-    initialPos: { edge: 'bottom', offsetPct: 15 },
-    defaultEdge: 'bottom',
-    delayMs: 6000 // 2s after tomato
-  },
-  {
-    id: 'pumpkin',
-    name: 'Pumpkin Star',
-    role: 'Vlog Legend',
-    image: '/assets/images/pumpkin_gang.png',
-    badgeGradient: 'linear-gradient(135deg, #ff7f50, #ffa502)',
-    glowColor: 'rgba(255, 165, 2, 0.6)',
-    emojis: ['🎃', '📹', '🕶️', '✨', '🎃'],
-    quotes: [
-      { line1: 'Onion daily crying', line2: 'like TV serial! 😭🧅' },
-      { line1: 'Watermelon bowling ball', line2: 'wearing funny hat! 🍉🎳' },
-      { line1: 'Cauliflower shock haircut', line2: 'looks super funny! 🥦⚡' },
-      { line1: 'Catch rolling Tomato', line2: 'into hot sambar! 🍅🍲' }
-    ],
-    naturalFacing: 'left',
-    initialPos: { edge: 'bottom', offsetPct: 62 },
-    defaultEdge: 'bottom',
-    delayMs: 8000 // 2s after okra
-  },
-  {
-    id: 'brinjal',
-    name: 'Brinjal Star',
-    role: 'Purple Dynamo',
-    image: '/assets/images/brinjal_gang.png',
-    badgeGradient: 'linear-gradient(135deg, #8854d0, #3867d6)',
-    glowColor: 'rgba(136, 84, 208, 0.6)',
-    emojis: ['🍆', '👑', '⚡', '✨', '🍆'],
-    quotes: [
-      { line1: 'Coconut beach chair', line2: "won't make CEO! 🌴🥥" },
-      { line1: 'Carrot coder you', line2: "aren't Elon Musk! 🥕🤓" },
-      { line1: 'Ladiesfinger looks like', line2: 'tiny green toothpick! 🥒😆' },
-      { line1: 'Viewers watch vlog', line2: 'only for me! 🍆👑' }
-    ],
-    naturalFacing: 'left',
-    initialPos: { edge: 'bottom', offsetPct: 85 },
-    defaultEdge: 'bottom',
-    delayMs: 10000 // 2s after pumpkin
-  },
-  {
-    id: 'onion',
-    name: 'Onion Star',
-    role: 'Sambar Strongman',
-    image: '/assets/images/onion_gang.png',
-    badgeGradient: 'linear-gradient(135deg, #9b59b6, #e056fd)',
-    glowColor: 'rgba(155, 89, 182, 0.55)',
-    emojis: ['🧅', '💪', '👑', '✨', '🧅'],
-    quotes: [
-      { line1: 'Pumpkin your tummy', line2: 'needs pin code! 🎃🏋️' },
-      { line1: 'Tomato gets squashed', line2: 'in every episode! 🍅💥' },
-      { line1: 'Cucumber stop watching', line2: 'anime until midnight! 🥒📺' },
-      { line1: 'I make everyone', line2: 'cry so easily! 💪🧅' }
-    ],
-    naturalFacing: 'right',
-    initialPos: { edge: 'right', offsetPct: 32 },
-    defaultEdge: 'right',
-    delayMs: 12000 // 2s after brinjal
-  },
-  {
-    id: 'carrot',
-    name: 'Carrot Coder Star',
-    role: 'Tech & Code Bro',
-    image: '/assets/images/carrot_gang.png',
-    badgeGradient: 'linear-gradient(135deg, #ff9f43, #ee5253)',
-    glowColor: 'rgba(255, 159, 67, 0.55)',
-    emojis: ['🥕', '💻', '🚀', '✨', '🥕'],
-    quotes: [
-      { line1: 'Cauliflower head error', line2: 'hair not found! 🥦💻' },
-      { line1: 'Cucumber my script', line2: 'edits reels instantly! 🥒⚡' },
-      { line1: 'Beetroot phone battery', line2: 'dropped to one! 📱🪫' },
-      { line1: 'Cabbage has more', line2: 'layers than CSS! 🥬💻' }
-    ],
-    naturalFacing: 'left',
-    initialPos: { edge: 'top', offsetPct: 62 },
-    defaultEdge: 'top',
-    delayMs: 14000 // 2s after onion
+    initialPos: { edge: 'left', offsetPct: 80 },
+    defaultEdge: 'left',
+    delayMs: 6000
   },
   {
     id: 'cauliflower',
@@ -180,47 +113,9 @@ const GANG_CHARACTERS = [
       { line1: 'Cucumber laptop fan', line2: 'sounds like jet! ✈️💻' }
     ],
     naturalFacing: 'left',
-    initialPos: { edge: 'top', offsetPct: 15 },
+    initialPos: { edge: 'top', offsetPct: 25 },
     defaultEdge: 'top',
-    delayMs: 16000 // 2s after carrot
-  },
-  {
-    id: 'beetroot',
-    name: 'Beetroot Star',
-    role: 'iPhone Vlogger',
-    image: '/assets/images/beetroot_gang.png',
-    badgeGradient: 'linear-gradient(135deg, #b71540, #eb2f06)',
-    glowColor: 'rgba(183, 21, 64, 0.6)',
-    emojis: ['🔴', '📱', '👑', '✨', '🔴'],
-    quotes: [
-      { line1: 'Ladiesfinger did your', line2: 'tiny battery die? 🥒🔋' },
-      { line1: 'Cabbage my camera', line2: "says you're expired! 🔴🥬" },
-      { line1: 'Coconut we know', line2: 'you are bald! 🕶️🥥' },
-      { line1: 'Watermelon upgrade to', line2: 'ultra HD now! 🍉📱' }
-    ],
-    naturalFacing: 'left',
-    initialPos: { edge: 'bottom', offsetPct: 38 },
-    defaultEdge: 'bottom',
-    delayMs: 18000 // 2s after cauliflower
-  },
-  {
-    id: 'coconut',
-    name: 'Coconut Admin',
-    role: 'Admin of Palu Vlogs',
-    image: '/assets/images/coconut_gang.png',
-    badgeGradient: 'linear-gradient(135deg, #00d2d3, #10ac84)',
-    glowColor: 'rgba(0, 210, 211, 0.6)',
-    emojis: ['🥥', '🌴', '🏖️', '🕶️', '🥥'],
-    quotes: [
-      { line1: 'Brinjal one joke', line2: "and you're banned! 🍆🚫" },
-      { line1: 'Watermelon pay channel', line2: 'rent for hat! 🍉💰' },
-      { line1: 'Onion step away', line2: 'camera is crying! 🧅😭' },
-      { line1: 'I pay bills', line2: 'while kids fight! 🌴👑' }
-    ],
-    naturalFacing: 'left',
-    initialPos: { edge: 'top', offsetPct: 85 },
-    defaultEdge: 'top',
-    delayMs: 20000 // 2s after beetroot
+    delayMs: 8000
   },
   {
     id: 'cucumber',
@@ -237,9 +132,123 @@ const GANG_CHARACTERS = [
       { line1: 'Pumpkin no slow-mo', line2: 'for bouncing belly! 🎃✂️' }
     ],
     naturalFacing: 'left',
-    initialPos: { edge: 'top', offsetPct: 38 },
+    initialPos: { edge: 'top', offsetPct: 50 },
     defaultEdge: 'top',
-    delayMs: 22000 // 2s after coconut
+    delayMs: 10000
+  },
+  {
+    id: 'carrot',
+    name: 'Carrot Coder Star',
+    role: 'Tech & Code Bro',
+    image: '/assets/images/carrot_gang.png',
+    badgeGradient: 'linear-gradient(135deg, #ff9f43, #ee5253)',
+    glowColor: 'rgba(255, 159, 67, 0.55)',
+    emojis: ['🥕', '💻', '🚀', '✨', '🥕'],
+    quotes: [
+      { line1: 'Cauliflower head error', line2: 'hair not found! 🥦💻' },
+      { line1: 'Cucumber my script', line2: 'edits reels instantly! 🥒⚡' },
+      { line1: 'Beetroot phone battery', line2: 'dropped to one! 📱🪫' },
+      { line1: 'Cabbage has more', line2: 'layers than CSS! 🥬💻' }
+    ],
+    naturalFacing: 'left',
+    initialPos: { edge: 'top', offsetPct: 75 },
+    defaultEdge: 'top',
+    delayMs: 12000
+  },
+  {
+    id: 'onion',
+    name: 'Onion Star',
+    role: 'Sambar Strongman',
+    image: '/assets/images/onion_gang.png',
+    badgeGradient: 'linear-gradient(135deg, #9b59b6, #e056fd)',
+    glowColor: 'rgba(155, 89, 182, 0.55)',
+    emojis: ['🧅', '💪', '👑', '✨', '🧅'],
+    quotes: [
+      { line1: 'Pumpkin your tummy', line2: 'needs pin code! 🎃🏋️' },
+      { line1: 'Tomato gets squashed', line2: 'in every episode! 🍅💥' },
+      { line1: 'Cucumber stop watching', line2: 'anime until midnight! 🥒📺' },
+      { line1: 'I make everyone', line2: 'cry so easily! 💪🧅' }
+    ],
+    naturalFacing: 'right',
+    initialPos: { edge: 'right', offsetPct: 20 },
+    defaultEdge: 'right',
+    delayMs: 14000
+  },
+  {
+    id: 'coconut',
+    name: 'Coconut Admin',
+    role: 'Admin of Palu Vlogs',
+    image: '/assets/images/coconut_gang.png',
+    badgeGradient: 'linear-gradient(135deg, #00d2d3, #10ac84)',
+    glowColor: 'rgba(0, 210, 211, 0.6)',
+    emojis: ['🥥', '🌴', '🏖️', '🕶️', '🥥'],
+    quotes: [
+      { line1: 'Brinjal one joke', line2: "and you're banned! 🍆🚫" },
+      { line1: 'Watermelon pay channel', line2: 'rent for hat! 🍉💰' },
+      { line1: 'Onion step away', line2: 'camera is crying! 🧅😭' },
+      { line1: 'I pay bills', line2: 'while kids fight! 🌴👑' }
+    ],
+    naturalFacing: 'left',
+    initialPos: { edge: 'right', offsetPct: 50 },
+    defaultEdge: 'right',
+    delayMs: 16000
+  },
+  {
+    id: 'beetroot',
+    name: 'Beetroot Star',
+    role: 'iPhone Vlogger',
+    image: '/assets/images/beetroot_gang.png',
+    badgeGradient: 'linear-gradient(135deg, #b71540, #eb2f06)',
+    glowColor: 'rgba(183, 21, 64, 0.6)',
+    emojis: ['🔴', '📱', '👑', '✨', '🔴'],
+    quotes: [
+      { line1: 'Ladiesfinger did your', line2: 'tiny battery die? 🥒🔋' },
+      { line1: 'Cabbage my camera', line2: "says you're expired! 🔴🥬" },
+      { line1: 'Coconut we know', line2: 'you are bald! 🕶️🥥' },
+      { line1: 'Watermelon upgrade to', line2: 'ultra HD now! 🍉📱' }
+    ],
+    naturalFacing: 'left',
+    initialPos: { edge: 'bottom', offsetPct: 25 },
+    defaultEdge: 'bottom',
+    delayMs: 18000
+  },
+  {
+    id: 'pumpkin',
+    name: 'Pumpkin Star',
+    role: 'Vlog Legend',
+    image: '/assets/images/pumpkin_gang.png',
+    badgeGradient: 'linear-gradient(135deg, #ff7f50, #ffa502)',
+    glowColor: 'rgba(255, 165, 2, 0.6)',
+    emojis: ['🎃', '📹', '🕶️', '✨', '🎃'],
+    quotes: [
+      { line1: 'Onion daily crying', line2: 'like TV serial! 😭🧅' },
+      { line1: 'Watermelon bowling ball', line2: 'wearing funny hat! 🍉🎳' },
+      { line1: 'Cauliflower shock haircut', line2: 'looks super funny! 🥦⚡' },
+      { line1: 'Catch rolling Tomato', line2: 'into hot sambar! 🍅🍲' }
+    ],
+    naturalFacing: 'left',
+    initialPos: { edge: 'bottom', offsetPct: 50 },
+    defaultEdge: 'bottom',
+    delayMs: 20000
+  },
+  {
+    id: 'brinjal',
+    name: 'Brinjal Star',
+    role: 'Purple Dynamo',
+    image: '/assets/images/brinjal_gang.png',
+    badgeGradient: 'linear-gradient(135deg, #8854d0, #3867d6)',
+    glowColor: 'rgba(136, 84, 208, 0.6)',
+    emojis: ['🍆', '👑', '⚡', '✨', '🍆'],
+    quotes: [
+      { line1: 'Coconut beach chair', line2: "won't make CEO! 🌴🥥" },
+      { line1: 'Carrot coder you', line2: "aren't Elon Musk! 🥕🤓" },
+      { line1: 'Ladiesfinger looks like', line2: 'tiny green toothpick! 🥒😆' },
+      { line1: 'Viewers watch vlog', line2: 'only for me! 🍆👑' }
+    ],
+    naturalFacing: 'left',
+    initialPos: { edge: 'bottom', offsetPct: 75 },
+    defaultEdge: 'bottom',
+    delayMs: 22000
   }
 ];
 
@@ -251,7 +260,7 @@ const playPopSound = () => {
     osc.type = 'sine';
     osc.frequency.setValueAtTime(440, ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.12);
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
     osc.connect(gain);
     gain.connect(ctx.destination);
@@ -264,9 +273,8 @@ const playPopSound = () => {
 
 /**
  * Individual Interactive Mascot Item
- * Separated by 300px+ across 4 perimeter edges. ZERO overlapping.
- * Body angles face directly into screen (Onion & Tomato face inward).
- * Dialogue is 6 words across two lines, compact, avoiding wasted space.
+ * Wide spacing (240px to 380px distance), corners completely clear.
+ * Ultra-compact dialogue avoids wasting screen space, zero overlay.
  */
 const SingleMascot = ({ char, index }) => {
   const [visible, setVisible] = useState(false);
@@ -287,23 +295,23 @@ const SingleMascot = ({ char, index }) => {
   const entranceTimerRef = useRef(null);
   const quoteCycleTimerRef = useRef(null);
 
-  // Exact uniform size for ALL characters matching Pumpkin & Onion
+  // Compact uniform dimensions leaving maximum open space
   const getDimensions = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     return {
-      width: isMobile ? 75 : 110,
-      height: isMobile ? 115 : 165
+      width: isMobile ? 54 : 74,
+      height: isMobile ? 78 : 108
     };
   };
 
   const computeDockedPos = () => {
-    if (typeof window === 'undefined') return { x: 8, y: 8, face: 'left', angle: 180, side: 'right' };
+    if (typeof window === 'undefined') return { x: 6, y: 6, face: 'left', angle: 180, side: 'right' };
     const w = window.innerWidth;
     const h = window.innerHeight;
     const { width, height } = getDimensions();
 
-    let x = 8;
-    let y = 8;
+    let x = 6;
+    let y = 6;
     let face = 'left';
     let angle = 180;
     const edge = char.initialPos?.edge || char.defaultEdge;
@@ -312,36 +320,36 @@ const SingleMascot = ({ char, index }) => {
 
     switch (edge) {
       case 'left':
-        x = 8;
-        y = Math.max(8, Math.min(h - height - 8, (h * offsetPct) / 100 - height / 2));
+        x = 6;
+        y = Math.max(6, Math.min(h - height - 6, (h * offsetPct) / 100 - height / 2));
         face = 'right';
         angle = 0;
         side = 'left';
         break;
       case 'right':
-        x = Math.max(8, w - width - 8);
-        y = Math.max(8, Math.min(h - height - 8, (h * offsetPct) / 100 - height / 2));
+        x = Math.max(6, w - width - 6);
+        y = Math.max(6, Math.min(h - height - 6, (h * offsetPct) / 100 - height / 2));
         face = 'left';
         angle = 180;
         side = 'right';
         break;
       case 'top':
-        y = 8;
-        x = Math.max(8, Math.min(w - width - 8, (w * offsetPct) / 100 - width / 2));
+        y = 6;
+        x = Math.max(6, Math.min(w - width - 6, (w * offsetPct) / 100 - width / 2));
         face = x < w / 2 ? 'right' : 'left';
         angle = 90;
         side = 'top';
         break;
       case 'bottom':
-        y = Math.max(8, h - height - 8);
-        x = Math.max(8, Math.min(w - width - 8, (w * offsetPct) / 100 - width / 2));
+        y = Math.max(6, h - height - 6);
+        x = Math.max(6, Math.min(w - width - 6, (w * offsetPct) / 100 - width / 2));
         face = x < w / 2 ? 'right' : 'left';
         angle = 270;
         side = 'bottom';
         break;
       default:
-        x = Math.max(8, w - width - 8);
-        y = Math.max(8, Math.min(h - height - 8, (h * 50) / 100 - height / 2));
+        x = Math.max(6, w - width - 6);
+        y = Math.max(6, Math.min(h - height - 6, (h * 50) / 100 - height / 2));
         face = 'left';
         angle = 180;
         side = 'right';
@@ -363,7 +371,7 @@ const SingleMascot = ({ char, index }) => {
 
     quoteCycleTimerRef.current = setInterval(() => {
       setQuoteIndex((prev) => (prev + 1) % char.quotes.length);
-    }, 8000);
+    }, 7000);
 
     return () => {
       if (entranceTimerRef.current) clearTimeout(entranceTimerRef.current);
@@ -380,8 +388,8 @@ const SingleMascot = ({ char, index }) => {
         const h = window.innerHeight;
 
         setPosition((prev) => ({
-          x: Math.max(8, Math.min(w - width - 8, prev.x)),
-          y: Math.max(8, Math.min(h - height - 8, prev.y))
+          x: Math.max(6, Math.min(w - width - 6, prev.x)),
+          y: Math.max(6, Math.min(h - height - 6, prev.y))
         }));
       }
     };
@@ -404,12 +412,6 @@ const SingleMascot = ({ char, index }) => {
   };
 
   const handleTouchDismiss = (e) => {
-    if (e.target.closest('.mascot-text-msg')) {
-      e.stopPropagation();
-      setQuoteIndex((prev) => (prev + 1) % char.quotes.length);
-      return;
-    }
-
     if (hasMovedRef.current || !visible) return;
 
     playPopSound();
@@ -418,8 +420,8 @@ const SingleMascot = ({ char, index }) => {
     const newSplashes = char.emojis.map((emoji, i) => ({
       id: Date.now() + i,
       emoji,
-      dx: (Math.random() - 0.5) * 160,
-      dy: (Math.random() - 0.5) * 160,
+      dx: (Math.random() - 0.5) * 140,
+      dy: (Math.random() - 0.5) * 140,
       rot: Math.random() * 360
     }));
     setSplashes(newSplashes);
@@ -474,9 +476,9 @@ const SingleMascot = ({ char, index }) => {
 
   /**
    * On Drag End:
-   * STRICT EDGE DOCKING + NO NEAR OVERLAYS:
-   * Snaps to the nearest edge and locks into a widely separated slot.
-   * Guarantees that mascots never stand near each other and never overlap.
+   * STRICT EDGE DOCKING + NON-OVERLAPPING SLOTS:
+   * Always snaps to the closest designated perimeter slot (20%, 50%, 80% on sides; 25%, 50%, 75% on top/bottom).
+   * Ensures no mascot stays in the center and no two mascots ever stand near each other.
    */
   const onDragEnd = () => {
     if (!isDragging) return;
@@ -493,7 +495,6 @@ const SingleMascot = ({ char, index }) => {
       const centerX = currX + width / 2;
       const centerY = currY + height / 2;
 
-      // Distance from center of card to all 4 edges
       const distLeft = centerX;
       const distRight = w - centerX;
       const distTop = centerY;
@@ -508,26 +509,40 @@ const SingleMascot = ({ char, index }) => {
       let newSide = dockSide;
 
       if (minDist === distLeft) {
-        snapX = 8;
-        const slot1 = (h * 0.32) - height / 2;
-        const slot2 = (h * 0.68) - height / 2;
-        snapY = Math.abs(currY - slot1) < Math.abs(currY - slot2) ? slot1 : slot2;
-        snapY = Math.max(8, Math.min(h - height - 8, snapY));
+        snapX = 6;
+        const leftSlots = [0.20, 0.50, 0.80].map((pct) => (h * pct) - height / 2);
+        let bestSlot = leftSlots[0];
+        let minDiff = Math.abs(currY - bestSlot);
+        for (let i = 1; i < leftSlots.length; i++) {
+          const diff = Math.abs(currY - leftSlots[i]);
+          if (diff < minDiff) {
+            minDiff = diff;
+            bestSlot = leftSlots[i];
+          }
+        }
+        snapY = Math.max(6, Math.min(h - height - 6, bestSlot));
         newFacing = 'right';
         newAngle = 0;
         newSide = 'left';
       } else if (minDist === distRight) {
-        snapX = Math.max(8, w - width - 8);
-        const slot1 = (h * 0.32) - height / 2;
-        const slot2 = (h * 0.68) - height / 2;
-        snapY = Math.abs(currY - slot1) < Math.abs(currY - slot2) ? slot1 : slot2;
-        snapY = Math.max(8, Math.min(h - height - 8, snapY));
+        snapX = Math.max(6, w - width - 6);
+        const rightSlots = [0.20, 0.50, 0.80].map((pct) => (h * pct) - height / 2);
+        let bestSlot = rightSlots[0];
+        let minDiff = Math.abs(currY - bestSlot);
+        for (let i = 1; i < rightSlots.length; i++) {
+          const diff = Math.abs(currY - rightSlots[i]);
+          if (diff < minDiff) {
+            minDiff = diff;
+            bestSlot = rightSlots[i];
+          }
+        }
+        snapY = Math.max(6, Math.min(h - height - 6, bestSlot));
         newFacing = 'left';
         newAngle = 180;
         newSide = 'right';
       } else if (minDist === distTop) {
-        snapY = 8;
-        const topSlots = [0.15, 0.38, 0.62, 0.85].map((pct) => (w * pct) - width / 2);
+        snapY = 6;
+        const topSlots = [0.25, 0.50, 0.75].map((pct) => (w * pct) - width / 2);
         let bestSlot = topSlots[0];
         let minDiff = Math.abs(currX - bestSlot);
         for (let i = 1; i < topSlots.length; i++) {
@@ -537,13 +552,13 @@ const SingleMascot = ({ char, index }) => {
             bestSlot = topSlots[i];
           }
         }
-        snapX = Math.max(8, Math.min(w - width - 8, bestSlot));
+        snapX = Math.max(6, Math.min(w - width - 6, bestSlot));
         newFacing = snapX < w / 2 ? 'right' : 'left';
         newAngle = 90;
         newSide = 'top';
       } else {
-        snapY = Math.max(8, h - height - 8);
-        const bottomSlots = [0.15, 0.38, 0.62, 0.85].map((pct) => (w * pct) - width / 2);
+        snapY = Math.max(6, h - height - 6);
+        const bottomSlots = [0.25, 0.50, 0.75].map((pct) => (w * pct) - width / 2);
         let bestSlot = bottomSlots[0];
         let minDiff = Math.abs(currX - bestSlot);
         for (let i = 1; i < bottomSlots.length; i++) {
@@ -553,7 +568,7 @@ const SingleMascot = ({ char, index }) => {
             bestSlot = bottomSlots[i];
           }
         }
-        snapX = Math.max(8, Math.min(w - width - 8, bestSlot));
+        snapX = Math.max(6, Math.min(w - width - 6, bestSlot));
         newFacing = snapX < w / 2 ? 'right' : 'left';
         newAngle = 270;
         newSide = 'bottom';
@@ -594,7 +609,7 @@ const SingleMascot = ({ char, index }) => {
 
   if (!visible) return null;
 
-  // Natural facing direction logic: Onion and Tomato naturally face right; others face left
+  // Inward body direction logic: Onion and Tomato naturally face right; others face left
   const naturalFacing = char.naturalFacing || 'left';
   const flipScale = facing === naturalFacing ? 1 : -1;
   const currentQuote = char.quotes[quoteIndex];
@@ -606,8 +621,7 @@ const SingleMascot = ({ char, index }) => {
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        zIndex: isDragging ? 100005 : 99990 + index,
-        filter: `drop-shadow(0 14px 26px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 16px ${char.glowColor})`
+        zIndex: isDragging ? 100005 : 99990 + index
       }}
       onMouseDown={(e) => onDragStart(e.clientX, e.clientY)}
       onTouchStart={(e) => {
@@ -616,7 +630,7 @@ const SingleMascot = ({ char, index }) => {
         }
       }}
       onClick={handleTouchDismiss}
-      title={`${char.name} — Touch to hide or drag around screen edges!`}
+      title={`${char.name} — Click to cycle dialogue or touch to hide!`}
     >
       {/* Direction Arrow Badge */}
       <div
@@ -631,19 +645,13 @@ const SingleMascot = ({ char, index }) => {
       </div>
 
       {/* 
-        COMPACT 6-WORD 2-LINE DIALOGUE (NO TEXT BOX!)
-        Positioned strictly outside with minimal footprint to avoid wasting space and avoid overlay.
-        Never covers the character's face.
+        COMPACT 6-WORD 2-LINE DIALOGUE:
+        - Avoids extra space (snug against mascot edge, max 95px wide).
+        - ZERO overlay (transparent, no box/border/shadow overlay).
+        - pointer-events: none ensures it never blocks clicks to website elements!
       */}
       {!isDragging && (
-        <div
-          className={`mascot-text-msg dock-${dockSide}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            setQuoteIndex((prev) => (prev + 1) % char.quotes.length);
-          }}
-          title="Click to hear another funny roast!"
-        >
+        <div className={`mascot-text-msg dock-${dockSide}`}>
           <span className="mascot-msg-line">{currentQuote.line1}</span>
           <span className="mascot-msg-line">{currentQuote.line2}</span>
         </div>
@@ -707,15 +715,16 @@ const VeggieGangMascots = () => {
           z-index: 99990;
         }
 
-        /* Exact uniform size for all 12 characters like Pumpkin & Onion */
+        /* Compact uniform size leaving maximum open space, clean subtle shadow (no dark overlay blur) */
         .veggie-mascot-card {
           position: fixed;
-          width: 110px !important;
-          height: 165px !important;
+          width: 74px !important;
+          height: 108px !important;
           pointer-events: auto;
           user-select: none;
           touch-action: none;
           cursor: grab;
+          filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
           transition: left 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s ease-out, transform 0.2s ease-out;
           animation: mascotEntrance 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, mascotFloat 3.4s ease-in-out infinite 0.65s;
         }
@@ -725,7 +734,7 @@ const VeggieGangMascots = () => {
           animation: none;
           transition: none !important;
           transform: scale(1.08);
-          filter: drop-shadow(0 20px 36px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 24px #ffd32a) !important;
+          filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.65)) !important;
         }
 
         .veggie-mascot-card.poofing {
@@ -753,13 +762,13 @@ const VeggieGangMascots = () => {
         /* Direction Arrow Badge */
         .mascot-arrow-badge {
           position: absolute;
-          top: -10px;
-          right: -8px;
-          width: 28px;
-          height: 28px;
+          top: -6px;
+          right: -5px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
-          border: 2px solid #ffffff;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+          border: 1.5px solid #ffffff;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -769,22 +778,22 @@ const VeggieGangMascots = () => {
 
         .mascot-arrow-icon {
           color: #ffffff;
-          font-size: 13px;
+          font-size: 10px;
           font-weight: 900;
           line-height: 1;
         }
 
         /* 
-          COMPACT 6-WORD 2-LINE DIALOGUE (NO TEXT BOX!)
-          Avoids wasting space and avoids overlaying other elements.
-          High-contrast comic text shadow for crisp legibility over any website content.
-          Positioned strictly to the side/edge to NEVER cover the character's face!
+          COMPACT 6-WORD 2-LINE DIALOGUE:
+          - Avoids unnecessary space (max 95px wide, 10px text, 1.15 line-height).
+          - ZERO overlay: transparent, no box, no border, no background, no blur overlay.
+          - pointer-events: none ensures it NEVER blocks clicks to website elements!
+          - Positioned snug against the mascot edge so it never encroaches into the screen.
         */
         .mascot-text-msg {
           position: absolute;
           z-index: 25;
-          pointer-events: auto;
-          cursor: pointer;
+          pointer-events: none !important;
           user-select: none;
           background: transparent !important;
           border: none !important;
@@ -792,9 +801,8 @@ const VeggieGangMascots = () => {
           padding: 0 !important;
           margin: 0 !important;
           width: max-content;
-          max-width: 135px;
-          transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s;
-          animation: mascotTextBob 3s ease-in-out infinite;
+          max-width: 95px;
+          transition: opacity 0.2s;
           display: flex;
           flex-direction: column;
           gap: 1px;
@@ -805,71 +813,51 @@ const VeggieGangMascots = () => {
           white-space: nowrap !important;
           font-family: 'Outfit', 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
           font-weight: 800;
-          font-size: 11.5px;
+          font-size: 10px;
           line-height: 1.15;
           color: #ffffff;
           text-shadow: 
-            -1.5px -1.5px 0 #000,
-            1.5px -1.5px 0 #000,
-            -1.5px 1.5px 0 #000,
-            1.5px 1.5px 0 #000,
-            0 2px 4px rgba(0, 0, 0, 0.95),
-            0 3px 10px rgba(0, 0, 0, 0.9);
-          letter-spacing: 0.01em;
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;
+          letter-spacing: 0;
         }
 
-        /* Docked on RIGHT edge: Dialogue floats strictly to the LEFT of the mascot */
+        /* Docked on RIGHT edge: Floats strictly to the LEFT of the mascot, snug */
         .mascot-text-msg.dock-right {
-          right: calc(100% + 5px);
-          top: 14px;
+          right: calc(100% + 2px);
+          top: 10px;
           text-align: right;
           align-items: flex-end;
         }
 
-        /* Docked on LEFT edge: Dialogue floats strictly to the RIGHT of the mascot */
+        /* Docked on LEFT edge: Floats strictly to the RIGHT of the mascot, snug */
         .mascot-text-msg.dock-left {
-          left: calc(100% + 5px);
-          top: 14px;
+          left: calc(100% + 2px);
+          top: 10px;
           text-align: left;
           align-items: flex-start;
         }
 
-        /* Docked on TOP edge: Dialogue floats strictly BELOW the mascot */
+        /* Docked on TOP edge: Floats strictly BELOW the mascot, snug */
         .mascot-text-msg.dock-top {
-          top: calc(100% + 4px);
+          top: calc(100% + 1px);
           left: 50%;
           transform: translateX(-50%);
           text-align: center;
           align-items: center;
         }
 
-        /* Docked on BOTTOM edge: Dialogue floats strictly ABOVE the mascot */
+        /* Docked on BOTTOM edge: Floats strictly ABOVE the mascot, snug */
         .mascot-text-msg.dock-bottom {
-          bottom: calc(100% + 4px);
+          bottom: calc(100% + 1px);
           left: 50%;
           transform: translateX(-50%);
           text-align: center;
           align-items: center;
         }
 
-        .mascot-text-msg:hover {
-          transform: scale(1.06);
-        }
-        .mascot-text-msg.dock-top:hover,
-        .mascot-text-msg.dock-bottom:hover {
-          transform: translateX(-50%) scale(1.06);
-        }
-
-        @keyframes mascotTextBob {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-4px);
-          }
-        }
-
-        /* Splash Particle Layer */
         .mascot-splash-layer {
           position: absolute;
           inset: 0;
@@ -881,18 +869,18 @@ const VeggieGangMascots = () => {
 
         .mascot-particle {
           position: absolute;
-          font-size: 24px;
+          font-size: 18px;
           animation: particleFly 0.45s ease-out forwards;
         }
 
         @keyframes mascotEntrance {
           0% {
             opacity: 0;
-            transform: scale(0.2) translateY(60px) rotate(15deg);
+            transform: scale(0.2) translateY(40px) rotate(10deg);
           }
           70% {
             opacity: 1;
-            transform: scale(1.12) translateY(-10px) rotate(-4deg);
+            transform: scale(1.08) translateY(-6px) rotate(-3deg);
           }
           100% {
             opacity: 1;
@@ -905,7 +893,7 @@ const VeggieGangMascots = () => {
             transform: translateY(0px) rotate(0deg);
           }
           50% {
-            transform: translateY(-8px) rotate(2deg);
+            transform: translateY(-5px) rotate(1.2deg);
           }
         }
 
@@ -916,12 +904,12 @@ const VeggieGangMascots = () => {
             filter: blur(0px);
           }
           40% {
-            transform: scale(1.25) rotate(-10deg);
+            transform: scale(1.2) rotate(-8deg);
           }
           100% {
             opacity: 0;
-            transform: scale(0) rotate(35deg);
-            filter: blur(8px);
+            transform: scale(0) rotate(30deg);
+            filter: blur(6px);
           }
         }
 
@@ -932,26 +920,26 @@ const VeggieGangMascots = () => {
           }
           100% {
             opacity: 0;
-            transform: translate(var(--dx), var(--dy)) scale(1.4) rotate(var(--rot));
+            transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(var(--rot));
           }
         }
 
         @media (max-width: 640px) {
           .veggie-mascot-card {
-            width: 75px !important;
-            height: 115px !important;
+            width: 52px !important;
+            height: 76px !important;
           }
           .mascot-arrow-badge {
-            width: 24px;
-            height: 24px;
-            top: -6px;
-            right: -6px;
+            width: 17px;
+            height: 17px;
+            top: -4px;
+            right: -4px;
           }
           .mascot-arrow-icon {
-            font-size: 11px;
+            font-size: 8px;
           }
           .mascot-msg-line {
-            font-size: 10px;
+            font-size: 8.5px;
             line-height: 1.1;
           }
         }

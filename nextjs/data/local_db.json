@@ -4,7 +4,7 @@
       "_id": "user_admin_1",
       "name": "Palu Vlogs Admin",
       "email": "admin@paluvlogs.com",
-      "password": "$2a$10$DR3ZAl/Z/Ezy3x39sPo3CuTo2xozimAKgTPetzrfx.tu9ka3lUAie",
+      "password": "$2b$10$IXkLjQJ7F4981yxXJz1wAOmSIUKFtNuemR8KaZSmnOYecgso6AU6G",
       "role": "admin",
       "avatar": "/assets/images/logo.jpg",
       "createdAt": "2026-09-11T12:15:44.815Z"

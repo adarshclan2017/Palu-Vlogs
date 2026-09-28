@@ -8,22 +8,6 @@ import path from 'path';
 import bcrypt from 'bcryptjs';
 import { getStatus } from './db.js';
 
-// Lazy-load Mongoose models to avoid issues during build
-let User, Vlog, Photo, Album, Location, ContactMessage, NewsletterSubscriber, SiteSettings;
-
-function loadModels() {
-  if (!User) {
-    User = require('../models/User').default;
-    Vlog = require('../models/Vlog').default;
-    Photo = require('../models/Photo').default;
-    Album = require('../models/Album').default;
-    Location = require('../models/Location').default;
-    ContactMessage = require('../models/ContactMessage').default;
-    NewsletterSubscriber = require('../models/NewsletterSubscriber').default;
-    SiteSettings = require('../models/SiteSettings').default;
-  }
-}
-
 const DB_FILE = path.join(process.cwd(), 'data', 'local_db.json');
 let localDb = null;
 

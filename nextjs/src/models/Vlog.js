@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const vlogSchema = new mongoose.Schema({
   title: {
@@ -81,4 +81,5 @@ const vlogSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Vlog', vlogSchema);
+const Vlog = mongoose.models.Vlog || mongoose.model('Vlog', vlogSchema);
+export default Vlog;

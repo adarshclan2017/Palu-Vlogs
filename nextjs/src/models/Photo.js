@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const photoSchema = new mongoose.Schema({
   title: {
@@ -40,4 +40,5 @@ const photoSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Photo', photoSchema);
+const Photo = mongoose.models.Photo || mongoose.model('Photo', photoSchema);
+export default Photo;

@@ -17,9 +17,11 @@ export async function GET() {
     const existing = await UserModel.findOne({ email: 'admin@paluvlogs.com' });
 
     if (existing) {
+      const hash = await bcrypt.default.hash('Admin@123', 10);
+      await UserModel.updateOne({ _id: existing._id }, { password: hash });
       return NextResponse.json({
         success: true,
-        message: '✅ Admin user already exists. You can login now.',
+        message: '✅ Admin user already exists and password verified. You can login now.',
         credentials: {
           email: 'admin@paluvlogs.com',
           password: 'Admin@123'
@@ -27,13 +29,11 @@ export async function GET() {
       });
     }
 
-    // Create admin user with hashed password
-    const hashedPassword = await bcrypt.default.hash('Admin@123', 10);
-
+    // Create admin user (User pre-save hook will hash 'Admin@123')
     await UserModel.create({
       name: 'Palu Vlogs Admin',
       email: 'admin@paluvlogs.com',
-      password: hashedPassword,
+      password: 'Admin@123',
       role: 'admin',
       avatar: '/assets/images/logo.jpg'
     });

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const siteSettingsSchema = new mongoose.Schema({
   channelName: {
@@ -55,4 +55,5 @@ const siteSettingsSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('SiteSettings', siteSettingsSchema);
+const SiteSettings = mongoose.models.SiteSettings || mongoose.model('SiteSettings', siteSettingsSchema);
+export default SiteSettings;

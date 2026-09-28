@@ -1,6 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -36,9 +35,13 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Encrypt password using bcrypt
+// Encrypt password using bcrypt ONLY if it has been modified and not already hashed
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
+    return next();
+  }
+  // Prevent double-hashing if already a valid bcrypt hash
+  if (typeof this.password === 'string' && /^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$/.test(this.password)) {
     return next();
   }
   const salt = await bcrypt.genSalt(10);
@@ -51,13 +54,7 @@ userSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Generate JWT token
-userSchema.methods.getSignedJwtToken = function() {
-  return jwt.sign(
-    { id: this._id, email: this.email, role: this.role },
-    process.env.JWT_SECRET || 'paluvlogs_jwt_secret',
-    { expiresIn: '30d' }
-  );
-};
+// Use existing model if already compiled (avoids Vercel hot-reload errors)
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-module.exports = mongoose.model('User', userSchema);
+export default User;

@@ -285,7 +285,7 @@ const playPopSound = () => {
  * Closes automatically while screen is scrolling.
  * Ultra-compact dialogue avoids wasting screen space, zero overlay.
  */
-const SingleMascot = ({ char, index, isScrolling }) => {
+const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
   const [visible, setVisible] = useState(false);
   const [isPoofing, setIsPoofing] = useState(false);
   const [position, setPosition] = useState({ x: -999, y: -999 });
@@ -617,7 +617,10 @@ const SingleMascot = ({ char, index, isScrolling }) => {
     };
   }, [isDragging]);
 
+  // While scrolling: hide completely. After 30s no-scroll: only shown if revealedAfterScroll.
   if (!visible) return null;
+  if (isScrolling && !isDragging) return null;
+  if (!isScrolling && revealedAfterScroll === false) return null;
 
   // Inward body direction logic: Onion and Tomato naturally face right; others face left
   const naturalFacing = char.naturalFacing || 'left';
@@ -627,7 +630,7 @@ const SingleMascot = ({ char, index, isScrolling }) => {
   return (
     <div
       ref={mascotRef}
-      className={`veggie-mascot-card mascot-${char.id} dock-${dockSide} ${isPoofing ? 'poofing' : ''} ${isDragging ? 'dragging' : ''} ${isScrolling ? 'scrolling-closed' : ''}`}
+      className={`veggie-mascot-card mascot-${char.id} dock-${dockSide} ${isPoofing ? 'poofing' : ''} ${isDragging ? 'dragging' : ''}`}
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
@@ -661,7 +664,7 @@ const SingleMascot = ({ char, index, isScrolling }) => {
         - ZERO overlay (transparent, no box/border/shadow overlay).
         - pointer-events: none ensures it never blocks clicks to website elements!
       */}
-      {!isDragging && !isScrolling && (
+      {!isDragging && (
         <div className={`mascot-text-msg dock-${dockSide}`}>
           <span className="mascot-msg-line">{currentQuote.line1}</span>
           <span className="mascot-msg-line">{currentQuote.line2}</span>
@@ -708,37 +711,82 @@ const SingleMascot = ({ char, index, isScrolling }) => {
 /**
  * Vegetable Gang Mascots Root Component for Next.js
  * Displays 12 mascots line-by-line every 2 seconds docked at screen edges.
- * Auto-closes all mascots and dialogues whenever the screen is scrolled!
+ * Auto-closes all mascots when scrolling. After 30 seconds of no scroll,
+ * mascots reappear ONE BY ONE sequentially (like the very first entrance),
+ * with 2-second gaps between each character — exactly like initial load!
  */
 const VeggieGangMascots = () => {
   const [isScrolling, setIsScrolling] = useState(false);
-  const scrollTimeoutRef = useRef(null);
+  // -1 = all hidden, 0..11 = sequential reveal index, 12 = all revealed (normal)
+  const [scrollRevealCount, setScrollRevealCount] = useState(12);
+  const scrollIdleTimerRef = useRef(null);  // 30-second idle timer
+  const revealIntervalRef = useRef(null);   // 2-second sequential reveal interval
+  const scrollTimeoutRef = useRef(null);    // short debounce for active-scroll CSS class
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolling(true);
+      setScrollRevealCount(-1); // immediately hide all
 
+      // Clear any pending reveal sequences
+      if (revealIntervalRef.current) {
+        clearInterval(revealIntervalRef.current);
+        revealIntervalRef.current = null;
+      }
+      if (scrollIdleTimerRef.current) {
+        clearTimeout(scrollIdleTimerRef.current);
+        scrollIdleTimerRef.current = null;
+      }
+      // Short debounce to clear the active-scrolling CSS state
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
-
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
-      }, 700);
+      }, 400);
+
+      // After 30 seconds of no scroll, begin sequential one-by-one reveal
+      scrollIdleTimerRef.current = setTimeout(() => {
+        let count = 0;
+        setScrollRevealCount(0);
+        revealIntervalRef.current = setInterval(() => {
+          count += 1;
+          setScrollRevealCount(count);
+          if (count >= GANG_CHARACTERS.length - 1) {
+            clearInterval(revealIntervalRef.current);
+            revealIntervalRef.current = null;
+            setScrollRevealCount(12);
+          }
+        }, 2000);
+      }, 30000);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     return () => {
       window.removeEventListener('scroll', handleScroll, { capture: true });
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      if (scrollIdleTimerRef.current) clearTimeout(scrollIdleTimerRef.current);
+      if (revealIntervalRef.current) clearInterval(revealIntervalRef.current);
     };
   }, []);
 
   return (
     <>
-      <div className={`veggie-gang-mascots-root ${isScrolling ? 'is-scrolling' : ''}`} aria-live="polite">
+      <div className="veggie-gang-mascots-root" aria-live="polite">
         {GANG_CHARACTERS.map((char, index) => (
-          <SingleMascot key={char.id} char={char} index={index} isScrolling={isScrolling} />
+          <SingleMascot
+            key={char.id}
+            char={char}
+            index={index}
+            isScrolling={isScrolling}
+            revealedAfterScroll={
+              scrollRevealCount === 12
+                ? null
+                : scrollRevealCount >= 0
+                  ? index <= scrollRevealCount
+                  : false
+            }
+          />
         ))}
       </div>
 
@@ -764,33 +812,6 @@ const VeggieGangMascots = () => {
           animation: mascotEntrance 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, mascotFloat 3.4s ease-in-out infinite 0.65s;
         }
 
-        /* 
-          WHILE SCROLLING SCREEN: ALL ITEMS ARE CLOSED!
-          Smoothly folded into outer screen bezels with 0 opacity and pointer-events disabled.
-          Leaves screen 100% clean and unobstructed while browsing!
-        */
-        .veggie-mascot-card.scrolling-closed {
-          opacity: 0 !important;
-          pointer-events: none !important;
-          animation: none !important;
-          transition: transform 0.28s ease-in, opacity 0.24s ease-in !important;
-        }
-
-        .veggie-mascot-card.scrolling-closed.dock-left {
-          transform: translateX(-140%) scale(0.8) !important;
-        }
-
-        .veggie-mascot-card.scrolling-closed.dock-right {
-          transform: translateX(140%) scale(0.8) !important;
-        }
-
-        .veggie-mascot-card.scrolling-closed.dock-top {
-          transform: translateY(-140%) scale(0.8) !important;
-        }
-
-        .veggie-mascot-card.scrolling-closed.dock-bottom {
-          transform: translateY(140%) scale(0.8) !important;
-        }
 
         .veggie-mascot-card.dragging {
           cursor: grabbing;

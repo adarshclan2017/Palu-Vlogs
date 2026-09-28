@@ -36,7 +36,7 @@ export default function Navbar() {
           </div>
 
           <div className="nav-actions">
-            <Link href="https://youtube.com/@paluvlogs" target="_blank" className="btn-primary" style={{ padding: '8px 16px', fontSize: 13 }}>
+            <Link href="https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1" target="_blank" className="btn-primary" style={{ padding: '8px 16px', fontSize: 13 }}>
               ▶ Subscribe
             </Link>
             <Link href="/admin/login" className="admin-nav-pill" style={{ background: 'var(--panel-2)', border: '1px solid var(--line)', color: 'var(--gold)', fontSize: 12, fontWeight: 700, padding: '6px 12px', borderRadius: '9999px', display: 'inline-flex', alignItems: 'center', gap: 6 }}>

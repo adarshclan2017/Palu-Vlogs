@@ -23,7 +23,7 @@ const siteSettingsSchema = new mongoose.Schema({
   },
   youtubeUrl: {
     type: String,
-    default: 'https://youtube.com/@paluvlogs'
+    default: 'https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1'
   },
   instagramUrl: {
     type: String,

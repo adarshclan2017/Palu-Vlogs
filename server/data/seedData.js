@@ -197,7 +197,7 @@ const siteSettings = {
   bio: 'Four friends, one camera, and a running vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.',
   profileImage: '/assets/images/logo.jpg',
   coverImage: '/assets/images/hero_team.jpg',
-  youtubeUrl: 'https://youtube.com/@paluvlogs',
+  youtubeUrl: 'https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1',
   instagramUrl: 'https://instagram.com/paluvlogs',
   whatsappUrl: 'https://whatsapp.com/channel/paluvlogs',
   email: 'contact@paluvlogs.com',

@@ -79,10 +79,11 @@ export default function Home() {
                   </button>
                 )}
                 <a
-                  href={settings?.youtubeUrl || 'https://youtube.com/@paluvlogs'}
+                  href="https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-gold"
+                  title="Subscribe to Palu Vlogs on YouTube"
                 >
                   Subscribe on YouTube 🔔
                 </a>
@@ -287,7 +288,10 @@ export default function Home() {
             <div className="locations-grid">
               {locations.map((loc, idx) => (
                 <div key={loc._id || idx} className="location-card">
-                  <img src={loc.coverImage} alt={loc.name} className="location-cover" loading="lazy" />
+                  <div className="location-img-frame">
+                    <img src={loc.coverImage} alt="" className="location-bg-blur" aria-hidden="true" />
+                    <img src={loc.coverImage} alt={loc.name} className="location-cover" loading="lazy" />
+                  </div>
                   <div className="location-body">
                     <div className="location-coords">
                       📍 {loc.state}, {loc.country} · {loc.visitedDate}

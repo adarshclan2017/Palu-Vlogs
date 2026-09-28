@@ -65,11 +65,12 @@ export default function LocationsPage() {
               </p>
             </div>
 
-            <div style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', height: '220px' }}>
+            <div style={{ borderRadius: 'var(--radius-md)', overflow: 'hidden', height: '240px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0d0c0b' }}>
+              <img src={selectedLoc.coverImage} alt="" className="location-bg-blur" aria-hidden="true" />
               <img
                 src={selectedLoc.coverImage}
                 alt={selectedLoc.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{ position: 'relative', zIndex: 1, maxWidth: '100%', maxHeight: '100%', width: 'auto', height: 'auto', objectFit: 'contain', borderRadius: '4px', boxShadow: '0 8px 24px rgba(0,0,0,0.6)' }}
               />
             </div>
           </div>
@@ -89,12 +90,20 @@ export default function LocationsPage() {
                 onClick={() => setSelectedLoc(loc)}
                 style={{ cursor: 'pointer' }}
               >
-                <img
-                  src={loc.coverImage || '/assets/images/about_roadtrip.jpg'}
-                  alt={loc.name}
-                  className="location-cover"
-                  loading="lazy"
-                />
+                <div className="location-img-frame">
+                  <img
+                    src={loc.coverImage || '/assets/images/about_roadtrip.jpg'}
+                    alt=""
+                    className="location-bg-blur"
+                    aria-hidden="true"
+                  />
+                  <img
+                    src={loc.coverImage || '/assets/images/about_roadtrip.jpg'}
+                    alt={loc.name}
+                    className="location-cover"
+                    loading="lazy"
+                  />
+                </div>
                 <div className="location-body">
                   <div className="location-coords">
                     📍 {loc.state}, {loc.country} • {loc.visitedDate}

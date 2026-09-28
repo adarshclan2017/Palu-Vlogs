@@ -129,7 +129,9 @@ const ManageLocations = () => {
         <div className="locations-grid">
           {locations.map(loc => (
             <div key={loc._id} className="location-card">
-              <img src={loc.coverImage} alt={loc.name} className="location-cover" />
+              <div className="location-img-frame">
+                <img src={loc.coverImage} alt={loc.name} className="location-cover" />
+              </div>
               <div className="location-body">
                 <div className="location-coords">📍 {loc.state}, {loc.country} · {loc.visitedDate}</div>
                 <h3 className="location-title">{loc.name}</h3>

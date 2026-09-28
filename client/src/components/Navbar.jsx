@@ -63,11 +63,12 @@ const Navbar = () => {
             )}
 
             <a
-              href="https://youtube.com/@paluvlogs"
+              href="https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1"
               target="_blank"
               rel="noopener noreferrer"
               className="btn-gold"
               style={{ padding: '8px 18px', fontSize: '13px' }}
+              title="Subscribe to Palu Vlogs on YouTube"
             >
               <span>Subscribe</span>
               <span>▶</span>
@@ -98,6 +99,16 @@ const Navbar = () => {
           <Link to="/locations" className="nav-link" onClick={closeMobile}>Adventures</Link>
           <Link to="/about" className="nav-link" onClick={closeMobile}>About</Link>
           <Link to="/contact" className="nav-link" onClick={closeMobile}>Contact</Link>
+          <a
+            href="https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="nav-link"
+            style={{ color: 'var(--gold)', fontWeight: 700 }}
+            onClick={closeMobile}
+          >
+            ▶ Subscribe on YouTube
+          </a>
           {isAuthenticated ? (
             <>
               <Link to="/admin" className="nav-link" style={{ color: 'var(--gold)' }} onClick={closeMobile}>Dashboard</Link>

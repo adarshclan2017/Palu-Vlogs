@@ -12,11 +12,11 @@ export default function Footer() {
             <p className="footer-desc">Four friends, one camera, and a vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.</p>
             <div className="footer-socials">
               {[
-                { href: 'https://youtube.com/@paluvlogs', icon: '▶' },
+                { href: 'https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1', icon: '▶' },
                 { href: 'https://instagram.com/paluvlogs', icon: '📸' },
                 { href: 'https://whatsapp.com', icon: '💬' },
               ].map(({ href, icon }) => (
-                <a key={href} href={href} target="_blank" rel="noopener noreferrer" className="footer-social-btn">{icon}</a>
+                <a key={href} href={href} target="_blank" rel="noopener noreferrer" className="footer-social-btn" title="Subscribe on YouTube">{icon}</a>
               ))}
             </div>
           </div>
@@ -40,9 +40,9 @@ export default function Footer() {
               <span>🎬 125K+ Subscribers</span>
               <span>👁 4.8M+ Total Views</span>
             </div>
-            <Link href="https://youtube.com/@paluvlogs" target="_blank"
+            <Link href="https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1" target="_blank"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 20, background: 'var(--red)', color: '#fff', padding: '10px 18px', borderRadius: 8, fontWeight: 800, fontSize: 13 }}>
-              ▶ Watch on YouTube
+              ▶ Subscribe on YouTube
             </Link>
           </div>
         </div>

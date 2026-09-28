@@ -40,7 +40,7 @@ const Footer = () => {
               Four friends, one camera, and a vegetable-costume joke that became a movement. Weekly road trips across Kerala and beyond!
             </p>
             <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
-              <a href="https://youtube.com/@paluvlogs" target="_blank" rel="noopener noreferrer" className="share-btn" title="YouTube">📺 YouTube</a>
+              <a href="https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1" target="_blank" rel="noopener noreferrer" className="share-btn" title="Subscribe to Palu Vlogs on YouTube">📺 YouTube</a>
               <a href="https://instagram.com/paluvlogs" target="_blank" rel="noopener noreferrer" className="share-btn" title="Instagram">📸 Instagram</a>
               <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer" className="share-btn" title="WhatsApp">💬 WhatsApp</a>
             </div>

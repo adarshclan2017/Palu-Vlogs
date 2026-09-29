@@ -207,6 +207,17 @@ export const dataStore = {
     const [d] = db.photos.splice(i, 1); saveLocalStore(); return d;
   },
 
+  updatePhoto: async (id, data) => {
+    if (getStatus()) {
+      const { default: PhotoModel } = await import('../models/Photo.js');
+      return PhotoModel.findByIdAndUpdate(id, data, { new: true });
+    }
+    const db = initLocalStore();
+    const i = (db.photos || []).findIndex(p => p._id === id);
+    if (i === -1) return null;
+    db.photos[i] = { ...db.photos[i], ...data }; saveLocalStore(); return db.photos[i];
+  },
+
   // Locations
   getLocations: async () => {
     if (getStatus()) {

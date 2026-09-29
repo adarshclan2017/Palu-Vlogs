@@ -68,6 +68,7 @@ export const api = {
   },
   getAlbums: () => request('/gallery/albums'),
   createPhoto: (data) => request('/gallery', { method: 'POST', body: data }),
+  updatePhoto: (id, data) => request(`/gallery/${id}`, { method: 'PUT', body: data }),
   deletePhoto: (id) => request(`/gallery/${id}`, { method: 'DELETE' }),
 
   // Locations

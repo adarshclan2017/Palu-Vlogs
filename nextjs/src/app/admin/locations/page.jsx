@@ -8,6 +8,7 @@ export default function ManageLocationsPage() {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingLocation, setEditingLocation] = useState(null);
   const [toast, setToast] = useState(null);
 
   const [name, setName] = useState('');
@@ -33,27 +34,60 @@ export default function ManageLocationsPage() {
     fetchLocations();
   }, []);
 
-  const handleAdd = async (e) => {
+  const openAddModal = () => {
+    setEditingLocation(null);
+    setName('');
+    setState('Kerala');
+    setCountry('India');
+    setDescription('');
+    setCoverImage('');
+    setVisitedDate('2026');
+    setModalOpen(true);
+  };
+
+  const openEditModal = (loc) => {
+    setEditingLocation(loc);
+    setName(loc.name || '');
+    setState(loc.state || 'Kerala');
+    setCountry(loc.country || 'India');
+    setDescription(loc.description || '');
+    setCoverImage(loc.coverImage || '');
+    setVisitedDate(loc.visitedDate || '2026');
+    setModalOpen(true);
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.createLocation({
+      const payload = {
         name,
         state,
         country,
         description,
         coverImage: coverImage || '/assets/images/about_roadtrip.jpg',
         visitedDate
-      });
+      };
+
+      let res;
+      if (editingLocation) {
+        res = await api.updateLocation(editingLocation._id, payload);
+      } else {
+        res = await api.createLocation(payload);
+      }
+
       if (res?.success) {
-        setToast({ message: 'Location added successfully!', type: 'success' });
+        setToast({
+          message: editingLocation ? 'Destination updated successfully! 📍' : 'Destination added successfully! 📍',
+          type: 'success'
+        });
         setModalOpen(false);
-        setName('');
-        setDescription('');
-        setCoverImage('');
+        setEditingLocation(null);
         fetchLocations();
+      } else {
+        setToast({ message: res?.message || 'Operation failed', type: 'error' });
       }
     } catch (err) {
-      setToast({ message: err.message || 'Failed to add location', type: 'error' });
+      setToast({ message: err.message || 'Failed to save destination', type: 'error' });
     }
   };
 
@@ -62,11 +96,11 @@ export default function ManageLocationsPage() {
     try {
       const res = await api.deleteLocation(id);
       if (res?.success) {
-        setToast({ message: 'Location deleted successfully', type: 'success' });
+        setToast({ message: 'Destination deleted successfully', type: 'success' });
         fetchLocations();
       }
     } catch (err) {
-      setToast({ message: err.message || 'Failed to delete location', type: 'error' });
+      setToast({ message: err.message || 'Failed to delete destination', type: 'error' });
     }
   };
 
@@ -74,13 +108,13 @@ export default function ManageLocationsPage() {
     <div>
       <div className="admin-topbar">
         <div>
-          <h1 style={{ fontSize: '32px', color: 'var(--cream)' }}>Manage Destinations</h1>
+          <h1 style={{ fontSize: '32px', color: 'var(--cream)' }}>Places Explored (Destinations)</h1>
           <p style={{ color: 'var(--stone)', fontSize: '14px' }}>
-            Add and manage the road trip routes and scenic pins explored by the gang
+            Add, update, or remove the road trip routes and scenic spots explored by the gang
           </p>
         </div>
 
-        <button onClick={() => setModalOpen(true)} className="btn-primary" style={{ padding: '10px 20px' }}>
+        <button onClick={openAddModal} className="btn-primary" style={{ padding: '10px 20px' }}>
           + Add New Destination
         </button>
       </div>
@@ -91,7 +125,7 @@ export default function ManageLocationsPage() {
         </div>
       ) : locations.length === 0 ? (
         <div style={{ padding: '40px', textAlign: 'center', background: 'var(--panel)', borderRadius: 'var(--radius-md)' }}>
-          <p style={{ color: 'var(--stone)' }}>No destinations added yet.</p>
+          <p style={{ color: 'var(--stone)' }}>No destinations added yet. Click "+ Add New Destination" to start!</p>
         </div>
       ) : (
         <div className="admin-table-wrap">
@@ -124,13 +158,22 @@ export default function ManageLocationsPage() {
                   <td>📍 {loc.state}, {loc.country}</td>
                   <td>{loc.visitedDate}</td>
                   <td>
-                    <button
-                      onClick={() => handleDelete(loc._id, loc.name)}
-                      className="share-btn"
-                      style={{ padding: '4px 10px', fontSize: '12px', color: '#ff604c' }}
-                    >
-                      Delete 🗑️
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={() => openEditModal(loc)}
+                        className="share-btn"
+                        style={{ padding: '4px 10px', fontSize: '12px', color: 'var(--gold)' }}
+                      >
+                        Edit ✏️
+                      </button>
+                      <button
+                        onClick={() => handleDelete(loc._id, loc.name)}
+                        className="share-btn"
+                        style={{ padding: '4px 10px', fontSize: '12px', color: '#ff604c' }}
+                      >
+                        Delete 🗑️
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -139,17 +182,17 @@ export default function ManageLocationsPage() {
         </div>
       )}
 
-      {/* Add Modal */}
+      {/* Add / Edit Modal */}
       {modalOpen && (
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setModalOpen(false)}>✕</button>
 
             <h3 style={{ fontSize: '24px', color: 'var(--gold)', marginBottom: '20px' }}>
-              Add Travel Destination
+              {editingLocation ? '✏️ Edit Travel Destination' : '📍 Add Travel Destination'}
             </h3>
 
-            <form onSubmit={handleAdd}>
+            <form onSubmit={handleSave}>
               <div className="form-group">
                 <label className="form-label">Destination Name *</label>
                 <input
@@ -218,7 +261,7 @@ export default function ManageLocationsPage() {
                   Cancel
                 </button>
                 <button type="submit" className="btn-primary">
-                  Save Destination 📍
+                  {editingLocation ? 'Update Destination 💾' : 'Save Destination 📍'}
                 </button>
               </div>
             </form>

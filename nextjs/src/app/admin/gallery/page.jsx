@@ -9,6 +9,7 @@ export default function ManageGalleryPage() {
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState(null);
   const [toast, setToast] = useState(null);
 
   const [title, setTitle] = useState('');
@@ -36,29 +37,59 @@ export default function ManageGalleryPage() {
     fetchGallery();
   }, []);
 
-  const handleUpload = async (e) => {
+  const openUploadModal = () => {
+    setEditingPhoto(null);
+    setTitle('');
+    setCaption('');
+    setAlbumSlug('season-2-road-trips');
+    setLocation('Kerala');
+    setImageUrl('');
+    setModalOpen(true);
+  };
+
+  const openEditModal = (p) => {
+    setEditingPhoto(p);
+    setTitle(p.title || '');
+    setCaption(p.caption || '');
+    setAlbumSlug(p.albumSlug || 'season-2-road-trips');
+    setLocation(p.location || 'Kerala');
+    setImageUrl(p.imageUrl || '');
+    setModalOpen(true);
+  };
+
+  const handleSave = async (e) => {
     e.preventDefault();
     try {
-      if (!imageUrl) throw new Error('Please select an image to upload');
+      if (!imageUrl) throw new Error('Please select an image');
 
-      const res = await api.createPhoto({
+      const payload = {
         title,
         caption,
         albumSlug,
         location,
         imageUrl
-      });
+      };
+
+      let res;
+      if (editingPhoto) {
+        res = await api.updatePhoto(editingPhoto._id, payload);
+      } else {
+        res = await api.createPhoto(payload);
+      }
 
       if (res?.success) {
-        setToast({ message: '🎉 Photo uploaded successfully!', type: 'success' });
+        setToast({
+          message: editingPhoto ? 'Photo updated successfully! 🖼️' : '🎉 Photo uploaded successfully!',
+          type: 'success'
+        });
         setModalOpen(false);
-        setTitle('');
-        setCaption('');
-        setImageUrl('');
+        setEditingPhoto(null);
         fetchGallery();
+      } else {
+        setToast({ message: res?.message || 'Operation failed', type: 'error' });
       }
     } catch (err) {
-      setToast({ message: err.message || 'Upload failed', type: 'error' });
+      setToast({ message: err.message || 'Operation failed', type: 'error' });
     }
   };
 
@@ -81,11 +112,11 @@ export default function ManageGalleryPage() {
         <div>
           <h1 style={{ fontSize: '32px', color: 'var(--cream)' }}>Manage Photo Gallery</h1>
           <p style={{ color: 'var(--stone)', fontSize: '14px' }}>
-            Upload, organize into albums, and manage photo captures
+            Upload, update, organize into albums, and manage photo captures
           </p>
         </div>
 
-        <button onClick={() => setModalOpen(true)} className="btn-gold" style={{ padding: '10px 20px' }}>
+        <button onClick={openUploadModal} className="btn-gold" style={{ padding: '10px 20px' }}>
           + Upload New Photo
         </button>
       </div>
@@ -96,7 +127,7 @@ export default function ManageGalleryPage() {
         </div>
       ) : photos.length === 0 ? (
         <div style={{ padding: '40px', textAlign: 'center', background: 'var(--panel)', borderRadius: 'var(--radius-md)' }}>
-          <p style={{ color: 'var(--stone)' }}>No photos in gallery. Click "Upload New Photo" to add one!</p>
+          <p style={{ color: 'var(--stone)' }}>No photos in gallery. Click "+ Upload New Photo" to add one!</p>
         </div>
       ) : (
         <div className="admin-table-wrap">
@@ -127,13 +158,22 @@ export default function ManageGalleryPage() {
                   <td>📍 {p.location || 'Kerala'}</td>
                   <td><span className="badge">{p.albumSlug || 'General'}</span></td>
                   <td>
-                    <button
-                      onClick={() => handleDelete(p._id, p.title)}
-                      className="share-btn"
-                      style={{ padding: '4px 10px', fontSize: '12px', color: '#ff604c' }}
-                    >
-                      Delete 🗑️
-                    </button>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={() => openEditModal(p)}
+                        className="share-btn"
+                        style={{ padding: '4px 10px', fontSize: '12px', color: 'var(--gold)' }}
+                      >
+                        Edit ✏️
+                      </button>
+                      <button
+                        onClick={() => handleDelete(p._id, p.title)}
+                        className="share-btn"
+                        style={{ padding: '4px 10px', fontSize: '12px', color: '#ff604c' }}
+                      >
+                        Delete 🗑️
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -142,79 +182,81 @@ export default function ManageGalleryPage() {
         </div>
       )}
 
-      {/* Upload Modal */}
+      {/* Upload / Edit Modal */}
       {modalOpen && (
         <div className="modal-overlay" onClick={() => setModalOpen(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setModalOpen(false)}>✕</button>
 
             <h3 style={{ fontSize: '24px', color: 'var(--gold)', marginBottom: '20px' }}>
-              Add New Photo to Gallery
+              {editingPhoto ? '✏️ Edit Photo Details' : '🖼️ Add New Photo to Gallery'}
             </h3>
 
-            <form onSubmit={handleUpload}>
+            <form onSubmit={handleSave}>
               <div className="form-group">
                 <label className="form-label">Photo Title *</label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Potato Star at Tea Plantation"
+                  placeholder="e.g. Sunset over Vagamon hills"
                   required
-                  className="form-input"
-                />
-              </div>
-
-              <ImageUploader
-                value={imageUrl}
-                onChange={setImageUrl}
-                label="Photo File *"
-                helpText="Select JPG, PNG, WebP from your device or drop it here"
-              />
-
-              <div className="form-group">
-                <label className="form-label">Caption / Memory</label>
-                <input
-                  type="text"
-                  value={caption}
-                  onChange={(e) => setCaption(e.target.value)}
-                  placeholder="Brief fun backstory..."
                   className="form-input"
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div className="form-group">
-                  <label className="form-label">Location</label>
-                  <input
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Munnar, Kerala"
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Album</label>
+                  <label className="form-label">Album / Category</label>
                   <select
                     value={albumSlug}
                     onChange={(e) => setAlbumSlug(e.target.value)}
                     className="form-select"
                   >
                     <option value="season-2-road-trips">Season 2 Road Trips</option>
-                    <option value="vegetable-gang-memories">Vegetable Gang Memories</option>
-                    <option value="backwater-diaries">Backwater Diaries</option>
+                    <option value="street-food-crawls">Street Food Crawls</option>
+                    <option value="behind-the-scenes">Behind the Scenes</option>
+                    <option value="vegetable-gang-memes">Vegetable Gang Memes</option>
+                    <option value="fan-meetups">Fan Meetups</option>
                   </select>
                 </div>
+
+                <div className="form-group">
+                  <label className="form-label">Location Tag</label>
+                  <input
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="e.g. Vagamon, Kerala"
+                    className="form-input"
+                  />
+                </div>
+              </div>
+
+              <ImageUploader
+                value={imageUrl}
+                onChange={setImageUrl}
+                label="Photo Image"
+                helpText="Upload a crisp capture (PNG, JPG, WebP) from device"
+              />
+
+              <div className="form-group">
+                <label className="form-label">Caption / Backstory</label>
+                <textarea
+                  value={caption}
+                  onChange={(e) => setCaption(e.target.value)}
+                  placeholder="Write what happened during this shot..."
+                  rows={2}
+                  className="form-textarea"
+                />
               </div>
 
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '24px' }}>
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-ghost">
                   Cancel
                 </button>
-                <button type="submit" className="btn-gold">
-                  Upload Photo 📸
+                <button type="submit" className="btn-primary">
+                  {editingPhoto ? 'Update Photo 💾' : 'Upload to Gallery 🚀'}
                 </button>
               </div>
             </form>

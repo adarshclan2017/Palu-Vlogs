@@ -63,7 +63,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
     { href: '/admin', label: 'Dashboard Overview', icon: '📊', exact: true },
     { href: '/admin/vlogs', label: 'Manage Vlogs', icon: '🎬' },
     { href: '/admin/gallery', label: 'Photo Gallery', icon: '🖼️' },
-    { href: '/admin/locations', label: 'Adventures & Maps', icon: '📍' },
+    { href: '/admin/locations', label: 'Places Explored', icon: '📍' },
     { href: '/admin/messages', label: 'Contact Inquiries', icon: '📬', badge: unreadCount },
     { href: '/admin/settings', label: 'Site Settings', icon: '⚙️' },
   ];

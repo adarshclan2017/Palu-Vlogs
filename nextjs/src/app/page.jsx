@@ -9,7 +9,16 @@ import HeroSquadDP from '@/components/HeroSquadDP';
 import MountainSnowText from '@/components/MountainSnowText';
 
 export default function Home() {
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState(() => {
+    // Read from localStorage synchronously — shows correct image from frame 1, no flash
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('palu_settings_cache');
+        if (raw) return JSON.parse(raw);
+      } catch {}
+    }
+    return null;
+  });
   const [latestVlogs, setLatestVlogs] = useState([]);
   const [popularVlogs, setPopularVlogs] = useState([]);
   const [featuredVlog, setFeaturedVlog] = useState(null);
@@ -22,11 +31,7 @@ export default function Home() {
   const [lightboxIndex, setLightboxIndex] = useState(-1);
 
   useEffect(() => {
-    // Step 1: Show cached settings IMMEDIATELY (no flash, no wait)
-    const cached = api.getCachedSettings();
-    if (cached) setSettings(cached);
-
-    // Step 2: Fetch fresh data from MongoDB in background
+    // Fetch fresh data from MongoDB in background (cache already shown from useState)
     const fetchData = async () => {
       try {
         const [settingsRes, vlogsRes, photosRes, locsRes] = await Promise.all([
@@ -113,7 +118,7 @@ export default function Home() {
               <HeroSquadDP
                 profileImage={settings?.profileImage}
                 coverImage={settings?.coverImage}
-                fallback="/assets/images/hero_team.jpg"
+                fallback={settings ? null : '/assets/images/hero_team.jpg'}
               />
             </div>
           </div>

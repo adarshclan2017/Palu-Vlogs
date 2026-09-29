@@ -108,7 +108,7 @@ export default function Home() {
             <div className="hero-art">
               <div className="hero-badge-wrap">
                 <img
-                  src={settings?.coverImage || '/assets/images/hero_team.jpg'}
+                  src={settings?.profileImage || settings?.coverImage || '/assets/images/hero_team.jpg'}
                   alt="Palu Vlogs Squad"
                   className="hero-badge"
                 />

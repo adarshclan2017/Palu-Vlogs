@@ -775,12 +775,21 @@ export const dataStore = {
     if (getStatus()) {
       try {
         const { default: SSModel } = await import('../models/SiteSettings.js');
-        let s = await SSModel.findOne();
+        // Always force a fresh read from MongoDB - never cache or fall through to local
+        const s = await SSModel.findOne().lean();
         if (s) return s;
+        // No document yet - upsert defaults into MongoDB so future saves persist
+        const created = await SSModel.findOneAndUpdate(
+          {},
+          { $setOnInsert: initLocalStore().settings || {} },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+        return created;
       } catch (err) {
         console.warn('getSettings mongo error:', err.message);
       }
     }
+    // Only reach here when MongoDB is genuinely unavailable
     return initLocalStore().settings;
   },
 
@@ -790,14 +799,15 @@ export const dataStore = {
         const { default: SSModel } = await import('../models/SiteSettings.js');
         const updated = await SSModel.findOneAndUpdate(
           {},
-          { $set: data, updatedAt: new Date() },
+          { $set: { ...data, updatedAt: new Date() } },
           { upsert: true, new: true, setDefaultsOnInsert: true }
         );
         if (updated) {
+          // Mirror to local as secondary backup only
           const db = initLocalStore();
           db.settings = { ...db.settings, ...data, updatedAt: new Date().toISOString() };
           saveLocalStore();
-          return updated;
+          return updated.toObject ? updated.toObject() : updated;
         }
       } catch (err) {
         console.warn('updateSettings mongo error:', err.message);

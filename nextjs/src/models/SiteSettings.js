@@ -7,11 +7,11 @@ const siteSettingsSchema = new mongoose.Schema({
   },
   tagline: {
     type: String,
-    default: 'Oru Palu Vlogs — Vegetable Gang | Fun · Vibes · Memories · Chaos'
+    default: "It's not about the views, it's about the memories"
   },
   bio: {
     type: String,
-    default: 'Four friends, one camera, and a running vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.'
+    default: "A passionate group of teams and friends from Kanniyakumari, capturing unscripted road journeys, coastal rides, and authentic moments. Started in April 2026 — for us, it's not about the views, it's about the memories."
   },
   profileImage: {
     type: String,

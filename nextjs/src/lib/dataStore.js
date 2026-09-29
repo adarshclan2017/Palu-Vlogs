@@ -47,8 +47,8 @@ function initLocalStore() {
     settings: {
       _id: 'settings_1',
       channelName: 'Palu Vlogs',
-      tagline: 'Oru Palu Vlogs — Vegetable Gang | Fun · Vibes · Memories · Chaos',
-      bio: 'Four friends, one camera, and a running vegetable-costume joke that got completely out of hand.',
+      tagline: "It's not about the views, it's about the memories",
+      bio: "A passionate group of teams and friends from Kanniyakumari, capturing unscripted road journeys, coastal rides, and authentic moments. Started in April 2026 — for us, it's not about the views, it's about the memories.",
       profileImage: '',
       coverImage: '',
       youtubeUrl: 'https://youtube.com/@paluvlogs',

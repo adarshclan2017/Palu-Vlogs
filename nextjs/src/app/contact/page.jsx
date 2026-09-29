@@ -134,7 +134,7 @@ export default function ContactPage() {
                 <div className="contact-icon">📍</div>
                 <div>
                   <div style={{ fontSize: '12px', color: 'var(--stone)', textTransform: 'uppercase', fontWeight: 700 }}>Base Location</div>
-                  <div style={{ fontSize: '15px', color: 'var(--cream)', fontWeight: 600 }}>Kochi / Ernakulam, Kerala, India</div>
+                  <div style={{ fontSize: '15px', color: 'var(--cream)', fontWeight: 600 }}>Kanniyakumari, Tamil Nadu, India</div>
                 </div>
               </div>
 

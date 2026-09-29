@@ -11,8 +11,8 @@ export default function AdminSettingsPage() {
 
   const DEFAULTS = {
     channelName: 'Palu Vlogs',
-    tagline: 'Oru Palu Vlogs — Vegetable Gang | Fun · Vibes · Memories · Chaos',
-    bio: 'Four friends, one camera, and a running vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.',
+    tagline: "It's not about the views, it's about the memories",
+    bio: "A passionate group of teams and friends from Kanniyakumari, capturing unscripted road journeys, coastal rides, and authentic moments. Started in April 2026 — for us, it's not about the views, it's about the memories.",
     profileImage: '',
     coverImage: '',
     youtubeUrl: 'https://youtube.com/@paluvlogs',

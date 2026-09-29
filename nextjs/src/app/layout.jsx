@@ -6,12 +6,12 @@ import Footer from '@/components/Footer';
 import WatermelonMascot from '@/components/WatermelonMascot';
 
 export const metadata = {
-  title: 'Palu Vlogs — Official YouTube Vlogger Portal',
-  description: 'Official YouTube Vlog website for Palu Vlogs and the Vegetable Gang. Watch latest road trips, Kerala adventures, and browse behind the scenes.',
-  keywords: 'Palu Vlogs, Vegetable Gang, Kerala, YouTube, Road Trip, Vlog',
+  title: 'Palu Vlogs — Unscripted Road Trips & Memories',
+  description: "Official YouTube Vlog portal for Palu Vlogs. A group of teams and friends from Kanniyakumari. It's not about the views, it's about the memories.",
+  keywords: 'Palu Vlogs, Kanniyakumari, Road Trip, YouTube Vlogger, Memories',
   openGraph: {
-    title: 'Palu Vlogs — Vegetable Gang',
-    description: 'Fun · Vibes · Memories · Chaos from Kerala',
+    title: 'Palu Vlogs — Kanniyakumari Squad',
+    description: "It's not about the views, it's about the memories — Palu Vlogs from Kanniyakumari.",
     type: 'website',
   },
 };

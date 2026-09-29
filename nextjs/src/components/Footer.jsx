@@ -14,7 +14,7 @@ export default function Footer({ initialSettings = null }) {
   }, [initialSettings]);
 
   const channelName = settings?.channelName || 'Palu Vlogs';
-  const bio = settings?.bio || 'Four friends, one camera, and a vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.';
+  const bio = settings?.bio || "A passionate group of teams and friends from Kanniyakumari, capturing unscripted road journeys, coastal rides, and authentic moments. Started in April 2026 — for us, it's not about the views, it's about the memories.";
   const email = settings?.email || 'contact@paluvlogs.com';
   const subscriberCount = settings?.subscriberCount || '125K';
   const totalViews = settings?.totalViews || '4.8M';
@@ -39,7 +39,7 @@ export default function Footer({ initialSettings = null }) {
           <div className="footer-col-nav">
             <h4 className="footer-col-title">Explore</h4>
             <nav className="footer-nav">
-              {[['/', 'Home'], ['/vlogs', 'Vlogs'], ['/gallery', 'Gallery'], ['/locations', 'Locations'], ['/about', 'About Me'], ['/contact', 'Contact']].map(([href, label]) => (
+              {[['/', 'Home'], ['/vlogs', 'Vlogs'], ['/gallery', 'Gallery'], ['/locations', 'Locations'], ['/about', 'About Us'], ['/contact', 'Contact']].map(([href, label]) => (
                 <Link key={href} href={href} className="footer-nav-link">{label}</Link>
               ))}
             </nav>
@@ -49,7 +49,7 @@ export default function Footer({ initialSettings = null }) {
             <h4 className="footer-col-title">Connect</h4>
             <div className="footer-info">
               <span>📧 {email}</span>
-              <span>📍 Kerala, India</span>
+              <span>📍 Kanniyakumari, Tamil Nadu, India</span>
               <span>🎬 {subscriberCount}+ Subs</span>
               <span>👁 {totalViews}+ Views</span>
             </div>
@@ -60,8 +60,8 @@ export default function Footer({ initialSettings = null }) {
         </div>
 
         <div className="footer-bottom">
-          <span>© {year} {channelName} — Vegetable Gang. All rights reserved.</span>
-          <span style={{ color: 'var(--gold)', fontWeight: 700 }}>Made with 🥦 in Kerala</span>
+          <span>© {year} {channelName}. All rights reserved.</span>
+          <span style={{ color: 'var(--gold)', fontWeight: 700 }}>Made with ❤️ in Kanniyakumari</span>
         </div>
       </div>
     </footer>

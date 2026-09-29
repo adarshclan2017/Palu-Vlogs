@@ -59,7 +59,7 @@ export default function HomePageClient({
 
               <p className="hero-tag">
                 {settings?.bio ||
-                  'Four friends, one camera, and a running vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.'}
+                  "A passionate group of teams and friends from Kanniyakumari, capturing unscripted road journeys, coastal rides, and authentic moments. Started in April 2026 — for us, it's not about the views, it's about the memories."}
               </p>
 
               <div className="hero-actions">
@@ -259,7 +259,7 @@ export default function HomePageClient({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '36px', flexWrap: 'wrap', gap: '16px' }}>
               <div className="section-head" style={{ marginBottom: 0 }}>
                 <h2>Locations Visited</h2>
-                <p>The destinations across Kerala and beyond where our cameras rolled.</p>
+                <p>The destinations across Kanniyakumari and beyond where our cameras rolled.</p>
               </div>
               <Link href="/locations" className="btn-ghost">
                 View All Locations ({locations.length}) →
@@ -300,13 +300,13 @@ export default function HomePageClient({
         <div className="wrap">
           <div style={{ background: 'var(--panel)', padding: '48px 36px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--line)', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
             <span className="kicker">The Story</span>
-            <h2 style={{ fontSize: '36px', marginBottom: '16px' }}>Four Friends. One Camera. Zero Plan.</h2>
+            <h2 style={{ fontSize: '36px', marginBottom: '16px' }}>It's Not About The Views. It's About The Memories.</h2>
             <p style={{ color: 'var(--stone)', fontSize: '16px', lineHeight: 1.7, marginBottom: '16px', maxWidth: '720px', margin: '0 auto 16px' }}>
               {settings?.bio ||
-                'We started filming our weekend scooter trips across Kerala with no script and no budget. What started as casual spontaneous travel quickly became a full-blown passion project documenting beautiful roads, authentic flavors, and real memories.'}
+                "We are a group of teams and friends from Kanniyakumari. Our journey began in April 2026 with unscripted road trips, scenic rides, and unfiltered laughs. For our squad, it has never been about chasing views — it's all about the memories we create together."}
             </p>
             <p style={{ color: 'var(--cream)', fontSize: '16px', fontWeight: 600, lineHeight: 1.7, marginBottom: '28px', maxWidth: '720px', margin: '0 auto 28px' }}>
-              Today, {settings?.channelName || 'Palu Vlogs'} is a family of {settings?.subscriberCount || '125K'}+ subscribers who ride along with us on every hairpin turn and roadside food stop.
+              Today, {settings?.channelName || 'Palu Vlogs'} is a growing family of {settings?.subscriberCount || '125K'}+ subscribers riding along on every coastal road and adventure.
             </p>
             <Link href="/about" className="btn-primary" style={{ display: 'inline-flex' }}>
               Read Our Full Story →

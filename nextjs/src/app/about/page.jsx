@@ -22,8 +22,8 @@ export default async function AboutPage() {
   const settings = rawSettings ? JSON.parse(JSON.stringify(rawSettings)) : null;
 
   const channelName = settings?.channelName || 'Palu Vlogs';
-  const tagline = settings?.tagline || 'Fun · Vibes · Memories · Chaos';
-  const bio = settings?.bio || 'Four friends, one camera, and unscripted road trips across scenic routes, street food runs, and high-energy laughter.';
+  const tagline = settings?.tagline || "It's not about the views, it's about the memories";
+  const bio = settings?.bio || "A passionate group of teams and friends from Kanniyakumari, capturing unscripted road journeys, coastal rides, and authentic moments. Started in April 2026 — for us, it's not about the views, it's about the memories.";
   const subscriberCount = settings?.subscriberCount || '125K';
   const totalViews = settings?.totalViews || '4.8M';
   const coverImage = settings?.coverImage || null;
@@ -81,7 +81,7 @@ export default async function AboutPage() {
             {bio}
           </p>
           <p style={{ color: 'var(--stone)', fontSize: '16px', lineHeight: 1.8, marginBottom: '18px' }}>
-            What began as spontaneous road trips exploring Kerala's mountain passes and coastal highways quickly transformed into an energetic community of travelers, food lovers, and creators. We ride with open minds, capture authentic unfiltered moments, and celebrate the journey over the destination.
+            What started in April 2026 as spontaneous road trips from Kanniyakumari brought together our group of teams. We ride with open minds, capture authentic unfiltered moments, and cherish every single adventure. For our squad, it has never been about chasing numbers or views — it is, and always will be, about the memories we create together.
           </p>
           <div style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', marginTop: '28px', paddingTop: '24px', borderTop: '1px solid var(--line)' }}>
             <div>
@@ -105,7 +105,7 @@ export default async function AboutPage() {
                 100%
               </div>
               <div style={{ fontSize: '13px', color: 'var(--stone)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Real Unscripted Vibes
+                Memories & Pure Vibes
               </div>
             </div>
           </div>
@@ -120,7 +120,7 @@ export default async function AboutPage() {
             <ul className="about-features-list">
               <li className="about-feature-item">Sony FX3 & A7 IV with 24-70mm GM II lens</li>
               <li className="about-feature-item">GoPro Hero 12 Black mounted on helmet for road POV</li>
-              <li className="about-feature-item">DJI Mini 4 Pro drone for aerial Kerala landscapes</li>
+              <li className="about-feature-item">DJI Mini 4 Pro drone for aerial coastal landscapes</li>
               <li className="about-feature-item">Rode Wireless PRO mics with wind deadcats for high-speed riding</li>
               <li className="about-feature-item">Apple M3 Max MacBook Pro with DaVinci Resolve Studio</li>
             </ul>
@@ -131,11 +131,10 @@ export default async function AboutPage() {
               🏆 Channel Milestones
             </h4>
             <ul className="about-features-list">
-              <li className="about-feature-item"><strong>May 2024:</strong> First video uploaded (The Scooter Experiment)</li>
-              <li className="about-feature-item"><strong>Nov 2024:</strong> 10,000 Subscribers milestone achieved</li>
-              <li className="about-feature-item"><strong>June 2025:</strong> 50,000 Subscribers & YouTube Silver Creator Award</li>
-              <li className="about-feature-item"><strong>Jan 2026:</strong> 100,000 Subscribers & 4.5M+ total views</li>
-              <li className="about-feature-item"><strong>Present:</strong> Season 2 Live with community episodes!</li>
+              <li className="about-feature-item"><strong>April 2026:</strong> Official Launch — Palu Vlogs started from Kanniyakumari!</li>
+              <li className="about-feature-item"><strong>Season 1:</strong> Coastal road trips, spontaneous challenges, and memories captured</li>
+              <li className="about-feature-item"><strong>Community:</strong> A passionate group of teams exploring southern roads</li>
+              <li className="about-feature-item"><strong>Our Motto:</strong> It's not about the views, it's about the memories!</li>
             </ul>
           </div>
         </div>

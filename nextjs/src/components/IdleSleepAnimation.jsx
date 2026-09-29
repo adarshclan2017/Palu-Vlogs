@@ -82,13 +82,47 @@ export default function IdleSleepAnimation() {
               <line x1="88" y1="96" x2="85" y2="120" strokeWidth="3"/>
               <line x1="112" y1="96" x2="115" y2="120" strokeWidth="3"/>
 
-              {/* BODY */}
-              <path d="M 70 122 Q 65 120 62 130 L 58 210 Q 64 222 100 224 Q 136 222 142 210 L 138 130 Q 135 120 130 122 Z" strokeWidth="3.5"/>
-              <path d="M 82 135 Q 100 142 118 135" strokeWidth="1.8"/>
+              {/* ── SHIRT BODY ── */}
+              <path d="M 70 122 Q 65 120 62 130 L 60 170 L 140 170 L 138 130 Q 135 120 130 122 Z" strokeWidth="3.5"/>
+              {/* V-neck collar */}
+              <path d="M 88 120 Q 100 136 112 120" strokeWidth="2.5"/>
+              {/* PALU VLOGS text on shirt */}
+              <text x="100" y="148" fontSize="12" textAnchor="middle"
+                fill="#f0e6c8" fontFamily="Anton, sans-serif" letterSpacing="1.5">PALU</text>
+              <text x="100" y="163" fontSize="11" textAnchor="middle"
+                fill="#f0e6c8" fontFamily="Anton, sans-serif" letterSpacing="1">VLOGS</text>
+              {/* Shirt hem line (where shirt meets pants) */}
+              <path d="M 60 170 Q 100 174 140 170" strokeWidth="2.5"/>
+              {/* Shirt side seams */}
+              <line x1="62" y1="130" x2="60" y2="170" strokeWidth="1.5"/>
+              <line x1="138" y1="130" x2="140" y2="170" strokeWidth="1.5"/>
 
-              {/* LEFT ARM — raised up */}
+              {/* ── PANTS ── */}
+              {/* Waistband */}
+              <path d="M 58 168 Q 100 176 142 168 L 142 182 Q 100 190 58 182 Z" strokeWidth="2.8"/>
+              {/* Belt buckle */}
+              <rect x="93" y="170" width="14" height="9" rx="2" strokeWidth="2"/>
+              <line x1="100" y1="170" x2="100" y2="179" strokeWidth="1.5"/>
+              {/* Left trouser leg */}
+              <path d="M 60 182 Q 56 182 54 186 L 46 300 Q 48 310 66 312 Q 78 312 82 302 L 86 190 Q 84 182 78 182 Z" strokeWidth="3"/>
+              {/* Left inner seam */}
+              <line x1="68" y1="186" x2="66" y2="308" strokeWidth="1.5"/>
+              {/* Left trouser cuff */}
+              <path d="M 46 302 Q 66 314 84 302" strokeWidth="2"/>
+              {/* Right trouser leg */}
+              <path d="M 122 182 Q 116 182 114 190 L 118 302 Q 122 312 134 312 Q 152 312 154 302 L 146 186 Q 144 182 140 182 Z" strokeWidth="3"/>
+              {/* Right inner seam */}
+              <line x1="132" y1="186" x2="134" y2="308" strokeWidth="1.5"/>
+              {/* Right trouser cuff */}
+              <path d="M 116 302 Q 136 314 154 302" strokeWidth="2"/>
+
+              {/* LEFT ARM — raised up (shirt sleeve) */}
               <g className="sk-arm-up-l" style={{transformOrigin:'70px 128px'}}>
+                {/* Sleeve (slightly wider) */}
+                <path d="M 64 126 Q 54 90 36 56 Q 44 52 48 56 Q 62 90 76 126 Z" strokeWidth="2.5"/>
                 <line x1="70" y1="128" x2="40" y2="60" strokeWidth="3.5"/>
+                {/* Sleeve cuff */}
+                <path d="M 34 52 Q 44 48 52 56" strokeWidth="2.2"/>
                 <line x1="40" y1="60" x2="18" y2="8" strokeWidth="3"/>
                 {/* Hand */}
                 <path d="M 18 8 Q 8 4 4 12 Q 2 20 10 22" strokeWidth="2.5"/>
@@ -99,9 +133,13 @@ export default function IdleSleepAnimation() {
                 <path d="M 4 12 Q -2 6 2 0 Q 8 -4 14 4" strokeWidth="2.5"/>
               </g>
 
-              {/* RIGHT ARM — raised up */}
+              {/* RIGHT ARM — raised up (shirt sleeve) */}
               <g className="sk-arm-up-r" style={{transformOrigin:'130px 128px'}}>
+                {/* Sleeve */}
+                <path d="M 136 126 Q 146 90 164 56 Q 156 52 152 56 Q 138 90 124 126 Z" strokeWidth="2.5"/>
                 <line x1="130" y1="128" x2="160" y2="60" strokeWidth="3.5"/>
+                {/* Sleeve cuff */}
+                <path d="M 148 52 Q 158 48 166 56" strokeWidth="2.2"/>
                 <line x1="160" y1="60" x2="182" y2="8" strokeWidth="3"/>
                 {/* Hand */}
                 <path d="M 182 8 Q 192 4 196 12 Q 198 20 190 22" strokeWidth="2.5"/>
@@ -112,17 +150,13 @@ export default function IdleSleepAnimation() {
                 <path d="M 196 12 Q 202 6 198 0 Q 192 -4 186 4" strokeWidth="2.5"/>
               </g>
 
-              {/* LEFT LEG */}
-              <line x1="85" y1="223" x2="75" y2="320" strokeWidth="3.5"/>
-              <line x1="75" y1="320" x2="68" y2="385" strokeWidth="3.2"/>
-              {/* Left foot */}
-              <path d="M 68 385 Q 52 388 40 398 Q 38 406 50 408 Q 66 410 78 402 Q 82 396 76 390" strokeWidth="2.8"/>
+              {/* LEFT SHOE */}
+              <path d="M 46 308 Q 30 312 18 322 Q 16 330 28 332 Q 46 334 58 326 Q 62 320 56 314" strokeWidth="2.8"/>
+              <path d="M 28 332 Q 22 340 26 344 Q 34 346 44 340" strokeWidth="2"/>
 
-              {/* RIGHT LEG */}
-              <line x1="115" y1="223" x2="125" y2="320" strokeWidth="3.5"/>
-              <line x1="125" y1="320" x2="132" y2="385" strokeWidth="3.2"/>
-              {/* Right foot */}
-              <path d="M 132 385 Q 148 388 160 398 Q 162 406 150 408 Q 134 410 122 402 Q 118 396 124 390" strokeWidth="2.8"/>
+              {/* RIGHT SHOE */}
+              <path d="M 154 308 Q 170 312 182 322 Q 184 330 172 332 Q 154 334 142 326 Q 138 320 144 314" strokeWidth="2.8"/>
+              <path d="M 172 332 Q 178 340 174 344 Q 166 346 156 340" strokeWidth="2"/>
 
             </g>
           </svg>

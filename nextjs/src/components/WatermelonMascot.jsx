@@ -42,7 +42,13 @@ const GANG_CHARACTERS = [
       { line1: 'Dai Cucumber edit,', line2: 'stop sleeping now! 🥒😴' },
       { line1: 'Cabbage fifty layers,', line2: 'zero brain bro! 🥬🤣' },
       { line1: 'Tomato stop blushing,', line2: 'look at Pumpkin! 🍅💃' },
-      { line1: 'Onion stop crying,', line2: 'nobody cut you! 🧅😭' }
+      { line1: 'Onion stop crying,', line2: 'nobody cut you! 🧅😭' },
+      { line1: 'I am the captain', line2: 'of Palu Vlogs! 🍉👑' },
+      { line1: 'Click like subscribe,', line2: 'or I smash head! 🍉👍' },
+      { line1: 'Coconut pay rent,', line2: 'channel is mine! 🍉💰' },
+      { line1: 'Sweet red juicy,', line2: 'pure summer vibe! 🍉✨' },
+      { line1: 'Carrot your bugs', line2: 'crashed our video! 🥕🐛' },
+      { line1: 'Millions of views,', line2: 'trending number one! 🚀🍉' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'right', offsetPct: 80 },
@@ -61,7 +67,13 @@ const GANG_CHARACTERS = [
       { line1: 'Tomato rolls fast,', line2: 'totally zero brain! 🍅💨' },
       { line1: 'Carrot your code', line2: 'has many bugs! 🐛💻' },
       { line1: 'Beetroot you are', line2: 'not iPhone model! 📱🤣' },
-      { line1: 'Watermelon big head,', line2: 'empty inside bro! 🍉💥' }
+      { line1: 'Watermelon big head,', line2: 'empty inside bro! 🍉💥' },
+      { line1: 'Peel my layers,', line2: 'find pure gold! 🥬✨' },
+      { line1: 'Ladiesfinger stay back,', line2: 'you are too skinny! 🥒😂' },
+      { line1: 'Green and fresh,', line2: 'king of salad! 🥬🥗' },
+      { line1: 'Pumpkin your stomach', line2: 'needs two seats! 🎃💺' },
+      { line1: 'Editor cut scenes,', line2: 'make me hero! 🥬🎬' },
+      { line1: 'Subscribers love me,', line2: 'ten out of ten! 🥬❤️' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'left', offsetPct: 50 },
@@ -80,7 +92,13 @@ const GANG_CHARACTERS = [
       { line1: 'Cabbage walking slowly', line2: 'with fifty layers! 🥬👗' },
       { line1: 'Ladiesfinger did you', line2: 'fast ten years? 🥒💀' },
       { line1: 'Pumpkin move away,', line2: 'blocking vlog camera! 🎃📸' },
-      { line1: 'Onion your smell', line2: 'knocks everyone down! 🧅😵' }
+      { line1: 'Onion your smell', line2: 'knocks everyone down! 🧅😵' },
+      { line1: 'Red round juicy,', line2: 'star of sambar! 🍅🍲' },
+      { line1: 'Don’t squeeze me,', line2: 'juice will blast! 🍅💥' },
+      { line1: 'Watermelon is heavy,', line2: 'I roll faster! 🍅⚡' },
+      { line1: 'Catch me live', line2: 'in every episode! 🍅⭐' },
+      { line1: 'Drop a comment,', line2: 'show some love! 🍅💬' },
+      { line1: 'Spicy rasam boss,', line2: 'can’t cook without! 🍅🌶️' }
     ],
     naturalFacing: 'right',
     initialPos: { edge: 'left', offsetPct: 20 },
@@ -99,7 +117,13 @@ const GANG_CHARACTERS = [
       { line1: 'Beetroot put down', line2: 'that scary phone! 🤳😱' },
       { line1: 'Coconut one hammer', line2: 'breaks you completely! 🔨🥥' },
       { line1: 'Brinjal you are', line2: 'only side dish! 🍆😂' },
-      { line1: 'Cucumber make my', line2: 'vlog biceps bigger! 💪🥒' }
+      { line1: 'Cucumber make my', line2: 'vlog biceps bigger! 💪🥒' },
+      { line1: 'Slim and sharp,', line2: 'top channel guard! 🥒🛡️' },
+      { line1: 'Haters stay out,', line2: 'I will poke! 🥒⚔️' },
+      { line1: 'Onion stop crying,', line2: 'stand in queue! 🧅👮' },
+      { line1: 'Green ninja strike,', line2: 'super crisp moves! 🥒⚡' },
+      { line1: 'Pumpkin no trespassing', line2: 'in food stall! 🎃🚫' },
+      { line1: 'VIP access only,', line2: 'show your sub! 🥒🎫' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'left', offsetPct: 80 },
@@ -118,7 +142,13 @@ const GANG_CHARACTERS = [
       { line1: 'Praying for Carrot', line2: 'buggy broken code! 🙏🥕' },
       { line1: 'Brinjal why that', line2: 'sad purple face? 🍆💔' },
       { line1: 'Pumpkin stop eating', line2: 'all shoot snacks! 🎃🍩' },
-      { line1: 'Cucumber laptop fan', line2: 'sounds like jet! ✈️💻' }
+      { line1: 'Cucumber laptop fan', line2: 'sounds like jet! ✈️💻' },
+      { line1: 'Blessings to all,', line2: 'peace and love! 🥦🕊️' },
+      { line1: 'Watermelon chill out,', line2: 'no anger today! 🍉😇' },
+      { line1: 'My fluffy hair,', line2: 'best salon look! 🥦💇' },
+      { line1: 'Gobi Manchurian star,', line2: 'tastiest of all! 🥦🔥' },
+      { line1: 'May your views', line2: 'cross one billion! 🥦🚀' },
+      { line1: 'Smile for vlog,', line2: 'god is watching! 🥦📸' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'top', offsetPct: 25 },
@@ -137,7 +167,13 @@ const GANG_CHARACTERS = [
       { line1: 'Watermelon bring biryani', line2: 'or get cut! 🍉🍛' },
       { line1: 'Carrot website broke,', line2: 'go fix bugs! 🥕💥' },
       { line1: 'Beetroot shaky shots', line2: 'make team dizzy! 📱🤢' },
-      { line1: 'Pumpkin no slow-mo', line2: 'for bouncing belly! 🎃✂️' }
+      { line1: 'Pumpkin no slow-mo', line2: 'for bouncing belly! 🎃✂️' },
+      { line1: 'Cool like ice,', line2: 'editing 4K vlog! 🥒🎧' },
+      { line1: 'Rendering video now,', line2: 'CPU is melting! 🥒🔥' },
+      { line1: 'Tomato act well,', line2: 'or get trimmed! 🍅✂️' },
+      { line1: 'No caffeine left,', line2: 'only cucumber juice! 🥒🥤' },
+      { line1: 'Color grade done,', line2: 'looks like cinema! 🥒🎬' },
+      { line1: 'Exporting 60 FPS,', line2: 'super buttery smooth! 🥒⚡' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'top', offsetPct: 50 },
@@ -156,7 +192,13 @@ const GANG_CHARACTERS = [
       { line1: 'Cauliflower head error', line2: 'hair not found! 🥦💻' },
       { line1: 'Cucumber my script', line2: 'edits reels instantly! 🥒⚡' },
       { line1: 'Beetroot phone battery', line2: 'dropped to one! 📱🪫' },
-      { line1: 'Cabbage has more', line2: 'layers than CSS! 🥬💻' }
+      { line1: 'Cabbage has more', line2: 'layers than CSS! 🥬💻' },
+      { line1: 'Eat carrot daily,', line2: 'sharp 4K vision! 🥕👀' },
+      { line1: 'Compiled zero errors,', line2: 'pushing to prod! 🥕🚀' },
+      { line1: 'Watermelon big data,', line2: 'small memory leak! 🍉💾' },
+      { line1: 'Coconut WiFi router', line2: 'needs reboot now! 🥥📶' },
+      { line1: 'Halwa or code,', line2: 'sweetest in world! 🥕🍮' },
+      { line1: 'Dark mode enabled,', line2: 'hack the planet! 🥕🕶️' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'top', offsetPct: 75 },
@@ -175,7 +217,13 @@ const GANG_CHARACTERS = [
       { line1: 'Pumpkin your tummy', line2: 'needs pin code! 🎃🏋️' },
       { line1: 'Tomato gets squashed', line2: 'in every episode! 🍅💥' },
       { line1: 'Cucumber stop watching', line2: 'anime until midnight! 🥒📺' },
-      { line1: 'I make everyone', line2: 'cry so easily! 💪🧅' }
+      { line1: 'I make everyone', line2: 'cry so easily! 💪🧅' },
+      { line1: 'Sambar without me', line2: 'is just warm water! 🧅🍲' },
+      { line1: 'Biryani fried onion,', line2: 'pure crispy heaven! 🧅🍗' },
+      { line1: 'Who dared touch', line2: 'my purple crown? 🧅👑' },
+      { line1: 'Strong emotional drama,', line2: 'tears of joy! 🧅🎭' },
+      { line1: 'Hit that bell,', line2: 'never miss video! 🧅🔔' },
+      { line1: 'Toughest in kitchen,', line2: 'nobody beats me! 🧅💪' }
     ],
     naturalFacing: 'right',
     initialPos: { edge: 'right', offsetPct: 20 },
@@ -194,7 +242,13 @@ const GANG_CHARACTERS = [
       { line1: 'Brinjal one joke', line2: "and you're banned! 🍆🚫" },
       { line1: 'Watermelon pay channel', line2: 'rent for hat! 🍉💰' },
       { line1: 'Onion step away', line2: 'camera is crying! 🧅😭' },
-      { line1: 'I pay bills', line2: 'while kids fight! 🌴👑' }
+      { line1: 'I pay bills', line2: 'while kids fight! 🌴👑' },
+      { line1: 'Hard shell outside,', line2: 'sweet coconut water! 🥥🌴' },
+      { line1: 'Server bill paid,', line2: 'stream is live! 🥥📶' },
+      { line1: 'Cucumber do work,', line2: 'deadline is today! 🥒⏰' },
+      { line1: 'Chutney chief executive,', line2: 'respect the admin! 🥥👔' },
+      { line1: 'Coconut break ceremony', line2: 'for new milestone! 🥥🎉' },
+      { line1: 'All vlog profits', line2: 'stored in vault! 🥥💎' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'right', offsetPct: 50 },
@@ -213,7 +267,13 @@ const GANG_CHARACTERS = [
       { line1: 'Ladiesfinger did your', line2: 'tiny battery die? 🥒🔋' },
       { line1: 'Cabbage my camera', line2: "says you're expired! 🔴🥬" },
       { line1: 'Coconut we know', line2: 'you are bald! 🕶️🥥' },
-      { line1: 'Watermelon upgrade to', line2: 'ultra HD now! 🍉📱' }
+      { line1: 'Watermelon upgrade to', line2: 'ultra HD now! 🍉📱' },
+      { line1: 'Glowing ruby red,', line2: 'natural lip gloss! 🔴💄' },
+      { line1: 'Check my outfit,', line2: 'fashion week icon! 🔴✨' },
+      { line1: 'Pumpkin step aside,', line2: 'lighting is mine! 🎃💡' },
+      { line1: 'One million likes', line2: 'on my selfie! 📱❤️' },
+      { line1: 'Healthy blood juice,', line2: 'run ten miles! 🔴🏃' },
+      { line1: 'Red carpet ready,', line2: 'take my picture! 🔴📸' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'bottom', offsetPct: 25 },
@@ -232,7 +292,13 @@ const GANG_CHARACTERS = [
       { line1: 'Onion daily crying', line2: 'like TV serial! 😭🧅' },
       { line1: 'Watermelon bowling ball', line2: 'wearing funny hat! 🍉🎳' },
       { line1: 'Cauliflower shock haircut', line2: 'looks super funny! 🥦⚡' },
-      { line1: 'Catch rolling Tomato', line2: 'into hot sambar! 🍅🍲' }
+      { line1: 'Catch rolling Tomato', line2: 'into hot sambar! 🍅🍲' },
+      { line1: 'Golden royal giant,', line2: 'king of feast! 🎃👑' },
+      { line1: 'Halwa in making,', line2: 'smells so good! 🎃🍮' },
+      { line1: 'Cabbage stop talking,', line2: 'I can squash! 🥬💥' },
+      { line1: 'Bigger than car,', line2: 'vlog mega star! 🎃🚗' },
+      { line1: 'Passed lunch break,', line2: 'where is biryani? 🎃🍛' },
+      { line1: 'Legendary Halloween boss,', line2: 'glow in dark! 🎃✨' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'bottom', offsetPct: 50 },
@@ -251,7 +317,13 @@ const GANG_CHARACTERS = [
       { line1: 'Coconut beach chair', line2: "won't make CEO! 🌴🥥" },
       { line1: 'Carrot coder you', line2: "aren't Elon Musk! 🥕🤓" },
       { line1: 'Ladiesfinger looks like', line2: 'tiny green toothpick! 🥒😆' },
-      { line1: 'Viewers watch vlog', line2: 'only for me! 🍆👑' }
+      { line1: 'Viewers watch vlog', line2: 'only for me! 🍆👑' },
+      { line1: 'Royal shiny purple,', line2: 'glossy crown prince! 🍆✨' },
+      { line1: 'Baingan ka bharta,', line2: 'spiciest sensation! 🍆🔥' },
+      { line1: 'Tomato you roll,', line2: 'I rule throne! 🍅🤴' },
+      { line1: 'Autograph signing line', line2: 'starts right here! 🍆✍️' },
+      { line1: 'Watch my swagger,', line2: 'cinema superstar! 🍆🕶️' },
+      { line1: 'Share this vlog,', line2: 'make me viral! 🍆🚀' }
     ],
     naturalFacing: 'left',
     initialPos: { edge: 'bottom', offsetPct: 75 },

@@ -17,6 +17,7 @@ export default function ManageLocationsPage() {
   const [description, setDescription] = useState('');
   const [coverImage, setCoverImage] = useState('');
   const [visitedDate, setVisitedDate] = useState('2026');
+  const [isSaving, setIsSaving] = useState(false);
 
   const fetchLocations = async () => {
     setLoading(true);
@@ -58,14 +59,16 @@ export default function ManageLocationsPage() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (isSaving) return;
+    setIsSaving(true);
     try {
       const payload = {
-        name,
-        state,
-        country,
-        description,
+        name: name.trim(),
+        state: state.trim(),
+        country: country.trim(),
+        description: description.trim(),
         coverImage: coverImage || '/assets/images/about_roadtrip.jpg',
-        visitedDate
+        visitedDate: visitedDate.trim()
       };
 
       let res;
@@ -82,12 +85,14 @@ export default function ManageLocationsPage() {
         });
         setModalOpen(false);
         setEditingLocation(null);
-        fetchLocations();
+        await fetchLocations();
       } else {
         setToast({ message: res?.message || 'Operation failed', type: 'error' });
       }
     } catch (err) {
       setToast({ message: err.message || 'Failed to save destination', type: 'error' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -260,8 +265,13 @@ export default function ManageLocationsPage() {
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-ghost">
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary">
-                  {editingLocation ? 'Update Destination 💾' : 'Save Destination 📍'}
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="btn-primary"
+                  style={{ opacity: isSaving ? 0.7 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}
+                >
+                  {isSaving ? 'Saving... ⏳' : (editingLocation ? 'Update Destination 💾' : 'Save Destination 📍')}
                 </button>
               </div>
             </form>

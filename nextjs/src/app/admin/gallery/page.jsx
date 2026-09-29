@@ -17,6 +17,7 @@ export default function ManageGalleryPage() {
   const [albumSlug, setAlbumSlug] = useState('season-2-road-trips');
   const [location, setLocation] = useState('Kerala');
   const [imageUrl, setImageUrl] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const fetchGallery = async () => {
     setLoading(true);
@@ -59,14 +60,16 @@ export default function ManageGalleryPage() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (isSaving) return;
+    setIsSaving(true);
     try {
       if (!imageUrl) throw new Error('Please select an image');
 
       const payload = {
-        title,
-        caption,
+        title: title.trim(),
+        caption: caption.trim(),
         albumSlug,
-        location,
+        location: location.trim(),
         imageUrl
       };
 
@@ -84,12 +87,14 @@ export default function ManageGalleryPage() {
         });
         setModalOpen(false);
         setEditingPhoto(null);
-        fetchGallery();
+        await fetchGallery();
       } else {
         setToast({ message: res?.message || 'Operation failed', type: 'error' });
       }
     } catch (err) {
       setToast({ message: err.message || 'Operation failed', type: 'error' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -255,8 +260,13 @@ export default function ManageGalleryPage() {
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-ghost">
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary">
-                  {editingPhoto ? 'Update Photo 💾' : 'Upload to Gallery 🚀'}
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="btn-primary"
+                  style={{ opacity: isSaving ? 0.7 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}
+                >
+                  {isSaving ? 'Saving... ⏳' : (editingPhoto ? 'Update Photo 💾' : 'Upload to Gallery 🚀')}
                 </button>
               </div>
             </form>

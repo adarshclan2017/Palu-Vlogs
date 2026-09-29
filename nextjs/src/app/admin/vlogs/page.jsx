@@ -24,6 +24,7 @@ export default function ManageVlogsPage() {
     isFeatured: false,
     isPopular: false
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   const fetchVlogs = async () => {
     setLoading(true);
@@ -75,6 +76,8 @@ export default function ManageVlogsPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSaving) return;
+    setIsSaving(true);
     try {
       if (editingVlog) {
         const res = await api.updateVlog(editingVlog._id, formData);
@@ -88,9 +91,11 @@ export default function ManageVlogsPage() {
         }
       }
       setModalOpen(false);
-      fetchVlogs();
+      await fetchVlogs();
     } catch (err) {
       setToast({ message: err.message || 'Operation failed', type: 'error' });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -322,8 +327,13 @@ export default function ManageVlogsPage() {
                 <button type="button" onClick={() => setModalOpen(false)} className="btn-ghost">
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary">
-                  {editingVlog ? 'Save Changes' : 'Publish Episode 🚀'}
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="btn-primary"
+                  style={{ opacity: isSaving ? 0.7 : 1, cursor: isSaving ? 'not-allowed' : 'pointer' }}
+                >
+                  {isSaving ? 'Publishing... ⏳' : (editingVlog ? 'Save Changes' : 'Publish Episode 🚀')}
                 </button>
               </div>
             </form>

@@ -93,6 +93,24 @@ export const isObjectId = (id) => {
   return /^[0-9a-fA-F]{24}$/.test(str);
 };
 
+// In-flight concurrency lock to prevent duplicate parallel creations
+const pendingOps = new Map();
+
+function withOpLock(key, fn) {
+  if (pendingOps.has(key)) {
+    return pendingOps.get(key);
+  }
+  const promise = (async () => {
+    try {
+      return await fn();
+    } finally {
+      setTimeout(() => pendingOps.delete(key), 2000);
+    }
+  })();
+  pendingOps.set(key, promise);
+  return promise;
+}
+
 export const dataStore = {
   isMongoActive: () => getStatus(),
 
@@ -175,26 +193,45 @@ export const dataStore = {
   },
 
   createVlog: async (data) => {
-    let created = null;
-    const mongoData = { ...data };
-    if (mongoData.location && !isObjectId(mongoData.location)) {
-      delete mongoData.location;
-    }
-    if (getStatus()) {
-      try {
-        const { default: VlogModel } = await import('../models/Vlog.js');
-        created = await VlogModel.create(mongoData);
-      } catch (err) {
-        console.warn('createVlog mongo error:', err.message);
+    const lockKey = 'vlog:' + (data.youtubeId || data.slug || data.title || '').trim().toLowerCase();
+    return withOpLock(lockKey, async () => {
+      let created = null;
+      const mongoData = { ...data };
+      if (mongoData.location && !isObjectId(mongoData.location)) {
+        delete mongoData.location;
       }
-    }
-    const db = initLocalStore();
-    const v = created
-      ? JSON.parse(JSON.stringify(created))
-      : { _id: `vlog_${Date.now()}`, views: 0, createdAt: new Date().toISOString(), publishedAt: new Date().toISOString(), ...data };
-    db.vlogs = [v, ...(db.vlogs || []).filter(item => item._id !== v._id && item.slug !== v.slug)];
-    saveLocalStore();
-    return created || v;
+      if (getStatus()) {
+        try {
+          const { default: VlogModel } = await import('../models/Vlog.js');
+          const dupCriteria = [];
+          if (mongoData.youtubeId) dupCriteria.push({ youtubeId: mongoData.youtubeId });
+          if (mongoData.slug) dupCriteria.push({ slug: mongoData.slug });
+          if (mongoData.title) dupCriteria.push({ title: mongoData.title });
+          if (dupCriteria.length > 0) {
+            const existing = await VlogModel.findOne({ $or: dupCriteria });
+            if (existing) return existing;
+          }
+          created = await VlogModel.create(mongoData);
+        } catch (err) {
+          console.warn('createVlog mongo error:', err.message);
+        }
+      }
+      const db = initLocalStore();
+      if (mongoData.youtubeId || mongoData.slug || mongoData.title) {
+        const existingLocal = (db.vlogs || []).find(
+          v => (mongoData.youtubeId && v.youtubeId === mongoData.youtubeId) ||
+               (mongoData.slug && v.slug === mongoData.slug) ||
+               (mongoData.title && v.title === mongoData.title)
+        );
+        if (existingLocal) return created || existingLocal;
+      }
+      const v = created
+        ? JSON.parse(JSON.stringify(created))
+        : { _id: `vlog_${Date.now()}`, views: 0, createdAt: new Date().toISOString(), publishedAt: new Date().toISOString(), ...data };
+      db.vlogs = [v, ...(db.vlogs || []).filter(item => item._id !== v._id && item.slug !== v.slug)];
+      saveLocalStore();
+      return created || v;
+    });
   },
 
   updateVlog: async (id, data) => {
@@ -345,26 +382,42 @@ export const dataStore = {
   },
 
   createPhoto: async (data) => {
-    let created = null;
-    const mongoData = { ...data };
-    if (mongoData.album && !isObjectId(mongoData.album)) {
-      delete mongoData.album;
-    }
-    if (getStatus()) {
-      try {
-        const { default: PhotoModel } = await import('../models/Photo.js');
-        created = await PhotoModel.create(mongoData);
-      } catch (err) {
-        console.warn('createPhoto mongo error:', err.message);
+    const lockKey = 'photo:' + ((data.title || '') + (data.imageUrl || '')).trim().toLowerCase();
+    return withOpLock(lockKey, async () => {
+      let created = null;
+      const mongoData = { ...data };
+      if (mongoData.album && !isObjectId(mongoData.album)) {
+        delete mongoData.album;
       }
-    }
-    const db = initLocalStore();
-    const p = created
-      ? JSON.parse(JSON.stringify(created))
-      : { _id: `photo_${Date.now()}`, createdAt: new Date().toISOString(), ...data };
-    db.photos = [p, ...(db.photos || []).filter(item => item._id !== p._id)];
-    saveLocalStore();
-    return created || p;
+      if (getStatus()) {
+        try {
+          const { default: PhotoModel } = await import('../models/Photo.js');
+          if (mongoData.title && mongoData.imageUrl) {
+            const existing = await PhotoModel.findOne({
+              title: mongoData.title,
+              imageUrl: mongoData.imageUrl
+            });
+            if (existing) return existing;
+          }
+          created = await PhotoModel.create(mongoData);
+        } catch (err) {
+          console.warn('createPhoto mongo error:', err.message);
+        }
+      }
+      const db = initLocalStore();
+      if (mongoData.title && mongoData.imageUrl) {
+        const existingLocal = (db.photos || []).find(
+          p => p.title === mongoData.title && p.imageUrl === mongoData.imageUrl
+        );
+        if (existingLocal) return created || existingLocal;
+      }
+      const p = created
+        ? JSON.parse(JSON.stringify(created))
+        : { _id: `photo_${Date.now()}`, createdAt: new Date().toISOString(), ...data };
+      db.photos = [p, ...(db.photos || []).filter(item => item._id !== p._id)];
+      saveLocalStore();
+      return created || p;
+    });
   },
 
   deletePhoto: async (id) => {
@@ -453,26 +506,44 @@ export const dataStore = {
   },
 
   createLocation: async (data) => {
-    let created = null;
-    const mongoData = { ...data };
-    if (Array.isArray(mongoData.vlogs)) {
-      mongoData.vlogs = mongoData.vlogs.filter(v => isObjectId(v));
-    }
-    if (getStatus()) {
-      try {
-        const { default: LocationModel } = await import('../models/Location.js');
-        created = await LocationModel.create(mongoData);
-      } catch (err) {
-        console.warn('createLocation mongo error:', err.message);
+    const cleanName = (data.name || '').trim();
+    const lockKey = 'loc:' + cleanName.toLowerCase();
+    return withOpLock(lockKey, async () => {
+      let created = null;
+      const mongoData = { ...data, name: cleanName };
+      if (Array.isArray(mongoData.vlogs)) {
+        mongoData.vlogs = mongoData.vlogs.filter(v => isObjectId(v));
       }
-    }
-    const db = initLocalStore();
-    const l = created
-      ? JSON.parse(JSON.stringify(created))
-      : { _id: `loc_${Date.now()}`, createdAt: new Date().toISOString(), ...data };
-    db.locations = [...(db.locations || []).filter(item => item._id !== l._id), l];
-    saveLocalStore();
-    return created || l;
+      if (getStatus()) {
+        try {
+          const { default: LocationModel } = await import('../models/Location.js');
+          if (cleanName) {
+            const existing = await LocationModel.findOne({
+              name: { $regex: new RegExp(`^${cleanName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
+            });
+            if (existing) {
+              return existing;
+            }
+          }
+          created = await LocationModel.create(mongoData);
+        } catch (err) {
+          console.warn('createLocation mongo error:', err.message);
+        }
+      }
+      const db = initLocalStore();
+      if (cleanName) {
+        const existingLocal = (db.locations || []).find(l => l.name?.trim().toLowerCase() === cleanName.toLowerCase());
+        if (existingLocal) {
+          return created || existingLocal;
+        }
+      }
+      const l = created
+        ? JSON.parse(JSON.stringify(created))
+        : { _id: `loc_${Date.now()}`, createdAt: new Date().toISOString(), ...data, name: cleanName };
+      db.locations = [...(db.locations || []).filter(item => item._id !== l._id), l];
+      saveLocalStore();
+      return created || l;
+    });
   },
 
   updateLocation: async (id, data) => {

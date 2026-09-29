@@ -304,12 +304,12 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
   const entranceTimerRef = useRef(null);
   const quoteCycleTimerRef = useRef(null);
 
-  // Compact uniform dimensions leaving maximum open space
+  // Enlarged uniform dimensions for clear visibility
   const getDimensions = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     return {
-      width: isMobile ? 54 : 74,
-      height: isMobile ? 78 : 108
+      width: isMobile ? 70 : 96,
+      height: isMobile ? 100 : 136
     };
   };
 
@@ -798,27 +798,26 @@ const VeggieGangMascots = () => {
           z-index: 99990;
         }
 
-        /* Compact uniform size leaving maximum open space, clean subtle shadow (no dark overlay blur) */
+        /* Larger uniform size for lively visibility and crisp interaction */
         .veggie-mascot-card {
           position: fixed;
-          width: 74px !important;
-          height: 108px !important;
+          width: 96px !important;
+          height: 136px !important;
           pointer-events: auto;
           user-select: none;
           touch-action: none;
           cursor: grab;
-          filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
+          filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
           transition: left 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s ease-out, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease-out;
           animation: mascotEntrance 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, mascotFloat 3.4s ease-in-out infinite 0.65s;
         }
-
 
         .veggie-mascot-card.dragging {
           cursor: grabbing;
           animation: none;
           transition: none !important;
           transform: scale(1.08);
-          filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.65)) !important;
+          filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.75)) !important;
         }
 
         .veggie-mascot-card.poofing {
@@ -848,11 +847,11 @@ const VeggieGangMascots = () => {
           position: absolute;
           top: -6px;
           right: -5px;
-          width: 20px;
-          height: 20px;
+          width: 22px;
+          height: 22px;
           border-radius: 50%;
           border: 1.5px solid #ffffff;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -862,85 +861,121 @@ const VeggieGangMascots = () => {
 
         .mascot-arrow-icon {
           color: #ffffff;
-          font-size: 10px;
+          font-size: 11px;
           font-weight: 900;
           line-height: 1;
         }
 
         /* 
-          COMPACT 6-WORD 2-LINE DIALOGUE:
+          SPEECH BUBBLE BOX ON TEXT:
+          - Distinct box with background, gold border, soft shadow & speech notch
           - Automatically CLOSED while scrolling screen!
-          - Avoids unnecessary space (max 95px wide, 10px text, 1.15 line-height).
-          - ZERO overlay: transparent, no box, no border, no background, no blur overlay.
-          - pointer-events: none ensures it NEVER blocks clicks to website elements!
-          - Positioned snug against the mascot edge so it never encroaches into the screen.
         */
         .mascot-text-msg {
           position: absolute;
           z-index: 25;
           pointer-events: none !important;
           user-select: none;
-          background: transparent !important;
-          border: none !important;
-          box-shadow: none !important;
-          padding: 0 !important;
+          background: rgba(16, 14, 13, 0.94) !important;
+          border: 1.5px solid var(--gold) !important;
+          border-radius: 8px !important;
+          box-shadow: 0 4px 18px rgba(0, 0, 0, 0.75), 0 0 12px rgba(255, 201, 60, 0.25) !important;
+          padding: 6px 10px !important;
           margin: 0 !important;
           width: max-content;
-          max-width: 95px;
-          transition: opacity 0.2s;
+          max-width: 145px;
+          backdrop-filter: blur(8px);
+          transition: opacity 0.2s, transform 0.2s;
           display: flex;
           flex-direction: column;
-          gap: 1px;
+          gap: 2px;
+        }
+
+        .mascot-text-msg::after {
+          content: '';
+          position: absolute;
+          width: 0;
+          height: 0;
         }
 
         .mascot-msg-line {
           display: block;
           white-space: nowrap !important;
-          font-family: 'Outfit', 'Montserrat', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-          font-weight: 800;
-          font-size: 10px;
-          line-height: 1.15;
-          color: #ffffff;
-          text-shadow: 
-            -1px -1px 0 #000,
-            1px -1px 0 #000,
-            -1px 1px 0 #000,
-            1px 1px 0 #000;
+          font-family: 'Work Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+          font-weight: 700;
+          font-size: 11px;
+          line-height: 1.25;
+          color: #f4efe4;
           letter-spacing: 0;
         }
 
-        /* Docked on RIGHT edge: Floats strictly to the LEFT of the mascot, snug */
+        .mascot-msg-line:last-child {
+          color: var(--gold);
+          font-weight: 800;
+        }
+
+        /* Docked on RIGHT edge: Floats to the LEFT of the mascot */
         .mascot-text-msg.dock-right {
-          right: calc(100% + 2px);
-          top: 10px;
+          right: calc(100% + 8px);
+          top: 14px;
           text-align: right;
           align-items: flex-end;
         }
-
-        /* Docked on LEFT edge: Floats strictly to the RIGHT of the mascot, snug */
-        .mascot-text-msg.dock-left {
-          left: calc(100% + 2px);
+        .mascot-text-msg.dock-right::after {
           top: 10px;
+          right: -6px;
+          border-top: 5px solid transparent;
+          border-bottom: 5px solid transparent;
+          border-left: 6px solid var(--gold);
+        }
+
+        /* Docked on LEFT edge: Floats to the RIGHT of the mascot */
+        .mascot-text-msg.dock-left {
+          left: calc(100% + 8px);
+          top: 14px;
           text-align: left;
           align-items: flex-start;
         }
+        .mascot-text-msg.dock-left::after {
+          top: 10px;
+          left: -6px;
+          border-top: 5px solid transparent;
+          border-bottom: 5px solid transparent;
+          border-right: 6px solid var(--gold);
+        }
 
-        /* Docked on TOP edge: Floats strictly BELOW the mascot, snug */
+        /* Docked on TOP edge: Floats BELOW the mascot */
         .mascot-text-msg.dock-top {
-          top: calc(100% + 1px);
+          top: calc(100% + 8px);
           left: 50%;
           transform: translateX(-50%);
           text-align: center;
           align-items: center;
         }
+        .mascot-text-msg.dock-top::after {
+          top: -6px;
+          left: 50%;
+          transform: translateX(-50%);
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-bottom: 6px solid var(--gold);
+        }
 
-        /* Docked on BOTTOM edge: Floats strictly ABOVE the mascot, snug */
+        /* Docked on BOTTOM edge: Floats ABOVE the mascot */
         .mascot-text-msg.dock-bottom {
-          bottom: calc(100% + 1px);
+          bottom: calc(100% + 8px);
           left: 50%;
           transform: translateX(-50%);
           text-align: center;
           align-items: center;
+        }
+        .mascot-text-msg.dock-bottom::after {
+          bottom: -6px;
+          left: 50%;
+          transform: translateX(-50%);
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-top: 6px solid var(--gold);
         }
 
         .mascot-splash-layer {
@@ -954,7 +989,7 @@ const VeggieGangMascots = () => {
 
         .mascot-particle {
           position: absolute;
-          font-size: 18px;
+          font-size: 20px;
           animation: particleFly 0.45s ease-out forwards;
         }
 
@@ -1011,21 +1046,26 @@ const VeggieGangMascots = () => {
 
         @media (max-width: 640px) {
           .veggie-mascot-card {
-            width: 52px !important;
-            height: 76px !important;
+            width: 70px !important;
+            height: 100px !important;
           }
           .mascot-arrow-badge {
-            width: 17px;
-            height: 17px;
+            width: 18px;
+            height: 18px;
             top: -4px;
             right: -4px;
           }
           .mascot-arrow-icon {
-            font-size: 8px;
+            font-size: 9px;
+          }
+          .mascot-text-msg {
+            padding: 4px 8px !important;
+            max-width: 120px;
+            border-radius: 6px !important;
           }
           .mascot-msg-line {
-            font-size: 8.5px;
-            line-height: 1.1;
+            font-size: 9.5px;
+            line-height: 1.2;
           }
         }
       `}</style>

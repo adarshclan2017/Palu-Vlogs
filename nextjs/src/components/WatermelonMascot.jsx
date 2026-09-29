@@ -280,88 +280,49 @@ const playPopSound = () => {
 };
 
 /**
- * Calculate 100% collision-free slots along the LEFT and RIGHT edges ONLY.
- * NO stickers on top edge, NO stickers on bottom edge!
- * Provides massive vertical clearance so stickers never touch each other.
+ * Exactly 8 collision-free slots: 4 on LEFT, 4 on RIGHT (ZERO top, ZERO bottom).
+ * Left and Right slots are vertically STAGGERED (Zipper layout):
+ * - Left slots at: 11%, 36%, 61%, 85%
+ * - Right slots at: 18%, 43%, 68%, 91%
+ * Because Left and Right are on completely different vertical rows:
+ * 1. Left text bubbles and Right text bubbles NEVER meet or touch horizontally.
+ * 2. Same-edge text bubbles have over 80px vertical clearance so they NEVER touch vertically.
  */
-const getSafeSlots = (w, h, width, height, isMobile) => {
-  if (isMobile) {
-    // Mobile: 4 spacious slots EXCLUSIVELY on LEFT and RIGHT edges
-    // High top clearance (avoiding header/notch) and high bottom clearance (avoiding footer)
-    return [
-      // 0: Left Upper
-      {
-        slotId: 'mobile-left-1',
-        edge: 'left',
-        x: 6,
-        y: Math.round(h * 0.26 - height / 2),
-        face: 'right',
-        angle: 0
-      },
-      // 1: Left Lower
-      {
-        slotId: 'mobile-left-2',
-        edge: 'left',
-        x: 6,
-        y: Math.round(h * 0.70 - height / 2),
-        face: 'right',
-        angle: 0
-      },
-      // 2: Right Upper
-      {
-        slotId: 'mobile-right-1',
-        edge: 'right',
-        x: Math.max(6, Math.round(w - width - 6)),
-        y: Math.round(h * 0.26 - height / 2),
-        face: 'left',
-        angle: 180
-      },
-      // 3: Right Lower
-      {
-        slotId: 'mobile-right-2',
-        edge: 'right',
-        x: Math.max(6, Math.round(w - width - 6)),
-        y: Math.round(h * 0.70 - height / 2),
-        face: 'left',
-        angle: 180
-      }
-    ];
-  }
+const getEightSlots = (w, h, width, height) => {
+  const leftPcts = [0.11, 0.36, 0.61, 0.85];
+  const rightPcts = [0.18, 0.43, 0.68, 0.91];
 
-  // Desktop: 12 perimeter slots distributed STRICTLY on LEFT (6) and RIGHT (6) edges
-  // ZERO stickers on top, ZERO stickers on bottom
-  const desktopPcts = [0.10, 0.25, 0.40, 0.55, 0.72, 0.87];
-  const leftSlots = desktopPcts.map((pct, idx) => ({
-    slotId: `d-left-${idx + 1}`,
+  const leftSlots = leftPcts.map((pct, idx) => ({
+    slotId: `left-slot-${idx}`,
     edge: 'left',
-    x: 8,
-    y: Math.round(h * pct - height / 2),
+    x: 6,
+    y: Math.max(6, Math.min(h - height - 6, Math.round(h * pct - height / 2))),
     face: 'right',
     angle: 0
   }));
-  const rightSlots = desktopPcts.map((pct, idx) => ({
-    slotId: `d-right-${idx + 1}`,
+
+  const rightSlots = rightPcts.map((pct, idx) => ({
+    slotId: `right-slot-${idx}`,
     edge: 'right',
-    x: Math.max(8, Math.round(w - width - 8)),
-    y: Math.round(h * pct - height / 2),
+    x: Math.max(6, Math.round(w - width - 6)),
+    y: Math.max(6, Math.min(h - height - 6, Math.round(h * pct - height / 2))),
     face: 'left',
     angle: 180
   }));
 
+  // Slots 0..3: Left, Slots 4..7: Right
   return [...leftSlots, ...rightSlots];
 };
 
 /**
  * Individual Interactive Mascot Item for Next.js
- * Guaranteed collision-free: strictly stationed in designated safety slots.
- * Dialogue box is snug and never overlaps other stickers.
+ * Guaranteed collision-free: stationed in 1 of 8 zipper slots.
+ * Dialogue box is snug and never overlaps other speech boxes.
  */
 const SingleMascot = ({
   char,
   slotIndex,
-  isMobile,
   isScrolling,
-  revealedAfterScroll,
   onCycle,
   onSwap
 }) => {
@@ -370,7 +331,7 @@ const SingleMascot = ({
   const [position, setPosition] = useState({ x: -999, y: -999 });
   const [facing, setFacing] = useState('left');
   const [arrowAngle, setArrowAngle] = useState(0);
-  const [dockSide, setDockSide] = useState('right');
+  const [dockSide, setDockSide] = useState('left');
   const [isDragging, setIsDragging] = useState(false);
   const [splashes, setSplashes] = useState([]);
   const [quoteIndex, setQuoteIndex] = useState(0);
@@ -382,12 +343,11 @@ const SingleMascot = ({
   const entranceTimerRef = useRef(null);
   const quoteCycleTimerRef = useRef(null);
 
-  // Enlarged uniform dimensions for clear visibility across devices
   const getDimensions = () => {
-    const mobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     return {
-      width: mobile ? 100 : 108,
-      height: mobile ? 142 : 154
+      width: isMobile ? 84 : 96,
+      height: isMobile ? 118 : 136
     };
   };
 
@@ -396,7 +356,7 @@ const SingleMascot = ({
     const w = window.innerWidth;
     const h = window.innerHeight;
     const { width, height } = getDimensions();
-    const slots = getSafeSlots(w, h, width, height, isMobile);
+    const slots = getEightSlots(w, h, width, height);
     const chosen = slots[targetSlotIdx % slots.length] || slots[0];
 
     return {
@@ -415,21 +375,23 @@ const SingleMascot = ({
     setArrowAngle(slot.angle);
     setDockSide(slot.side);
 
-    // Initial entrance delay
-    const delay = isMobile ? slotIndex * 700 : Math.min(slotIndex * 1500, char.delayMs || 0);
+    // Staggered entrance for 8 slots
+    const delay = Math.min(slotIndex * 350, 2400);
     entranceTimerRef.current = setTimeout(() => {
       setVisible(true);
     }, delay);
 
+    // Stagger quote cycling timing per character so dialogue never changes all at once
+    const quoteInterval = 5500 + (slotIndex % 4) * 800;
     quoteCycleTimerRef.current = setInterval(() => {
       setQuoteIndex((prev) => (prev + 1) % char.quotes.length);
-    }, 6500);
+    }, quoteInterval);
 
     return () => {
       if (entranceTimerRef.current) clearTimeout(entranceTimerRef.current);
       if (quoteCycleTimerRef.current) clearInterval(quoteCycleTimerRef.current);
     };
-  }, [slotIndex, isMobile, char.id]);
+  }, [slotIndex, char.id]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -444,7 +406,7 @@ const SingleMascot = ({
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isDragging, visible, slotIndex, isMobile]);
+  }, [isDragging, visible, slotIndex]);
 
   const handleTouchDismiss = () => {
     if (hasMovedRef.current || !visible || isScrolling) return;
@@ -468,7 +430,7 @@ const SingleMascot = ({
       if (onCycle) {
         onCycle();
       } else {
-        setTimeout(() => setVisible(true), 8000);
+        setTimeout(() => setVisible(true), 6000);
       }
     }, 450);
   };
@@ -516,8 +478,9 @@ const SingleMascot = ({
 
   /**
    * On Drag End:
-   * Snaps strictly to the closest designated perimeter safety slot.
-   * If slot is already occupied, swaps slot index to prevent touching.
+   * Snaps strictly to the closest of the 8 Left/Right slots.
+   * NEVER docks to top or bottom.
+   * If slot is occupied, swaps slot index to prevent touching.
    */
   const onDragEnd = () => {
     if (!isDragging) return;
@@ -526,7 +489,7 @@ const SingleMascot = ({
     const { width, height } = getDimensions();
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const slots = getSafeSlots(w, h, width, height, isMobile);
+    const slots = getEightSlots(w, h, width, height);
 
     let bestIdx = slotIndex;
     let minDiff = Infinity;
@@ -578,7 +541,6 @@ const SingleMascot = ({
   // While scrolling: hide completely
   if (!visible) return null;
   if (isScrolling && !isDragging) return null;
-  if (!isScrolling && revealedAfterScroll === false) return null;
 
   const naturalFacing = char.naturalFacing || 'left';
   const flipScale = facing === naturalFacing ? 1 : -1;
@@ -600,7 +562,7 @@ const SingleMascot = ({
         }
       }}
       onClick={handleTouchDismiss}
-      title={`${char.name} — Click to cycle squad or drag to move!`}
+      title={`${char.name} — Tap to cycle or drag!`}
     >
       {/* Direction Arrow Badge */}
       <div
@@ -661,173 +623,101 @@ const SingleMascot = ({
 
 /**
  * Vegetable Gang Mascots Root Component for Next.js
- * - GUARANTEED NON-OVERLAPPING: Stickers never touch each other or screen corners.
- * - Stickers stick strictly to LEFT and RIGHT edges ONLY (never top or bottom).
- * - On Mobile: 4 spacious, collision-free safety slots (2 on left, 2 on right) with squad rotation.
- * - On Desktop: 12 perimeter slots (6 on left, 6 on right).
+ * - DISPLAYS AT LEAST 8 STICKERS: 4 on the LEFT, 4 on the RIGHT.
+ * - ZERO stickers on top, ZERO stickers on bottom.
+ * - Staggered Zipper layout prevents dialogue speech bubbles from touching each other.
+ * - "ONE IN AND ONE OUT" ROTATION: Cycles continuously so all 12 gang members are displayed!
  * - Auto-closes when scrolling, reappears gracefully when scroll stops.
  */
 const VeggieGangMascots = () => {
   const [isScrolling, setIsScrolling] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  // Mobile active characters in 4 slots: [0, 1, 2, 3] initially (2 on left, 2 on right)
-  const [mobileSlots, setMobileSlots] = useState([0, 1, 2, 3]);
-  const [scrollRevealCount, setScrollRevealCount] = useState(12);
+  // 8 active slots: 4 on LEFT (0..3), 4 on RIGHT (4..7)
+  const [activeSlots, setActiveSlots] = useState([0, 1, 2, 3, 4, 5, 6, 7]);
+  const lastRotatedSlotRef = useRef(0);
 
-  const scrollIdleTimerRef = useRef(null);
-  const revealIntervalRef = useRef(null);
   const scrollTimeoutRef = useRef(null);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 640);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // On Mobile: Rotate one character every 13 seconds so all 12 gang members are featured cleanly
-  useEffect(() => {
-    if (!isMobile) return;
-    const interval = setInterval(() => {
-      setMobileSlots((prev) => {
-        const used = new Set(prev);
-        let nextChar = 0;
-        for (let i = 0; i < GANG_CHARACTERS.length; i++) {
-          const candidate = (prev[prev.length - 1] + 1 + i) % GANG_CHARACTERS.length;
-          if (!used.has(candidate)) {
-            nextChar = candidate;
-            break;
-          }
-        }
-        // Rotate the first slot to the end with the new character
-        return [...prev.slice(1), nextChar];
-      });
-    }, 13000);
-
-    return () => clearInterval(interval);
-  }, [isMobile]);
-
-  // Click on a mobile mascot cycles that slot to next character
-  const handleCycleSlot = (slotIdx) => {
-    if (!isMobile) return;
-    setMobileSlots((prev) => {
-      const used = new Set(prev);
-      let nextChar = 0;
+  // "One in and one out": Smoothly swaps one slot with a character from reserve
+  const cycleOneSlot = (slotIdx) => {
+    setActiveSlots((prev) => {
+      const activeSet = new Set(prev);
+      const reserve = [];
       for (let i = 0; i < GANG_CHARACTERS.length; i++) {
-        const candidate = (prev[slotIdx] + 1 + i) % GANG_CHARACTERS.length;
-        if (!used.has(candidate)) {
-          nextChar = candidate;
-          break;
+        if (!activeSet.has(i)) {
+          reserve.push(i);
         }
       }
-      const updated = [...prev];
-      updated[slotIdx] = nextChar;
-      return updated;
+      if (reserve.length === 0) return prev;
+
+      // Select next reserve character
+      const nextChar = reserve[Math.floor(Math.random() * reserve.length)];
+      const nextSlots = [...prev];
+      nextSlots[slotIdx] = nextChar;
+      return nextSlots;
     });
   };
 
-  // Dragging to another slot swaps the occupants to prevent touching
+  // Continuous "One In and One Out" squad rotation every 7.5 seconds
+  // Alternates between left and right sides so all 12 characters are shown
+  useEffect(() => {
+    const slotCycleSequence = [0, 4, 1, 5, 2, 6, 3, 7];
+    const timer = setInterval(() => {
+      lastRotatedSlotRef.current = (lastRotatedSlotRef.current + 1) % slotCycleSequence.length;
+      const targetSlot = slotCycleSequence[lastRotatedSlotRef.current];
+      cycleOneSlot(targetSlot);
+    }, 7500);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Dragging to another slot swaps occupants so no two stickers ever collide
   const handleSwapSlots = (fromSlotIdx, toSlotIdx) => {
     if (fromSlotIdx === toSlotIdx) return;
-    if (isMobile) {
-      setMobileSlots((prev) => {
-        if (fromSlotIdx >= prev.length || toSlotIdx >= prev.length) return prev;
-        const updated = [...prev];
-        const temp = updated[fromSlotIdx];
-        updated[fromSlotIdx] = updated[toSlotIdx];
-        updated[toSlotIdx] = temp;
-        return updated;
-      });
-    }
+    setActiveSlots((prev) => {
+      if (fromSlotIdx >= prev.length || toSlotIdx >= prev.length) return prev;
+      const updated = [...prev];
+      const temp = updated[fromSlotIdx];
+      updated[fromSlotIdx] = updated[toSlotIdx];
+      updated[toSlotIdx] = temp;
+      return updated;
+    });
   };
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolling(true);
-      setScrollRevealCount(-1);
 
-      if (revealIntervalRef.current) {
-        clearInterval(revealIntervalRef.current);
-        revealIntervalRef.current = null;
-      }
-      if (scrollIdleTimerRef.current) {
-        clearTimeout(scrollIdleTimerRef.current);
-        scrollIdleTimerRef.current = null;
-      }
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
       }, 400);
-
-      scrollIdleTimerRef.current = setTimeout(() => {
-        let count = 0;
-        setScrollRevealCount(0);
-        revealIntervalRef.current = setInterval(() => {
-          count += 1;
-          setScrollRevealCount(count);
-          if (count >= GANG_CHARACTERS.length - 1) {
-            clearInterval(revealIntervalRef.current);
-            revealIntervalRef.current = null;
-            setScrollRevealCount(12);
-          }
-        }, 1500);
-      }, 25000);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     return () => {
       window.removeEventListener('scroll', handleScroll, { capture: true });
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-      if (scrollIdleTimerRef.current) clearTimeout(scrollIdleTimerRef.current);
-      if (revealIntervalRef.current) clearInterval(revealIntervalRef.current);
     };
   }, []);
 
   return (
     <>
       <div className="veggie-gang-mascots-root" aria-live="polite">
-        {isMobile ? (
-          // Mobile: 6 spacious, collision-free slots that cycle through the full gang
-          mobileSlots.map((charIdx, slotIdx) => {
-            const char = GANG_CHARACTERS[charIdx];
-            return (
-              <SingleMascot
-                key={`${char.id}-${slotIdx}`}
-                char={char}
-                slotIndex={slotIdx}
-                isMobile={true}
-                isScrolling={isScrolling}
-                revealedAfterScroll={null}
-                onCycle={() => handleCycleSlot(slotIdx)}
-                onSwap={(targetIdx) => handleSwapSlots(slotIdx, targetIdx)}
-              />
-            );
-          })
-        ) : (
-          // Desktop: 12 perimeter slots with corner buffers
-          GANG_CHARACTERS.map((char, index) => (
+        {activeSlots.map((charIdx, slotIdx) => {
+          const char = GANG_CHARACTERS[charIdx];
+          return (
             <SingleMascot
-              key={char.id}
+              key={`${char.id}-${slotIdx}`}
               char={char}
-              slotIndex={index}
-              isMobile={false}
+              slotIndex={slotIdx}
               isScrolling={isScrolling}
-              revealedAfterScroll={
-                scrollRevealCount === 12
-                  ? null
-                  : scrollRevealCount >= 0
-                    ? index <= scrollRevealCount
-                    : false
-              }
-              onCycle={null}
-              onSwap={null}
+              onCycle={() => cycleOneSlot(slotIdx)}
+              onSwap={(targetIdx) => handleSwapSlots(slotIdx, targetIdx)}
             />
-          ))
-        )}
+          );
+        })}
       </div>
 
       <style>{`
@@ -838,16 +728,16 @@ const VeggieGangMascots = () => {
           z-index: 99990;
         }
 
-        /* Larger uniform size for lively visibility and crisp interaction */
+        /* 8 Stickers: 4 on LEFT, 4 on RIGHT - Spaced and collision-free */
         .veggie-mascot-card {
           position: fixed;
-          width: 108px !important;
-          height: 154px !important;
+          width: 96px !important;
+          height: 136px !important;
           pointer-events: auto;
           user-select: none;
           touch-action: none;
           cursor: grab;
-          filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.6));
+          filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.6));
           transition: left 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s ease-out, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease-out;
           animation: mascotEntrance 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, mascotFloat 3.4s ease-in-out infinite 0.65s;
         }
@@ -1084,43 +974,43 @@ const VeggieGangMascots = () => {
           }
         }
 
-        /* Small screen responsive adjustments: Light more bigger stickers & readable speech boxes */
+        /* Small screen adjustments for 8 stickers (4 Left, 4 Right) */
         @media (max-width: 640px) {
           .veggie-mascot-card {
-            width: 100px !important;
-            height: 142px !important;
+            width: 84px !important;
+            height: 118px !important;
           }
           .mascot-arrow-badge {
-            width: 23px;
-            height: 23px;
-            top: -5px;
-            right: -5px;
+            width: 20px;
+            height: 20px;
+            top: -4px;
+            right: -4px;
           }
           .mascot-arrow-icon {
-            font-size: 11px;
+            font-size: 10px;
           }
           .mascot-text-msg {
-            padding: 6px 10px !important;
-            max-width: 150px;
-            border-radius: 8px !important;
+            padding: 4px 8px !important;
+            max-width: 125px;
+            border-radius: 7px !important;
           }
           .mascot-msg-line {
-            font-size: 11.5px;
-            line-height: 1.25;
+            font-size: 10.5px;
+            line-height: 1.2;
           }
         }
 
         @media (max-width: 380px) {
           .veggie-mascot-card {
-            width: 88px !important;
-            height: 126px !important;
+            width: 74px !important;
+            height: 104px !important;
           }
           .mascot-text-msg {
-            padding: 5px 9px !important;
-            max-width: 135px;
+            padding: 3px 6px !important;
+            max-width: 112px;
           }
           .mascot-msg-line {
-            font-size: 10.5px;
+            font-size: 9.5px;
           }
         }
       `}</style>

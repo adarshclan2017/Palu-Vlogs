@@ -14,8 +14,8 @@ export default function ManageGalleryPage() {
 
   const [title, setTitle] = useState('');
   const [caption, setCaption] = useState('');
-  const [albumSlug, setAlbumSlug] = useState('season-2-road-trips');
-  const [location, setLocation] = useState('Kerala');
+  const [albumSlug, setAlbumSlug] = useState('team');
+  const [location, setLocation] = useState('Kanniyakumari');
   const [imageUrl, setImageUrl] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -42,8 +42,8 @@ export default function ManageGalleryPage() {
     setEditingPhoto(null);
     setTitle('');
     setCaption('');
-    setAlbumSlug('season-2-road-trips');
-    setLocation('Kerala');
+    setAlbumSlug('team');
+    setLocation('Kanniyakumari');
     setImageUrl('');
     setModalOpen(true);
   };
@@ -52,8 +52,8 @@ export default function ManageGalleryPage() {
     setEditingPhoto(p);
     setTitle(p.title || '');
     setCaption(p.caption || '');
-    setAlbumSlug(p.albumSlug || 'season-2-road-trips');
-    setLocation(p.location || 'Kerala');
+    setAlbumSlug(p.albumSlug || 'team');
+    setLocation(p.location || 'Kanniyakumari');
     setImageUrl(p.imageUrl || '');
     setModalOpen(true);
   };
@@ -218,11 +218,8 @@ export default function ManageGalleryPage() {
                     onChange={(e) => setAlbumSlug(e.target.value)}
                     className="form-select"
                   >
-                    <option value="season-2-road-trips">Season 2 Road Trips</option>
-                    <option value="street-food-crawls">Street Food Crawls</option>
-                    <option value="behind-the-scenes">Behind the Scenes</option>
-                    <option value="vegetable-gang-memes">Vegetable Gang Memes</option>
-                    <option value="fan-meetups">Fan Meetups</option>
+                    <option value="team">🫂 Team</option>
+                    <option value="place">📍 Place</option>
                   </select>
                 </div>
 

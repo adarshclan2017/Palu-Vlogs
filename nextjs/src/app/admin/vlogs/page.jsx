@@ -4,7 +4,18 @@ import { api } from '@/lib/api';
 import Toast from '@/components/Toast';
 import ImageUploader from '@/components/ImageUploader';
 
-
+const EMPTY_FORM = {
+  title: '',
+  youtubeUrl: '',
+  description: '',
+  tags: 'Vegetable Gang, Kanniyakumari',
+  locationName: 'Kanniyakumari, Tamil Nadu',
+  duration: '',
+  views: '',
+  isFeatured: false,
+  isPopular: false,
+  thumbnailUrl: ''
+};
 
 export default function ManageVlogsPage() {
   const [vlogs, setVlogs] = useState([]);
@@ -12,18 +23,10 @@ export default function ManageVlogsPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingVlog, setEditingVlog] = useState(null);
   const [toast, setToast] = useState(null);
-
-  const [formData, setFormData] = useState({
-    title: '',
-    youtubeUrl: '',
-    description: '',
-    tags: 'Vegetable Gang, Kerala',
-    locationName: 'Kerala, India',
-    duration: '18:00',
-    isFeatured: false,
-    isPopular: false
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [isSaving, setIsSaving] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const [fetchStatus, setFetchStatus] = useState(null); // { type: 'success'|'error'|'partial', msg }
 
   const fetchVlogs = async () => {
     setLoading(true);
@@ -43,16 +46,8 @@ export default function ManageVlogsPage() {
 
   const openAddModal = () => {
     setEditingVlog(null);
-    setFormData({
-      title: '',
-      youtubeUrl: '',
-      description: '',
-      tags: 'Vegetable Gang, Kerala',
-      locationName: 'Kerala, India',
-      duration: '18:00',
-      isFeatured: false,
-      isPopular: false
-    });
+    setFormData(EMPTY_FORM);
+    setFetchStatus(null);
     setModalOpen(true);
   };
 
@@ -63,12 +58,58 @@ export default function ManageVlogsPage() {
       youtubeUrl: vlog.youtubeUrl || `https://www.youtube.com/watch?v=${vlog.youtubeId}`,
       description: vlog.description,
       tags: Array.isArray(vlog.tags) ? vlog.tags.join(', ') : vlog.tags || '',
-      locationName: vlog.locationName || 'Kerala, India',
-      duration: vlog.duration || '18:00',
+      locationName: vlog.locationName || 'Kanniyakumari, Tamil Nadu',
+      duration: vlog.duration || '',
+      views: vlog.views || '',
       isFeatured: Boolean(vlog.isFeatured),
-      isPopular: Boolean(vlog.isPopular)
+      isPopular: Boolean(vlog.isPopular),
+      thumbnailUrl: vlog.thumbnailUrl || ''
     });
+    setFetchStatus(null);
     setModalOpen(true);
+  };
+
+  // ── Fetch YouTube metadata ──────────────────────────────────────
+  const handleFetchYouTubeMeta = async () => {
+    const url = formData.youtubeUrl.trim();
+    if (!url) {
+      setFetchStatus({ type: 'error', msg: 'Please enter a YouTube URL first.' });
+      return;
+    }
+    setIsFetching(true);
+    setFetchStatus(null);
+    try {
+      const res = await fetch(`/api/youtube-meta?url=${encodeURIComponent(url)}`);
+      const json = await res.json();
+
+      if (!json.success) {
+        setFetchStatus({ type: 'error', msg: json.message || 'Failed to fetch YouTube data.' });
+        return;
+      }
+
+      const d = json.data;
+      setFormData(prev => ({
+        ...prev,
+        title: d.title || prev.title,
+        description: d.description || prev.description,
+        duration: d.duration || prev.duration,
+        views: d.viewCount != null ? d.viewCount : prev.views,
+        thumbnailUrl: d.thumbnailUrl || prev.thumbnailUrl,
+      }));
+
+      if (json.partial) {
+        setFetchStatus({
+          type: 'partial',
+          msg: '✅ Title fetched! Duration & views require a YouTube API key (add YOUTUBE_API_KEY to .env.local).'
+        });
+      } else {
+        setFetchStatus({ type: 'success', msg: '✅ All details fetched successfully from YouTube!' });
+      }
+    } catch (err) {
+      setFetchStatus({ type: 'error', msg: err.message || 'Network error fetching YouTube data.' });
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -109,13 +150,19 @@ export default function ManageVlogsPage() {
     }
   };
 
+  const statusColors = {
+    success: 'var(--green, #4ade80)',
+    partial: 'var(--gold)',
+    error: '#ff604c',
+  };
+
   return (
     <div>
       <div className="admin-topbar">
         <div>
           <h1 style={{ fontSize: '32px', color: 'var(--cream)' }}>Manage Vlogs</h1>
           <p style={{ color: 'var(--stone)', fontSize: '14px' }}>
-            Publish, edit, or delete video episodes with automatic YouTube parsing
+            Publish, edit, or delete video episodes — auto-fetch details from YouTube
           </p>
         </div>
 
@@ -130,7 +177,7 @@ export default function ManageVlogsPage() {
         </div>
       ) : vlogs.length === 0 ? (
         <div style={{ padding: '40px', textAlign: 'center', background: 'var(--panel)', borderRadius: 'var(--radius-md)' }}>
-          <p style={{ color: 'var(--stone)' }}>No vlogs published yet. Click "Add New Vlog" to start!</p>
+          <p style={{ color: 'var(--stone)' }}>No vlogs published yet. Click &quot;Add New Vlog&quot; to start!</p>
         </div>
       ) : (
         <div className="admin-table-wrap">
@@ -155,10 +202,10 @@ export default function ManageVlogsPage() {
                     />
                     <div>
                       <div style={{ fontWeight: 700, color: 'var(--cream)', maxWidth: '300px' }}>{vlog.title}</div>
-                      <div style={{ fontSize: '12px', color: 'var(--stone)' }}>Duration: {vlog.duration}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--stone)' }}>Duration: {vlog.duration || 'N/A'}</div>
                     </div>
                   </td>
-                  <td>{(vlog.views || 0).toLocaleString()}</td>
+                  <td>{vlog.views != null ? Number(vlog.views).toLocaleString() : '—'}</td>
                   <td>
                     {vlog.isFeatured && <span className="badge" style={{ background: 'var(--red)', color: '#fff', marginRight: '4px' }}>Featured</span>}
                     {vlog.isPopular && <span className="badge">Popular</span>}
@@ -202,18 +249,47 @@ export default function ManageVlogsPage() {
             </h3>
 
             <form onSubmit={handleSubmit}>
+              {/* YouTube URL + Fetch Button */}
               <div className="form-group">
                 <label className="form-label">YouTube Video URL *</label>
-                <input
-                  type="text"
-                  value={formData.youtubeUrl}
-                  onChange={(e) => setFormData({ ...formData, youtubeUrl: e.target.value })}
-                  placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
-                  required
-                  className="form-input"
-                />
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                  <input
+                    type="text"
+                    value={formData.youtubeUrl}
+                    onChange={(e) => { setFormData({ ...formData, youtubeUrl: e.target.value }); setFetchStatus(null); }}
+                    placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                    required
+                    className="form-input"
+                    style={{ flex: 1 }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleFetchYouTubeMeta}
+                    disabled={isFetching}
+                    style={{
+                      padding: '10px 16px',
+                      background: isFetching ? 'var(--stone)' : 'var(--gold)',
+                      color: '#000',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: 700,
+                      cursor: isFetching ? 'not-allowed' : 'pointer',
+                      whiteSpace: 'nowrap',
+                      fontSize: '13px',
+                      flexShrink: 0,
+                      transition: 'opacity 0.2s',
+                    }}
+                  >
+                    {isFetching ? '⏳ Fetching...' : '🔍 Fetch Details'}
+                  </button>
+                </div>
+                {fetchStatus && (
+                  <p style={{ fontSize: '12px', color: statusColors[fetchStatus.type] || 'var(--stone)', marginTop: '6px' }}>
+                    {fetchStatus.msg}
+                  </p>
+                )}
                 <span style={{ fontSize: '11px', color: 'var(--stone)' }}>
-                  Paste any YouTube URL. Video ID and thumbnails are extracted automatically!
+                  Click &quot;Fetch Details&quot; to auto-fill title, description, duration &amp; views from YouTube.
                 </span>
               </div>
 
@@ -223,7 +299,7 @@ export default function ManageVlogsPage() {
                   type="text"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  placeholder="e.g. Munnar Fog & The Lost Drumstick Suit"
+                  placeholder="e.g. Kanyakumari Sunrise Memories"
                   required
                   className="form-input"
                 />
@@ -234,25 +310,37 @@ export default function ManageVlogsPage() {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Describe the adventure, road trip story, and timestamps..."
+                  placeholder="Describe the adventure, the team, timestamps..."
                   required
                   rows={4}
                   className="form-textarea"
                 />
               </div>
 
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="form-group">
+                  <label className="form-label">Duration</label>
+                  <input
+                    type="text"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                    placeholder="e.g. 18:30 (auto-filled)"
+                    className="form-input"
+                  />
+                </div>
 
-              <div className="form-group">
-                <label className="form-label">Duration</label>
-                <input
-                  type="text"
-                  value={formData.duration}
-                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                  placeholder="18:30"
-                  className="form-input"
-                />
+                <div className="form-group">
+                  <label className="form-label">Views (number)</label>
+                  <input
+                    type="number"
+                    value={formData.views}
+                    onChange={(e) => setFormData({ ...formData, views: e.target.value })}
+                    placeholder="e.g. 12000 (auto-filled)"
+                    className="form-input"
+                    min="0"
+                  />
+                </div>
               </div>
-
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div className="form-group">
@@ -261,7 +349,7 @@ export default function ManageVlogsPage() {
                     type="text"
                     value={formData.locationName}
                     onChange={(e) => setFormData({ ...formData, locationName: e.target.value })}
-                    placeholder="Munnar, Kerala"
+                    placeholder="Kanniyakumari, Tamil Nadu"
                     className="form-input"
                   />
                 </div>
@@ -272,7 +360,7 @@ export default function ManageVlogsPage() {
                     type="text"
                     value={formData.tags}
                     onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                    placeholder="Kerala, RoadTrip, Food"
+                    placeholder="Kanniyakumari, RoadTrip, Food"
                     className="form-input"
                   />
                 </div>

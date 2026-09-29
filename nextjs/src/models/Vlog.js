@@ -49,8 +49,7 @@ const vlogSchema = new mongoose.Schema({
     default: 'Kerala, India'
   },
   location: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Location'
+    type: mongoose.Schema.Types.Mixed
   },
   views: {
     type: Number,

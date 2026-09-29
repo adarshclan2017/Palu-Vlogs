@@ -15,8 +15,7 @@ const photoSchema = new mongoose.Schema({
     required: true
   },
   album: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Album'
+    type: mongoose.Schema.Types.Mixed
   },
   albumSlug: {
     type: String,

@@ -31,8 +31,7 @@ const locationSchema = new mongoose.Schema({
     default: '2026'
   },
   vlogs: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Vlog'
+    type: mongoose.Schema.Types.Mixed
   }],
   createdAt: {
     type: Date,

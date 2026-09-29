@@ -64,6 +64,12 @@ function saveLocalStore() {
   }
 }
 
+export const isObjectId = (id) => {
+  if (!id) return false;
+  const str = typeof id === 'object' && id._id ? id._id.toString() : id.toString();
+  return /^[0-9a-fA-F]{24}$/.test(str);
+};
+
 export const dataStore = {
   isMongoActive: () => getStatus(),
 
@@ -71,19 +77,30 @@ export const dataStore = {
   getUserByEmail: async (email) => {
     const clean = (email || '').trim().toLowerCase();
     if (getStatus()) {
-      const { default: UserModel } = await import('../models/User.js');
-      return UserModel.findOne({ email: clean }).select('+password');
+      try {
+        const { default: UserModel } = await import('../models/User.js');
+        const user = await UserModel.findOne({ email: clean }).select('+password');
+        if (user) return user;
+      } catch (err) {
+        console.warn('getUserByEmail mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
     return db.users.find(u => u.email.toLowerCase() === clean) || null;
   },
+
   getUserById: async (id) => {
-    if (getStatus()) {
-      const { default: UserModel } = await import('../models/User.js');
-      return UserModel.findById(id);
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: UserModel } = await import('../models/User.js');
+        const user = await UserModel.findById(id);
+        if (user) return user;
+      } catch (err) {
+        console.warn('getUserById mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const user = db.users.find(u => u._id === id);
+    const user = db.users.find(u => u._id === id || (u._id && u._id.toString() === id?.toString()));
     if (!user) return null;
     const { password, ...safe } = user;
     return safe;
@@ -92,15 +109,22 @@ export const dataStore = {
   // Vlogs
   getVlogs: async ({ search, category, tag, sort } = {}) => {
     if (getStatus()) {
-      const { default: VlogModel } = await import('../models/Vlog.js');
-      let query = {};
-      if (category && category !== 'all') query.category = category;
-      if (tag) query.tags = tag;
-      if (search) query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
-      ];
-      return VlogModel.find(query).sort({ publishedAt: -1 });
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        let query = {};
+        if (category && category !== 'all') query.category = category;
+        if (tag) query.tags = tag;
+        if (search) query.$or = [
+          { title: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ];
+        const docs = await VlogModel.find(query).sort({ publishedAt: -1 });
+        if (docs && (docs.length > 0 || search || (category && category !== 'all') || tag)) {
+          return docs;
+        }
+      } catch (err) {
+        console.warn('getVlogs mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
     let result = [...(db.vlogs || [])];
@@ -115,71 +139,176 @@ export const dataStore = {
 
   getVlogBySlug: async (slug) => {
     if (getStatus()) {
-      const { default: VlogModel } = await import('../models/Vlog.js');
-      return VlogModel.findOne({ slug });
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        let v = await VlogModel.findOne({ slug });
+        if (!v && isObjectId(slug)) {
+          v = await VlogModel.findById(slug);
+        }
+        if (v) return v;
+      } catch (err) {
+        console.warn('getVlogBySlug mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    return db.vlogs?.find(v => v.slug === slug) || null;
+    return db.vlogs?.find(v => v.slug === slug || v._id === slug) || null;
   },
 
   createVlog: async (data) => {
+    let created = null;
+    const mongoData = { ...data };
+    if (mongoData.location && !isObjectId(mongoData.location)) {
+      delete mongoData.location;
+    }
     if (getStatus()) {
-      const { default: VlogModel } = await import('../models/Vlog.js');
-      return VlogModel.create(data);
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        created = await VlogModel.create(mongoData);
+      } catch (err) {
+        console.warn('createVlog mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const v = { _id: `vlog_${Date.now()}`, views: 0, createdAt: new Date().toISOString(), publishedAt: new Date().toISOString(), ...data };
-    db.vlogs = [v, ...(db.vlogs || [])];
-    saveLocalStore(); return v;
+    const v = created
+      ? JSON.parse(JSON.stringify(created))
+      : { _id: `vlog_${Date.now()}`, views: 0, createdAt: new Date().toISOString(), publishedAt: new Date().toISOString(), ...data };
+    db.vlogs = [v, ...(db.vlogs || []).filter(item => item._id !== v._id && item.slug !== v.slug)];
+    saveLocalStore();
+    return created || v;
   },
 
   updateVlog: async (id, data) => {
-    if (getStatus()) {
-      const { default: VlogModel } = await import('../models/Vlog.js');
-      return VlogModel.findByIdAndUpdate(id, data, { new: true });
+    const mongoData = { ...data };
+    if (mongoData.location && !isObjectId(mongoData.location)) {
+      delete mongoData.location;
     }
+
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        const updated = await VlogModel.findByIdAndUpdate(id, mongoData, { new: true });
+        if (updated) {
+          const db = initLocalStore();
+          const i = (db.vlogs || []).findIndex(v => v._id === id || v.slug === updated.slug);
+          if (i !== -1) {
+            db.vlogs[i] = { ...db.vlogs[i], ...data };
+            saveLocalStore();
+          }
+          return updated;
+        }
+      } catch (err) {
+        console.warn('updateVlog mongo error:', err.message);
+      }
+    }
+
     const db = initLocalStore();
-    const i = db.vlogs.findIndex(v => v._id === id);
-    if (i === -1) return null;
-    db.vlogs[i] = { ...db.vlogs[i], ...data };
-    saveLocalStore(); return db.vlogs[i];
+    const i = (db.vlogs || []).findIndex(v => v._id === id || v.slug === id);
+    if (i !== -1) {
+      const prevSlug = db.vlogs[i].slug;
+      db.vlogs[i] = { ...db.vlogs[i], ...data };
+      saveLocalStore();
+
+      if (getStatus()) {
+        try {
+          const { default: VlogModel } = await import('../models/Vlog.js');
+          const targetSlug = data.slug || prevSlug;
+          if (targetSlug) {
+            await VlogModel.findOneAndUpdate(
+              { slug: targetSlug },
+              mongoData,
+              { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+          }
+        } catch (e) {
+          console.warn('Sync vlog to mongo failed:', e.message);
+        }
+      }
+      return db.vlogs[i];
+    }
+
+    if (getStatus() && data.slug) {
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        const updated = await VlogModel.findOneAndUpdate({ slug: data.slug }, mongoData, { new: true });
+        if (updated) return updated;
+      } catch {}
+    }
+    return null;
   },
 
   deleteVlog: async (id) => {
-    if (getStatus()) {
-      const { default: VlogModel } = await import('../models/Vlog.js');
-      return VlogModel.findByIdAndDelete(id);
+    let deleted = null;
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        deleted = await VlogModel.findByIdAndDelete(id);
+      } catch (err) {
+        console.warn('deleteVlog mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const i = db.vlogs.findIndex(v => v._id === id);
-    if (i === -1) return null;
-    const [d] = db.vlogs.splice(i, 1); saveLocalStore(); return d;
+    const i = (db.vlogs || []).findIndex(v => v._id === id || v.slug === id);
+    if (i !== -1) {
+      const [d] = db.vlogs.splice(i, 1);
+      saveLocalStore();
+      if (getStatus() && d.slug) {
+        try {
+          const { default: VlogModel } = await import('../models/Vlog.js');
+          await VlogModel.deleteOne({ slug: d.slug });
+        } catch {}
+      }
+      return deleted || d;
+    }
+    return deleted;
   },
 
   incrementVlogViews: async (id) => {
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        return await VlogModel.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+      } catch {}
+    }
     if (getStatus()) {
-      const { default: VlogModel } = await import('../models/Vlog.js');
-      return VlogModel.findByIdAndUpdate(id, { $inc: { views: 1 } }, { new: true });
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        const res = await VlogModel.findOneAndUpdate({ slug: id }, { $inc: { views: 1 } }, { new: true });
+        if (res) return res;
+      } catch {}
     }
     const db = initLocalStore();
     const v = db.vlogs?.find(v => v._id === id || v.slug === id);
-    if (v) { v.views = (v.views || 0) + 1; saveLocalStore(); }
+    if (v) {
+      v.views = (v.views || 0) + 1;
+      saveLocalStore();
+      return v;
+    }
   },
 
   // Gallery
   getAlbums: async () => {
     if (getStatus()) {
-      const { default: AlbumModel } = await import('../models/Album.js');
-      return AlbumModel.find();
+      try {
+        const { default: AlbumModel } = await import('../models/Album.js');
+        const docs = await AlbumModel.find();
+        if (docs && docs.length > 0) return docs;
+      } catch (err) {
+        console.warn('getAlbums mongo error:', err.message);
+      }
     }
     return (initLocalStore().albums || []);
   },
 
   getPhotos: async ({ albumSlug } = {}) => {
     if (getStatus()) {
-      const { default: PhotoModel } = await import('../models/Photo.js');
-      const q = albumSlug && albumSlug !== 'all' ? { albumSlug } : {};
-      return PhotoModel.find(q).sort({ createdAt: -1 });
+      try {
+        const { default: PhotoModel } = await import('../models/Photo.js');
+        const q = albumSlug && albumSlug !== 'all' ? { albumSlug } : {};
+        const docs = await PhotoModel.find(q).sort({ createdAt: -1 });
+        if (docs && (docs.length > 0 || (albumSlug && albumSlug !== 'all'))) return docs;
+      } catch (err) {
+        console.warn('getPhotos mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
     const photos = db.photos || [];
@@ -187,115 +316,294 @@ export const dataStore = {
   },
 
   createPhoto: async (data) => {
+    let created = null;
+    const mongoData = { ...data };
+    if (mongoData.album && !isObjectId(mongoData.album)) {
+      delete mongoData.album;
+    }
     if (getStatus()) {
-      const { default: PhotoModel } = await import('../models/Photo.js');
-      return PhotoModel.create(data);
+      try {
+        const { default: PhotoModel } = await import('../models/Photo.js');
+        created = await PhotoModel.create(mongoData);
+      } catch (err) {
+        console.warn('createPhoto mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const p = { _id: `photo_${Date.now()}`, createdAt: new Date().toISOString(), ...data };
-    db.photos = [p, ...(db.photos || [])]; saveLocalStore(); return p;
+    const p = created
+      ? JSON.parse(JSON.stringify(created))
+      : { _id: `photo_${Date.now()}`, createdAt: new Date().toISOString(), ...data };
+    db.photos = [p, ...(db.photos || []).filter(item => item._id !== p._id)];
+    saveLocalStore();
+    return created || p;
   },
 
   deletePhoto: async (id) => {
-    if (getStatus()) {
-      const { default: PhotoModel } = await import('../models/Photo.js');
-      return PhotoModel.findByIdAndDelete(id);
+    let deleted = null;
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: PhotoModel } = await import('../models/Photo.js');
+        deleted = await PhotoModel.findByIdAndDelete(id);
+      } catch (err) {
+        console.warn('deletePhoto mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
     const i = (db.photos || []).findIndex(p => p._id === id);
-    if (i === -1) return null;
-    const [d] = db.photos.splice(i, 1); saveLocalStore(); return d;
+    if (i !== -1) {
+      const [d] = db.photos.splice(i, 1);
+      saveLocalStore();
+      if (getStatus() && d.title) {
+        try {
+          const { default: PhotoModel } = await import('../models/Photo.js');
+          await PhotoModel.deleteOne({ title: d.title });
+        } catch {}
+      }
+      return deleted || d;
+    }
+    return deleted;
   },
 
   updatePhoto: async (id, data) => {
-    if (getStatus()) {
-      const { default: PhotoModel } = await import('../models/Photo.js');
-      return PhotoModel.findByIdAndUpdate(id, data, { new: true });
+    const mongoData = { ...data };
+    if (mongoData.album && !isObjectId(mongoData.album)) {
+      delete mongoData.album;
     }
+
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: PhotoModel } = await import('../models/Photo.js');
+        const updated = await PhotoModel.findByIdAndUpdate(id, mongoData, { new: true });
+        if (updated) {
+          const db = initLocalStore();
+          const i = (db.photos || []).findIndex(p => p._id === id);
+          if (i !== -1) {
+            db.photos[i] = { ...db.photos[i], ...data };
+            saveLocalStore();
+          }
+          return updated;
+        }
+      } catch (err) {
+        console.warn('updatePhoto mongo error:', err.message);
+      }
+    }
+
     const db = initLocalStore();
     const i = (db.photos || []).findIndex(p => p._id === id);
-    if (i === -1) return null;
-    db.photos[i] = { ...db.photos[i], ...data }; saveLocalStore(); return db.photos[i];
+    if (i !== -1) {
+      db.photos[i] = { ...db.photos[i], ...data };
+      saveLocalStore();
+      if (getStatus() && db.photos[i].title) {
+        try {
+          const { default: PhotoModel } = await import('../models/Photo.js');
+          await PhotoModel.findOneAndUpdate(
+            { title: db.photos[i].title },
+            mongoData,
+            { upsert: true, new: true }
+          );
+        } catch {}
+      }
+      return db.photos[i];
+    }
+    return null;
   },
 
   // Locations
   getLocations: async () => {
     if (getStatus()) {
-      const { default: LocationModel } = await import('../models/Location.js');
-      return LocationModel.find().sort({ visitedDate: -1 });
+      try {
+        const { default: LocationModel } = await import('../models/Location.js');
+        const docs = await LocationModel.find().sort({ visitedDate: -1 });
+        if (docs && docs.length > 0) return docs;
+      } catch (err) {
+        console.warn('getLocations mongo error:', err.message);
+      }
     }
     return (initLocalStore().locations || []);
   },
 
   createLocation: async (data) => {
+    let created = null;
+    const mongoData = { ...data };
+    if (Array.isArray(mongoData.vlogs)) {
+      mongoData.vlogs = mongoData.vlogs.filter(v => isObjectId(v));
+    }
     if (getStatus()) {
-      const { default: LocationModel } = await import('../models/Location.js');
-      return LocationModel.create(data);
+      try {
+        const { default: LocationModel } = await import('../models/Location.js');
+        created = await LocationModel.create(mongoData);
+      } catch (err) {
+        console.warn('createLocation mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const l = { _id: `loc_${Date.now()}`, createdAt: new Date().toISOString(), ...data };
-    db.locations = [...(db.locations || []), l]; saveLocalStore(); return l;
+    const l = created
+      ? JSON.parse(JSON.stringify(created))
+      : { _id: `loc_${Date.now()}`, createdAt: new Date().toISOString(), ...data };
+    db.locations = [...(db.locations || []).filter(item => item._id !== l._id), l];
+    saveLocalStore();
+    return created || l;
   },
 
   updateLocation: async (id, data) => {
-    if (getStatus()) {
-      const { default: LocationModel } = await import('../models/Location.js');
-      return LocationModel.findByIdAndUpdate(id, data, { new: true });
+    const mongoData = { ...data };
+    if (Array.isArray(mongoData.vlogs)) {
+      mongoData.vlogs = mongoData.vlogs.filter(v => isObjectId(v));
     }
+
+    // 1. If valid 24-hex ObjectId, try MongoDB directly
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: LocationModel } = await import('../models/Location.js');
+        const updated = await LocationModel.findByIdAndUpdate(id, mongoData, { new: true });
+        if (updated) {
+          const db = initLocalStore();
+          const i = (db.locations || []).findIndex(l => l._id === id || l._id?.toString() === id.toString() || l.name === updated.name);
+          if (i !== -1) {
+            db.locations[i] = { ...db.locations[i], ...data };
+            saveLocalStore();
+          }
+          return updated;
+        }
+      } catch (err) {
+        console.warn('updateLocation mongo error:', err.message);
+      }
+    }
+
+    // 2. Not an ObjectId (e.g. 'loc_1') or not found by ObjectId in Mongo: update local store & sync to Mongo by name
     const db = initLocalStore();
-    const i = (db.locations || []).findIndex(l => l._id === id);
-    if (i === -1) return null;
-    db.locations[i] = { ...db.locations[i], ...data }; saveLocalStore(); return db.locations[i];
+    const i = (db.locations || []).findIndex(l => l._id === id || l._id?.toString() === id?.toString());
+    if (i !== -1) {
+      const prevName = db.locations[i].name;
+      db.locations[i] = { ...db.locations[i], ...data };
+      saveLocalStore();
+
+      if (getStatus()) {
+        try {
+          const { default: LocationModel } = await import('../models/Location.js');
+          const targetName = data.name || prevName;
+          await LocationModel.findOneAndUpdate(
+            { name: { $regex: new RegExp(`^${targetName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } },
+            { ...mongoData, name: targetName },
+            { upsert: true, new: true, setDefaultsOnInsert: true }
+          );
+        } catch (e) {
+          console.warn('Sync location to mongo failed:', e.message);
+        }
+      }
+      return db.locations[i];
+    }
+
+    // 3. If not in local store, try finding by name in MongoDB
+    if (getStatus() && data.name) {
+      try {
+        const { default: LocationModel } = await import('../models/Location.js');
+        const updated = await LocationModel.findOneAndUpdate(
+          { name: { $regex: new RegExp(`^${data.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } },
+          mongoData,
+          { new: true }
+        );
+        if (updated) return updated;
+      } catch {}
+    }
+    return null;
   },
 
   deleteLocation: async (id) => {
-    if (getStatus()) {
-      const { default: LocationModel } = await import('../models/Location.js');
-      return LocationModel.findByIdAndDelete(id);
+    let deleted = null;
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: LocationModel } = await import('../models/Location.js');
+        deleted = await LocationModel.findByIdAndDelete(id);
+      } catch (err) {
+        console.warn('deleteLocation mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const i = (db.locations || []).findIndex(l => l._id === id);
-    if (i === -1) return null;
-    const [d] = db.locations.splice(i, 1); saveLocalStore(); return d;
+    const i = (db.locations || []).findIndex(l => l._id === id || l._id?.toString() === id?.toString());
+    if (i !== -1) {
+      const [d] = db.locations.splice(i, 1);
+      saveLocalStore();
+      if (getStatus() && d.name) {
+        try {
+          const { default: LocationModel } = await import('../models/Location.js');
+          await LocationModel.deleteOne({ name: { $regex: new RegExp(`^${d.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') } });
+        } catch {}
+      }
+      return deleted || d;
+    }
+    return deleted;
   },
 
   // Contact Messages
   getContactMessages: async () => {
     if (getStatus()) {
-      const { default: CMModel } = await import('../models/ContactMessage.js');
-      return CMModel.find().sort({ createdAt: -1 });
+      try {
+        const { default: CMModel } = await import('../models/ContactMessage.js');
+        const docs = await CMModel.find().sort({ createdAt: -1 });
+        if (docs && docs.length > 0) return docs;
+      } catch (err) {
+        console.warn('getContactMessages mongo error:', err.message);
+      }
     }
     return (initLocalStore().messages || []);
   },
 
   createContactMessage: async (data) => {
+    let created = null;
     if (getStatus()) {
-      const { default: CMModel } = await import('../models/ContactMessage.js');
-      return CMModel.create(data);
+      try {
+        const { default: CMModel } = await import('../models/ContactMessage.js');
+        created = await CMModel.create(data);
+      } catch (err) {
+        console.warn('createContactMessage mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const m = { _id: `msg_${Date.now()}`, isRead: false, createdAt: new Date().toISOString(), ...data };
-    db.messages = [m, ...(db.messages || [])]; saveLocalStore(); return m;
+    const m = created
+      ? JSON.parse(JSON.stringify(created))
+      : { _id: `msg_${Date.now()}`, isRead: false, createdAt: new Date().toISOString(), ...data };
+    db.messages = [m, ...(db.messages || []).filter(item => item._id !== m._id)];
+    saveLocalStore();
+    return created || m;
   },
 
   toggleMessageRead: async (id) => {
-    if (getStatus()) {
-      const { default: CMModel } = await import('../models/ContactMessage.js');
-      const msg = await CMModel.findById(id);
-      if (!msg) return null;
-      msg.isRead = !msg.isRead; await msg.save(); return msg;
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: CMModel } = await import('../models/ContactMessage.js');
+        const msg = await CMModel.findById(id);
+        if (msg) {
+          msg.isRead = !msg.isRead;
+          await msg.save();
+          const db = initLocalStore();
+          const local = (db.messages || []).find(m => m._id === id || m._id?.toString() === id.toString());
+          if (local) {
+            local.isRead = msg.isRead;
+            saveLocalStore();
+          }
+          return msg;
+        }
+      } catch (err) {
+        console.warn('toggleMessageRead mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const msg = (db.messages || []).find(m => m._id === id);
+    const msg = (db.messages || []).find(m => m._id === id || m._id?.toString() === id?.toString());
     if (!msg) return null;
-    msg.isRead = !msg.isRead; saveLocalStore(); return msg;
+    msg.isRead = !msg.isRead;
+    saveLocalStore();
+    return msg;
   },
 
   markAllMessagesAsRead: async () => {
     if (getStatus()) {
-      const { default: CMModel } = await import('../models/ContactMessage.js');
-      await CMModel.updateMany({ isRead: false }, { $set: { isRead: true } });
-      return true;
+      try {
+        const { default: CMModel } = await import('../models/ContactMessage.js');
+        await CMModel.updateMany({ isRead: false }, { $set: { isRead: true } });
+      } catch (err) {
+        console.warn('markAllMessagesAsRead mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
     (db.messages || []).forEach(m => { m.isRead = true; });
@@ -304,35 +612,60 @@ export const dataStore = {
   },
 
   deleteContactMessage: async (id) => {
-    if (getStatus()) {
-      const { default: CMModel } = await import('../models/ContactMessage.js');
-      return CMModel.findByIdAndDelete(id);
+    let deleted = null;
+    if (getStatus() && isObjectId(id)) {
+      try {
+        const { default: CMModel } = await import('../models/ContactMessage.js');
+        deleted = await CMModel.findByIdAndDelete(id);
+      } catch (err) {
+        console.warn('deleteContactMessage mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
-    const i = (db.messages || []).findIndex(m => m._id === id);
-    if (i === -1) return null;
-    const [d] = db.messages.splice(i, 1); saveLocalStore(); return d;
+    const i = (db.messages || []).findIndex(m => m._id === id || m._id?.toString() === id?.toString());
+    if (i !== -1) {
+      const [d] = db.messages.splice(i, 1);
+      saveLocalStore();
+      return deleted || d;
+    }
+    return deleted;
   },
 
   // Newsletter
   addSubscriber: async (email) => {
     if (getStatus()) {
-      const { default: NSModel } = await import('../models/NewsletterSubscriber.js');
-      const exists = await NSModel.findOne({ email });
-      if (exists) return exists;
-      return NSModel.create({ email });
+      try {
+        const { default: NSModel } = await import('../models/NewsletterSubscriber.js');
+        const exists = await NSModel.findOne({ email });
+        if (exists) return exists;
+        const created = await NSModel.create({ email });
+        const db = initLocalStore();
+        if (!db.subscribers) db.subscribers = [];
+        db.subscribers.push(JSON.parse(JSON.stringify(created)));
+        saveLocalStore();
+        return created;
+      } catch (err) {
+        console.warn('addSubscriber mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
     const exists = (db.subscribers || []).find(s => s.email.toLowerCase() === email.toLowerCase());
     if (exists) return exists;
     const s = { _id: `sub_${Date.now()}`, email, isActive: true, subscribedAt: new Date().toISOString() };
-    db.subscribers = [...(db.subscribers || []), s]; saveLocalStore(); return s;
+    db.subscribers = [...(db.subscribers || []), s];
+    saveLocalStore();
+    return s;
   },
 
   getSubscribers: async () => {
     if (getStatus()) {
-      const { default: NSModel } = await import('../models/NewsletterSubscriber.js');
-      return NSModel.find().sort({ subscribedAt: -1 });
+      try {
+        const { default: NSModel } = await import('../models/NewsletterSubscriber.js');
+        const docs = await NSModel.find().sort({ subscribedAt: -1 });
+        if (docs && docs.length > 0) return docs;
+      } catch (err) {
+        console.warn('getSubscribers mongo error:', err.message);
+      }
     }
     return (initLocalStore().subscribers || []);
   },
@@ -340,23 +673,35 @@ export const dataStore = {
   // Settings
   getSettings: async () => {
     if (getStatus()) {
-      const { default: SSModel } = await import('../models/SiteSettings.js');
-      let s = await SSModel.findOne();
-      if (!s) s = await SSModel.create({ channelName: 'Palu Vlogs' });
-      return s;
+      try {
+        const { default: SSModel } = await import('../models/SiteSettings.js');
+        let s = await SSModel.findOne();
+        if (s) return s;
+      } catch (err) {
+        console.warn('getSettings mongo error:', err.message);
+      }
     }
     return initLocalStore().settings;
   },
 
   updateSettings: async (data) => {
     if (getStatus()) {
-      const { default: SSModel } = await import('../models/SiteSettings.js');
-      const updated = await SSModel.findOneAndUpdate(
-        {},
-        { $set: data, updatedAt: new Date() },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
-      );
-      return updated;
+      try {
+        const { default: SSModel } = await import('../models/SiteSettings.js');
+        const updated = await SSModel.findOneAndUpdate(
+          {},
+          { $set: data, updatedAt: new Date() },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+        if (updated) {
+          const db = initLocalStore();
+          db.settings = { ...db.settings, ...data, updatedAt: new Date().toISOString() };
+          saveLocalStore();
+          return updated;
+        }
+      } catch (err) {
+        console.warn('updateSettings mongo error:', err.message);
+      }
     }
     const db = initLocalStore();
     db.settings = { ...db.settings, ...data, updatedAt: new Date().toISOString() };

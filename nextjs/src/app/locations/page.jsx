@@ -46,30 +46,23 @@ export default function LocationsPage() {
         ) : (
           <div className="locations-grid">
             {locations.map(loc => (
-              <div
-                key={loc._id}
-                className="location-card"
-              >
+              <div key={loc._id} className="location-card">
+
+                {/* Full image — no fixed height, no cropping */}
                 {loc.coverImage ? (
-                  <div className="location-img-frame">
-                    <img
-                      src={loc.coverImage}
-                      alt=""
-                      className="location-bg-blur"
-                      aria-hidden="true"
-                    />
-                    <img
-                      src={loc.coverImage}
-                      alt={loc.name}
-                      className="location-cover"
-                      loading="lazy"
-                    />
-                  </div>
+                  <img
+                    src={loc.coverImage}
+                    alt={loc.name}
+                    className="location-cover"
+                    loading="lazy"
+                  />
                 ) : (
                   <div style={{ height: '160px', background: 'var(--panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>
                     📍
                   </div>
                 )}
+
+                {/* Details below image */}
                 <div className="location-body">
                   <div className="location-coords">
                     📍 {loc.state}, {loc.country} • {loc.visitedDate}

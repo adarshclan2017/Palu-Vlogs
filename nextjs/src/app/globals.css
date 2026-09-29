@@ -204,12 +204,13 @@ button,input,textarea,select { font-family: inherit; }
 .gallery-caption { font-size:11.5px; font-weight:700; color:#12100e; margin-top:10px; text-align:center; text-transform:uppercase; }
 
 /* ── Locations ── */
-.locations-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:32px; }
+.locations-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:32px; align-items:start; }
 .location-card { background:var(--panel); border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden; display:flex; flex-direction:column; transition:var(--transition); }
 .location-card:hover { border-color:var(--gold); transform:translateY(-4px); box-shadow:0 16px 36px rgba(0,0,0,.6); }
-.location-img-frame { position:relative; width:100%; background:#0d0c0b; overflow:hidden; display:flex; align-items:center; justify-content:center; border-bottom:1px solid var(--line); }
-.location-bg-blur { position:absolute; inset:-20px; width:calc(100% + 40px); height:calc(100% + 40px); object-fit:cover; filter:blur(28px) brightness(0.38) saturate(1.25); transform:scale(1.15); pointer-events:none; user-select:none; }
-.location-cover { position:relative; z-index:1; max-width:100%; width:100%; height:auto; object-fit:contain; display:block; box-shadow:0 8px 24px rgba(0,0,0,0.6); border-radius:4px; }
+/* Full image — width:100%, height:auto = natural aspect ratio, no cropping */
+.location-cover { width:100%; height:auto; display:block; border-bottom:1px solid var(--line); }
+.location-img-frame { display:none; }
+.location-bg-blur { display:none; }
 .location-body { padding:24px; display:flex; flex-direction:column; flex-grow:1; }
 .location-title { font-family:'Anton'; font-size:26px; color:var(--cream); margin-bottom:6px; }
 .location-coords { font-size:12px; font-weight:700; color:var(--gold); margin-bottom:12px; }

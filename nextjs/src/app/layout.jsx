@@ -4,6 +4,7 @@ import dataStore from '@/lib/dataStore';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WatermelonMascot from '@/components/WatermelonMascot';
+import IdleSleepAnimation from '@/components/IdleSleepAnimation';
 
 export const metadata = {
   title: 'Palu Vlogs — Unscripted Road Trips & Memories',
@@ -28,6 +29,7 @@ export default async function RootLayout({ children }) {
         <main>{children}</main>
         <Footer initialSettings={initialSettings} />
         <WatermelonMascot />
+        <IdleSleepAnimation />
       </body>
     </html>
   );

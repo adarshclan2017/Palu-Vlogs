@@ -21,8 +21,10 @@ async function request(endpoint, options = {}) {
     if (!headers['Content-Type']) headers['Content-Type'] = 'application/json';
   }
 
+  // Settings endpoint carries base64 images — needs a longer timeout
+  const timeoutMs = endpoint.includes('/settings') ? 30000 : 12000;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000);
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const res = await fetch(`${BASE}${endpoint}`, {

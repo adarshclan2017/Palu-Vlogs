@@ -30,7 +30,8 @@ export default function ImageUploader({
 
     setProcessing(true);
     try {
-      const dataUrl = await compressImage(file, 1600, 1600, 0.85);
+      // Compress to max 800px and 0.72 quality to keep base64 small for MongoDB storage
+      const dataUrl = await compressImage(file, 800, 800, 0.72);
       if (onChange) onChange(dataUrl);
     } catch (err) {
       console.error('Image compression error:', err);

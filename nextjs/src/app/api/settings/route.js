@@ -9,7 +9,8 @@ export const revalidate = 0;
 
 export async function GET(request) {
   try {
-    await connectDB().catch(() => {});
+    // Use longer timeout for settings - it has base64 images and needs more time
+    await connectDB(8000).catch(() => {});
     const settings = await dataStore.getSettings();
     return NextResponse.json(
       { success: true, data: settings },
@@ -27,7 +28,7 @@ export async function GET(request) {
 
 export async function PUT(request) {
   try {
-    await connectDB().catch(() => {});
+    await connectDB(8000).catch(() => {});
     const user = getUserFromRequest(request);
     if (!user || user.role !== 'admin') {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });

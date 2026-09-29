@@ -201,11 +201,18 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="vlogs-grid">
-            {latestVlogs.map(vlog => (
-              <VlogCard key={vlog._id || vlog.slug} vlog={vlog} onPlay={() => setActiveVideo(vlog)} />
-            ))}
-          </div>
+          {latestVlogs.length > 0 ? (
+            <div className="vlogs-grid">
+              {latestVlogs.map(vlog => (
+                <VlogCard key={vlog._id || vlog.slug} vlog={vlog} onPlay={() => setActiveVideo(vlog)} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ padding: '60px 20px', textAlign: 'center', background: 'var(--panel)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--line)' }}>
+              <h3 style={{ color: 'var(--gold)', fontSize: '20px', marginBottom: '8px' }}>No Vlogs Uploaded Yet 🎬</h3>
+              <p style={{ color: 'var(--stone)', fontSize: '14px' }}>Fresh episodes and unscripted road trips will appear here soon.</p>
+            </div>
+          )}
         </div>
       </section>
 

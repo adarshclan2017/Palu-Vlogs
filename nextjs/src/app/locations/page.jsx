@@ -68,6 +68,11 @@ export default function LocationsPage() {
           <div style={{ padding: '60px', textAlign: 'center', color: 'var(--gold)', fontFamily: 'Anton', fontSize: '20px' }}>
             Loading Adventures...
           </div>
+        ) : locations.length === 0 ? (
+          <div style={{ padding: '60px 20px', textAlign: 'center', background: 'var(--panel)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--line)' }}>
+            <h3 style={{ color: 'var(--gold)', fontSize: '20px', marginBottom: '8px' }}>No Destinations Added Yet 📍</h3>
+            <p style={{ color: 'var(--stone)', fontSize: '14px' }}>New locations and travel spots will appear here once added in the admin panel.</p>
+          </div>
         ) : (
           <div className="locations-grid">
             {locations.map(loc => (

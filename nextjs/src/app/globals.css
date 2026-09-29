@@ -1532,3 +1532,588 @@ button,input,textarea,select { font-family: inherit; }
   pointer-events: none;
   z-index: 9998;
 }
+
+
+/* ════════════════════════════════════════
+   VEGETABLE GANG FAMILY & HIERARCHY TREE
+   ════════════════════════════════════════ */
+
+.vtree-section {
+  padding: 80px 0 60px;
+  background: radial-gradient(circle at 50% 10%, rgba(245, 158, 11, 0.08) 0%, rgba(14, 15, 19, 0.98) 70%);
+  border-top: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+
+.vtree-container {
+  width: 100%;
+  overflow-x: auto;
+  padding: 20px 10px 40px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) rgba(255, 255, 255, 0.05);
+}
+
+.vtree-chart {
+  min-width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin: 0 auto;
+}
+
+/* Level Rows */
+.vtree-level {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.vtree-level.level-1 { margin-bottom: 0px; }
+.vtree-level.level-2-ceo { margin-bottom: 0px; }
+.vtree-level.level-3-managers { gap: 60px; }
+.vtree-level.level-4-squad { margin-top: 0px; }
+
+/* Branch Wings */
+.vtree-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.vtree-sub-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.vtree-role-tag {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--stone);
+}
+
+.vtree-role-tag.ceo {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+}
+
+.vtree-role-tag.advisor {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+}
+
+.vtree-role-tag.operations {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+}
+
+/* Tree Connecting Stems & Bars */
+.vtree-stem-vertical {
+  width: 3px;
+  background: linear-gradient(to bottom, #f59e0b, rgba(245, 158, 11, 0.4));
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+.stem-founder-to-ceo {
+  height: 36px;
+}
+
+.stem-ceo-to-managers {
+  height: 36px;
+}
+
+.stem-managers-to-squad {
+  height: 38px;
+}
+
+.vtree-crossbar {
+  height: 3px;
+  background: linear-gradient(to right, rgba(245, 158, 11, 0.2), #f59e0b 50%, rgba(245, 158, 11, 0.2));
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.crossbar-managers {
+  width: 76%;
+  max-width: 820px;
+}
+
+.crossbar-squad {
+  width: 94%;
+  max-width: 1040px;
+}
+
+.vtree-stem-drop {
+  width: 3px;
+  height: 24px;
+  background: #f59e0b;
+  margin-bottom: 6px;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+}
+
+.vtree-stem-drop.small {
+  height: 20px;
+}
+
+/* Founder Box styling */
+.founder-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 28px;
+  border-radius: var(--radius-lg);
+  background: rgba(245, 158, 11, 0.04);
+  border: 1px dashed rgba(245, 158, 11, 0.3);
+  position: relative;
+}
+
+.ceo-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 28px;
+  border-radius: var(--radius-lg);
+  background: rgba(239, 68, 68, 0.04);
+  border: 1px dashed rgba(239, 68, 68, 0.35);
+  position: relative;
+}
+
+.vtree-level-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.vtree-level-label.ceo-label {
+  color: #f87171;
+}
+
+/* ── Tree Node (Character Card) ── */
+.vtree-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+  user-select: none;
+}
+
+.vtree-node:hover {
+  transform: translateY(-6px) scale(1.06);
+  z-index: 20;
+}
+
+.vtree-crown {
+  font-size: 26px;
+  margin-bottom: -10px;
+  z-index: 4;
+  animation: crownBounce 2s ease-in-out infinite;
+}
+
+@keyframes crownBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+/* Circular Avatar Frame */
+.vtree-avatar-frame {
+  position: relative;
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  background: #1a1c23;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 16px rgba(245, 158, 11, 0.25);
+  overflow: visible;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.vtree-node:hover .vtree-avatar-frame {
+  border-color: #fbbf24;
+  box-shadow: 0 12px 32px rgba(245, 158, 11, 0.4), 0 0 24px rgba(245, 158, 11, 0.6);
+}
+
+.vtree-node.large .vtree-avatar-frame {
+  width: 104px;
+  height: 104px;
+}
+
+.vtree-node.medium .vtree-avatar-frame {
+  width: 84px;
+  height: 84px;
+}
+
+.vtree-node.compact .vtree-avatar-frame {
+  width: 68px;
+  height: 68px;
+}
+
+.vtree-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.vtree-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  background: linear-gradient(135deg, #2a2215, #14151b);
+}
+
+.vtree-badge-emoji {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  background: #0f1015;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.vtree-node.compact .vtree-badge-emoji {
+  width: 22px;
+  height: 22px;
+  font-size: 11px;
+}
+
+/* Character Name */
+.vtree-char-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cream);
+  margin-top: 8px;
+  text-align: center;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vtree-node.large .vtree-char-name {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* ── Yellow Ribbon Banner (Matches Reference Diagram) ── */
+.vtree-ribbon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+}
+
+.ribbon-text {
+  background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 60%, #d97706 100%);
+  color: #1e1b18;
+  font-family: 'Anton', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 4px 14px;
+  white-space: nowrap;
+  border-top: 1px solid #fef08a;
+  border-bottom: 1px solid #b45309;
+  z-index: 2;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.vtree-node.compact .ribbon-text {
+  font-size: 10px;
+  padding: 3px 10px;
+}
+
+.vtree-node.large .ribbon-text {
+  font-size: 13.5px;
+  padding: 5px 18px;
+}
+
+/* Ribbon Notched Ends (Ribbon Fishtail) */
+.ribbon-tail {
+  position: absolute;
+  top: 3px;
+  width: 12px;
+  height: 100%;
+  background: #d97706;
+  z-index: 1;
+}
+
+.ribbon-tail.left {
+  left: -8px;
+  clip-path: polygon(100% 0, 100% 100%, 0 50%);
+  border-left: 1px solid #b45309;
+}
+
+.ribbon-tail.right {
+  right: -8px;
+  clip-path: polygon(0 0, 0 100%, 100% 50%);
+  border-right: 1px solid #b45309;
+}
+
+/* Tooltip Popup on Hover */
+.vtree-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: rgba(14, 15, 19, 0.96);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  width: 220px;
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8), 0 0 16px rgba(245, 158, 11, 0.2);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 30;
+}
+
+.vtree-tooltip strong {
+  display: block;
+  color: var(--cream);
+  font-size: 13px;
+}
+
+.vtree-tooltip-role {
+  display: block;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin: 2px 0 6px;
+}
+
+.vtree-tooltip p {
+  color: var(--stone);
+  font-size: 11.5px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.vtree-node:hover .vtree-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Level 3 Squad Grid */
+.vtree-team-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 16px 22px;
+  max-width: 1100px;
+  margin-top: 4px;
+}
+
+.vtree-team-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Tree Legend */
+.vtree-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--stone);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.legend-chip .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.legend-chip .dot.founder { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+.legend-chip .dot.ceo     { background: #ef4444; box-shadow: 0 0 8px #ef4444; }
+.legend-chip .dot.manager { background: #10b981; box-shadow: 0 0 8px #10b981; }
+.legend-chip .dot.crew    { background: #3b82f6; box-shadow: 0 0 8px #3b82f6; }
+
+
+/* ════════════════════════════════════════
+   PWA INSTALL BANNER & PROMPT
+   ════════════════════════════════════════ */
+
+.pwa-install-banner {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9995;
+  width: calc(100% - 32px);
+  max-width: 480px;
+  animation: pwaSlideUp 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes pwaSlideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 40px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.pwa-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(18, 20, 26, 0.96);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(245, 158, 11, 0.2);
+  backdrop-filter: blur(16px);
+}
+
+.pwa-icon-box {
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.pwa-banner-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pwa-text-box {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.pwa-banner-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0 0 2px;
+  letter-spacing: 0.01em;
+}
+
+.pwa-banner-desc {
+  font-size: 11.5px;
+  color: var(--stone);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.pwa-actions-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pwa-install-btn {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #000;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+}
+
+.pwa-install-btn:hover {
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+}
+
+.pwa-dismiss-btn {
+  background: transparent;
+  border: none;
+  color: var(--stone);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  line-height: 1;
+  transition: color 0.15s ease;
+}
+
+.pwa-dismiss-btn:hover {
+  color: var(--cream);
+}
+
+@media (max-width: 480px) {
+  .pwa-install-banner {
+    bottom: 16px;
+    width: calc(100% - 24px);
+  }
+  .pwa-banner-content {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .pwa-icon-box {
+    width: 38px;
+    height: 38px;
+  }
+  .pwa-install-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}

@@ -8,6 +8,7 @@ import PhotoLightbox from '@/components/PhotoLightbox';
 import HeroSquadDP from '@/components/HeroSquadDP';
 import MountainSnowText from '@/components/MountainSnowText';
 import VisitorBadge from '@/components/VisitorBadge';
+import VegetableFamilyTree from '@/components/VegetableFamilyTree';
 
 export default function HomePageClient({
   initialSettings = null,
@@ -42,6 +43,13 @@ export default function HomePageClient({
     setPhotos((prev) =>
       prev.map((p) => (p._id === photoId ? { ...p, reactions: newReactions } : p))
     );
+  };
+
+  const handleSelectTreePhoto = (photo) => {
+    const idx = photos.findIndex((p) => p._id === photo._id || p.title === photo.title);
+    if (idx >= 0) {
+      setLightboxIndex(idx);
+    }
   };
 
   // Background sync in case settings were updated while page was open
@@ -356,6 +364,9 @@ export default function HomePageClient({
           </div>
         </div>
       </section>
+
+      {/* ---------- VEGETABLE GANG HIERARCHY TREE ---------- */}
+      <VegetableFamilyTree photos={photos} onSelectPhoto={handleSelectTreePhoto} />
 
       {/* Video Modal Player */}
       {activeVideo && <VideoPlayerModal vlog={activeVideo} onClose={() => setActiveVideo(null)} />}

@@ -114,15 +114,32 @@
       "_id": "alb_4"
     }
   ],
-  "locations": [],
+  "locations": [
+    {
+      "name": "Wayanad Ghats",
+      "state": "Kerala",
+      "country": "India",
+      "description": "Curves and tea plantations",
+      "coverImage": "/assets/images/about_roadtrip.jpg",
+      "coordinates": {
+        "lat": 9.9312,
+        "lng": 76.2673
+      },
+      "visitedDate": "2026",
+      "vlogs": [],
+      "_id": "6abb595ffcc96fb512db1e6a",
+      "createdAt": "2026-09-29T06:23:27.708Z",
+      "__v": 0
+    }
+  ],
   "vlogs": [],
   "photos": [],
   "settings": {
     "channelName": "Palu Vlogs",
-    "tagline": "It's not about the views, it's about the memories",
-    "bio": "A passionate group of teams and friends from Kanniyakumari, capturing unscripted road journeys, coastal rides, and authentic moments. Started in April 2026 — for us, it's not about the views, it's about the memories.",
-    "profileImage": "",
-    "coverImage": "",
+    "tagline": "Oru Palu Vlogs — Vegetable Gang | Fun · Vibes · Memories · Chaos",
+    "bio": "Four friends, one camera, and a running vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.",
+    "profileImage": "/assets/images/logo.jpg",
+    "coverImage": "/assets/images/hero_team.jpg",
     "youtubeUrl": "https://youtube.com/@paluvlogs",
     "instagramUrl": "https://instagram.com/paluvlogs",
     "whatsappUrl": "https://whatsapp.com/channel/paluvlogs",
@@ -130,7 +147,8 @@
     "subscriberCount": "125K",
     "totalViews": "4.8M",
     "featuredVlogSlug": "great-eggplant-market-heist",
-    "_id": "settings_1"
+    "_id": "settings_1",
+    "visitorCount": 14822
   },
   "messages": [
     {

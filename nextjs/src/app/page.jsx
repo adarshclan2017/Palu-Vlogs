@@ -6,6 +6,7 @@ import VlogCard from '@/components/VlogCard';
 import VideoPlayerModal from '@/components/VideoPlayerModal';
 import PhotoLightbox from '@/components/PhotoLightbox';
 import HeroSquadDP from '@/components/HeroSquadDP';
+import MountainSnowText from '@/components/MountainSnowText';
 
 export default function Home() {
   const [settings, setSettings] = useState(null);
@@ -63,10 +64,7 @@ export default function Home() {
                 Fresh Episode Every Sunday
               </div>
 
-              <h1>
-                ORU PALU<br />
-                <span className="accent">VLOGS.</span>
-              </h1>
+              <MountainSnowText />
 
               <p className="hero-tag">
                 {settings?.bio ||
@@ -120,9 +118,9 @@ export default function Home() {
         <div className="marquee" aria-hidden="true">
           <div className="marquee-track">
             <span>FUN</span><span>·</span><span>VIBES</span><span>·</span><span>MEMORIES</span><span>·</span><span>CHAOS</span><span>·</span>
-            <span>ORU PALU VLOGS</span><span>·</span><span>THE VEGETABLE GANG</span><span>·</span><span>ROAD TRIPS</span><span>·</span><span>STREET FOOD</span><span>·</span>
+            <span>PALU VLOGS</span><span>·</span><span>THE VEGETABLE GANG</span><span>·</span><span>ROAD TRIPS</span><span>·</span><span>STREET FOOD</span><span>·</span>
             <span>FUN</span><span>·</span><span>VIBES</span><span>·</span><span>MEMORIES</span><span>·</span><span>CHAOS</span><span>·</span>
-            <span>ORU PALU VLOGS</span><span>·</span><span>THE VEGETABLE GANG</span><span>·</span><span>ROAD TRIPS</span><span>·</span><span>STREET FOOD</span><span>·</span>
+            <span>PALU VLOGS</span><span>·</span><span>THE VEGETABLE GANG</span><span>·</span><span>ROAD TRIPS</span><span>·</span><span>STREET FOOD</span><span>·</span>
           </div>
         </div>
       </header>

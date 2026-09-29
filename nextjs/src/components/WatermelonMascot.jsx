@@ -280,18 +280,110 @@ const playPopSound = () => {
 };
 
 /**
- * Individual Interactive Mascot Item for Next.js
- * Wide spacing (240px to 380px distance), corners completely clear.
- * Closes automatically while screen is scrolling.
- * Ultra-compact dialogue avoids wasting screen space, zero overlay.
+ * Calculate 100% collision-free slots with wide clearances.
+ * Small screens (<640px) use 6 spacious slots so stickers NEVER touch or crowd each other.
+ * Large screens (>=640px) use 12 perimeter slots with corner safety margins.
  */
-const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
+const getSafeSlots = (w, h, width, height, isMobile) => {
+  if (isMobile) {
+    return [
+      // 0: Top Center (far from left & right sides)
+      {
+        slotId: 'mobile-top',
+        edge: 'top',
+        x: Math.max(6, Math.min(w - width - 6, Math.round((w - width) / 2))),
+        y: 8,
+        face: 'left',
+        angle: 90
+      },
+      // 1: Left Upper (safely below top card, high on left)
+      {
+        slotId: 'mobile-left-u',
+        edge: 'left',
+        x: 6,
+        y: Math.round(Math.max(height + 26, h * 0.32 - height / 2)),
+        face: 'right',
+        angle: 0
+      },
+      // 2: Left Lower (generous gap below upper card, above bottom)
+      {
+        slotId: 'mobile-left-l',
+        edge: 'left',
+        x: 6,
+        y: Math.round(Math.min(h - height - 28, Math.max(height + 26 + height + 24, h * 0.68 - height / 2))),
+        face: 'right',
+        angle: 0
+      },
+      // 3: Bottom Center (far from left & right sides)
+      {
+        slotId: 'mobile-bottom',
+        edge: 'bottom',
+        x: Math.max(6, Math.min(w - width - 6, Math.round((w - width) / 2))),
+        y: Math.max(6, Math.round(h - height - 8)),
+        face: 'left',
+        angle: 270
+      },
+      // 4: Right Upper (safely below top card, high on right)
+      {
+        slotId: 'mobile-right-u',
+        edge: 'right',
+        x: Math.max(6, Math.round(w - width - 6)),
+        y: Math.round(Math.max(height + 26, h * 0.32 - height / 2)),
+        face: 'left',
+        angle: 180
+      },
+      // 5: Right Lower (generous gap below upper card, above bottom)
+      {
+        slotId: 'mobile-right-l',
+        edge: 'right',
+        x: Math.max(6, Math.round(w - width - 6)),
+        y: Math.round(Math.min(h - height - 28, Math.max(height + 26 + height + 24, h * 0.68 - height / 2))),
+        face: 'left',
+        angle: 180
+      }
+    ];
+  }
+
+  // Desktop 12 perimeter slots (cleanly separated from all 4 corners and each other)
+  return [
+    { slotId: 'd-top-1', edge: 'top', x: Math.round(w * 0.22 - width / 2), y: 8, face: 'right', angle: 90 },
+    { slotId: 'd-top-2', edge: 'top', x: Math.round(w * 0.50 - width / 2), y: 8, face: 'left', angle: 90 },
+    { slotId: 'd-top-3', edge: 'top', x: Math.round(w * 0.78 - width / 2), y: 8, face: 'left', angle: 90 },
+
+    { slotId: 'd-right-1', edge: 'right', x: Math.round(w - width - 8), y: Math.round(h * 0.22 - height / 2), face: 'left', angle: 180 },
+    { slotId: 'd-right-2', edge: 'right', x: Math.round(w - width - 8), y: Math.round(h * 0.50 - height / 2), face: 'left', angle: 180 },
+    { slotId: 'd-right-3', edge: 'right', x: Math.round(w - width - 8), y: Math.round(h * 0.78 - height / 2), face: 'left', angle: 180 },
+
+    { slotId: 'd-bottom-1', edge: 'bottom', x: Math.round(w * 0.78 - width / 2), y: Math.round(h - height - 8), face: 'left', angle: 270 },
+    { slotId: 'd-bottom-2', edge: 'bottom', x: Math.round(w * 0.50 - width / 2), y: Math.round(h - height - 8), face: 'left', angle: 270 },
+    { slotId: 'd-bottom-3', edge: 'bottom', x: Math.round(w * 0.22 - width / 2), y: Math.round(h - height - 8), face: 'right', angle: 270 },
+
+    { slotId: 'd-left-1', edge: 'left', x: 8, y: Math.round(h * 0.78 - height / 2), face: 'right', angle: 0 },
+    { slotId: 'd-left-2', edge: 'left', x: 8, y: Math.round(h * 0.50 - height / 2), face: 'right', angle: 0 },
+    { slotId: 'd-left-3', edge: 'left', x: 8, y: Math.round(h * 0.22 - height / 2), face: 'right', angle: 0 }
+  ];
+};
+
+/**
+ * Individual Interactive Mascot Item for Next.js
+ * Guaranteed collision-free: strictly stationed in designated safety slots.
+ * Dialogue box is snug and never overlaps other stickers.
+ */
+const SingleMascot = ({
+  char,
+  slotIndex,
+  isMobile,
+  isScrolling,
+  revealedAfterScroll,
+  onCycle,
+  onSwap
+}) => {
   const [visible, setVisible] = useState(false);
   const [isPoofing, setIsPoofing] = useState(false);
   const [position, setPosition] = useState({ x: -999, y: -999 });
   const [facing, setFacing] = useState('left');
   const [arrowAngle, setArrowAngle] = useState(0);
-  const [dockSide, setDockSide] = useState(char.defaultEdge);
+  const [dockSide, setDockSide] = useState('right');
   const [isDragging, setIsDragging] = useState(false);
   const [splashes, setSplashes] = useState([]);
   const [quoteIndex, setQuoteIndex] = useState(0);
@@ -300,127 +392,74 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
   const dragStartRef = useRef({ x: 0, y: 0 });
   const initialPosRef = useRef({ x: 0, y: 0 });
   const hasMovedRef = useRef(false);
-  const reappearTimerRef = useRef(null);
   const entranceTimerRef = useRef(null);
   const quoteCycleTimerRef = useRef(null);
 
   // Enlarged uniform dimensions for clear visibility across devices
   const getDimensions = () => {
-    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const mobile = typeof window !== 'undefined' && window.innerWidth < 640;
     return {
-      width: isMobile ? 92 : 106,
-      height: isMobile ? 130 : 150
+      width: mobile ? 100 : 108,
+      height: mobile ? 142 : 154
     };
   };
 
-  const computeDockedPos = () => {
+  const computeSlotPos = (targetSlotIdx = slotIndex) => {
     if (typeof window === 'undefined') return { x: 6, y: 6, face: 'left', angle: 180, side: 'right' };
     const w = window.innerWidth;
     const h = window.innerHeight;
     const { width, height } = getDimensions();
+    const slots = getSafeSlots(w, h, width, height, isMobile);
+    const chosen = slots[targetSlotIdx % slots.length] || slots[0];
 
-    let x = 6;
-    let y = 6;
-    let face = 'left';
-    let angle = 180;
-    const edge = char.initialPos?.edge || char.defaultEdge;
-    const offsetPct = char.initialPos?.offsetPct ?? 50;
-    let side = edge;
-
-    switch (edge) {
-      case 'left':
-        x = 6;
-        y = Math.max(6, Math.min(h - height - 6, (h * offsetPct) / 100 - height / 2));
-        face = 'right';
-        angle = 0;
-        side = 'left';
-        break;
-      case 'right':
-        x = Math.max(6, w - width - 6);
-        y = Math.max(6, Math.min(h - height - 6, (h * offsetPct) / 100 - height / 2));
-        face = 'left';
-        angle = 180;
-        side = 'right';
-        break;
-      case 'top':
-        y = 6;
-        x = Math.max(6, Math.min(w - width - 6, (w * offsetPct) / 100 - width / 2));
-        face = x < w / 2 ? 'right' : 'left';
-        angle = 90;
-        side = 'top';
-        break;
-      case 'bottom':
-        y = Math.max(6, h - height - 6);
-        x = Math.max(6, Math.min(w - width - 6, (w * offsetPct) / 100 - width / 2));
-        face = x < w / 2 ? 'right' : 'left';
-        angle = 270;
-        side = 'bottom';
-        break;
-      default:
-        x = Math.max(6, w - width - 6);
-        y = Math.max(6, Math.min(h - height - 6, (h * 50) / 100 - height / 2));
-        face = 'left';
-        angle = 180;
-        side = 'right';
-    }
-
-    return { x, y, face, angle, side };
+    return {
+      x: chosen.x,
+      y: chosen.y,
+      face: chosen.face,
+      angle: chosen.angle,
+      side: chosen.edge
+    };
   };
 
   useEffect(() => {
-    const initialDock = computeDockedPos();
-    setPosition({ x: initialDock.x, y: initialDock.y });
-    setFacing(initialDock.face);
-    setArrowAngle(initialDock.angle);
-    setDockSide(initialDock.side);
+    const slot = computeSlotPos(slotIndex);
+    setPosition({ x: slot.x, y: slot.y });
+    setFacing(slot.face);
+    setArrowAngle(slot.angle);
+    setDockSide(slot.side);
 
+    // Initial entrance delay
+    const delay = isMobile ? slotIndex * 700 : Math.min(slotIndex * 1500, char.delayMs || 0);
     entranceTimerRef.current = setTimeout(() => {
       setVisible(true);
-    }, char.delayMs);
+    }, delay);
 
     quoteCycleTimerRef.current = setInterval(() => {
       setQuoteIndex((prev) => (prev + 1) % char.quotes.length);
-    }, 7000);
+    }, 6500);
 
     return () => {
       if (entranceTimerRef.current) clearTimeout(entranceTimerRef.current);
-      if (reappearTimerRef.current) clearTimeout(reappearTimerRef.current);
       if (quoteCycleTimerRef.current) clearInterval(quoteCycleTimerRef.current);
     };
-  }, []);
+  }, [slotIndex, isMobile, char.id]);
 
   useEffect(() => {
     const handleResize = () => {
       if (!isDragging && visible) {
-        const { width, height } = getDimensions();
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-
-        setPosition((prev) => ({
-          x: Math.max(6, Math.min(w - width - 6, prev.x)),
-          y: Math.max(6, Math.min(h - height - 6, prev.y))
-        }));
+        const slot = computeSlotPos(slotIndex);
+        setPosition({ x: slot.x, y: slot.y });
+        setFacing(slot.face);
+        setArrowAngle(slot.angle);
+        setDockSide(slot.side);
       }
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [isDragging, visible]);
+  }, [isDragging, visible, slotIndex, isMobile]);
 
-  const scheduleReappearance = () => {
-    if (reappearTimerRef.current) clearTimeout(reappearTimerRef.current);
-    reappearTimerRef.current = setTimeout(() => {
-      const dock = computeDockedPos();
-      setPosition({ x: dock.x, y: dock.y });
-      setFacing(dock.face);
-      setArrowAngle(dock.angle);
-      setDockSide(dock.side);
-      setIsPoofing(false);
-      setVisible(true);
-    }, 10000);
-  };
-
-  const handleTouchDismiss = (e) => {
+  const handleTouchDismiss = () => {
     if (hasMovedRef.current || !visible || isScrolling) return;
 
     playPopSound();
@@ -439,7 +478,11 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
       setVisible(false);
       setIsPoofing(false);
       setSplashes([]);
-      scheduleReappearance();
+      if (onCycle) {
+        onCycle();
+      } else {
+        setTimeout(() => setVisible(true), 8000);
+      }
     }, 450);
   };
 
@@ -486,9 +529,8 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
 
   /**
    * On Drag End:
-   * STRICT EDGE DOCKING + NON-OVERLAPPING SLOTS:
-   * Always snaps to the closest designated perimeter slot (20%, 50%, 80% on sides; 25%, 50%, 75% on top/bottom).
-   * Ensures no mascot stays in the center and no two mascots ever stand near each other.
+   * Snaps strictly to the closest designated perimeter safety slot.
+   * If slot is already occupied, swaps slot index to prevent touching.
    */
   const onDragEnd = () => {
     if (!isDragging) return;
@@ -497,99 +539,28 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
     const { width, height } = getDimensions();
     const w = window.innerWidth;
     const h = window.innerHeight;
+    const slots = getSafeSlots(w, h, width, height, isMobile);
 
-    setPosition((prev) => {
-      const currX = prev.x;
-      const currY = prev.y;
-
-      const centerX = currX + width / 2;
-      const centerY = currY + height / 2;
-
-      const distLeft = centerX;
-      const distRight = w - centerX;
-      const distTop = centerY;
-      const distBottom = h - centerY;
-
-      const minDist = Math.min(distLeft, distRight, distTop, distBottom);
-
-      let snapX = currX;
-      let snapY = currY;
-      let newFacing = facing;
-      let newAngle = arrowAngle;
-      let newSide = dockSide;
-
-      if (minDist === distLeft) {
-        snapX = 6;
-        const leftSlots = [0.20, 0.50, 0.80].map((pct) => (h * pct) - height / 2);
-        let bestSlot = leftSlots[0];
-        let minDiff = Math.abs(currY - bestSlot);
-        for (let i = 1; i < leftSlots.length; i++) {
-          const diff = Math.abs(currY - leftSlots[i]);
-          if (diff < minDiff) {
-            minDiff = diff;
-            bestSlot = leftSlots[i];
-          }
-        }
-        snapY = Math.max(6, Math.min(h - height - 6, bestSlot));
-        newFacing = 'right';
-        newAngle = 0;
-        newSide = 'left';
-      } else if (minDist === distRight) {
-        snapX = Math.max(6, w - width - 6);
-        const rightSlots = [0.20, 0.50, 0.80].map((pct) => (h * pct) - height / 2);
-        let bestSlot = rightSlots[0];
-        let minDiff = Math.abs(currY - bestSlot);
-        for (let i = 1; i < rightSlots.length; i++) {
-          const diff = Math.abs(currY - rightSlots[i]);
-          if (diff < minDiff) {
-            minDiff = diff;
-            bestSlot = rightSlots[i];
-          }
-        }
-        snapY = Math.max(6, Math.min(h - height - 6, bestSlot));
-        newFacing = 'left';
-        newAngle = 180;
-        newSide = 'right';
-      } else if (minDist === distTop) {
-        snapY = 6;
-        const topSlots = [0.25, 0.50, 0.75].map((pct) => (w * pct) - width / 2);
-        let bestSlot = topSlots[0];
-        let minDiff = Math.abs(currX - bestSlot);
-        for (let i = 1; i < topSlots.length; i++) {
-          const diff = Math.abs(currX - topSlots[i]);
-          if (diff < minDiff) {
-            minDiff = diff;
-            bestSlot = topSlots[i];
-          }
-        }
-        snapX = Math.max(6, Math.min(w - width - 6, bestSlot));
-        newFacing = snapX < w / 2 ? 'right' : 'left';
-        newAngle = 90;
-        newSide = 'top';
-      } else {
-        snapY = Math.max(6, h - height - 6);
-        const bottomSlots = [0.25, 0.50, 0.75].map((pct) => (w * pct) - width / 2);
-        let bestSlot = bottomSlots[0];
-        let minDiff = Math.abs(currX - bestSlot);
-        for (let i = 1; i < bottomSlots.length; i++) {
-          const diff = Math.abs(currX - bottomSlots[i]);
-          if (diff < minDiff) {
-            minDiff = diff;
-            bestSlot = bottomSlots[i];
-          }
-        }
-        snapX = Math.max(6, Math.min(w - width - 6, bestSlot));
-        newFacing = snapX < w / 2 ? 'right' : 'left';
-        newAngle = 270;
-        newSide = 'bottom';
+    let bestIdx = slotIndex;
+    let minDiff = Infinity;
+    for (let i = 0; i < slots.length; i++) {
+      const s = slots[i];
+      const d = Math.hypot(s.x - position.x, s.y - position.y);
+      if (d < minDiff) {
+        minDiff = d;
+        bestIdx = i;
       }
+    }
 
-      setFacing(newFacing);
-      setArrowAngle(newAngle);
-      setDockSide(newSide);
+    const chosen = slots[bestIdx];
+    setPosition({ x: chosen.x, y: chosen.y });
+    setFacing(chosen.face);
+    setArrowAngle(chosen.angle);
+    setDockSide(chosen.edge);
 
-      return { x: snapX, y: snapY };
-    });
+    if (bestIdx !== slotIndex && onSwap) {
+      onSwap(bestIdx);
+    }
   };
 
   useEffect(() => {
@@ -617,12 +588,11 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
     };
   }, [isDragging]);
 
-  // While scrolling: hide completely. After 30s no-scroll: only shown if revealedAfterScroll.
+  // While scrolling: hide completely
   if (!visible) return null;
   if (isScrolling && !isDragging) return null;
   if (!isScrolling && revealedAfterScroll === false) return null;
 
-  // Inward body direction logic: Onion and Tomato naturally face right; others face left
   const naturalFacing = char.naturalFacing || 'left';
   const flipScale = facing === naturalFacing ? 1 : -1;
   const currentQuote = char.quotes[quoteIndex];
@@ -634,7 +604,7 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        zIndex: isDragging ? 100005 : 99990 + index
+        zIndex: isDragging ? 100005 : 99990 + slotIndex
       }}
       onMouseDown={(e) => onDragStart(e.clientX, e.clientY)}
       onTouchStart={(e) => {
@@ -643,7 +613,7 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
         }
       }}
       onClick={handleTouchDismiss}
-      title={`${char.name} — Click to cycle dialogue or touch to hide!`}
+      title={`${char.name} — Click to cycle squad or drag to move!`}
     >
       {/* Direction Arrow Badge */}
       <div
@@ -657,13 +627,7 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
         <span className="mascot-arrow-icon">➔</span>
       </div>
 
-      {/* 
-        COMPACT 6-WORD 2-LINE DIALOGUE:
-        - Automatically CLOSED while scrolling screen or dragging!
-        - Avoids extra space (snug against mascot edge, max 95px wide).
-        - ZERO overlay (transparent, no box/border/shadow overlay).
-        - pointer-events: none ensures it never blocks clicks to website elements!
-      */}
+      {/* SPEECH BUBBLE BOX: Snug, clear, and collision-free */}
       {!isDragging && (
         <div className={`mascot-text-msg dock-${dockSide}`}>
           <span className="mascot-msg-line">{currentQuote.line1}</span>
@@ -671,7 +635,7 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
         </div>
       )}
 
-      {/* Character Image with Flip Transform - FACE IS 100% UNCOVERED */}
+      {/* Character Image with Flip Transform */}
       <div
         className="mascot-img-wrap"
         style={{
@@ -686,7 +650,7 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
         />
       </div>
 
-      {/* Particle Splash on Touch Dismiss */}
+      {/* Particle Splash on Dismiss */}
       {isPoofing && (
         <div className="mascot-splash-layer">
           {splashes.map((s) => (
@@ -710,25 +674,92 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
 
 /**
  * Vegetable Gang Mascots Root Component for Next.js
- * Displays 12 mascots line-by-line every 2 seconds docked at screen edges.
- * Auto-closes all mascots when scrolling. After 30 seconds of no scroll,
- * mascots reappear ONE BY ONE sequentially (like the very first entrance),
- * with 2-second gaps between each character — exactly like initial load!
+ * - GUARANTEED NON-OVERLAPPING: Stickers never touch each other or screen corners.
+ * - On Mobile: 6 spacious, collision-free safety slots with squad rotation so all 12 characters are shown.
+ * - On Desktop: 12 perimeter slots with corner buffers.
+ * - Auto-closes when scrolling, reappears gracefully when scroll stops.
  */
 const VeggieGangMascots = () => {
   const [isScrolling, setIsScrolling] = useState(false);
-  // -1 = all hidden, 0..11 = sequential reveal index, 12 = all revealed (normal)
+  const [isMobile, setIsMobile] = useState(false);
+  // Mobile active characters in 6 slots: [0, 1, 2, 3, 4, 5] initially
+  const [mobileSlots, setMobileSlots] = useState([0, 1, 2, 3, 4, 5]);
   const [scrollRevealCount, setScrollRevealCount] = useState(12);
-  const scrollIdleTimerRef = useRef(null);  // 30-second idle timer
-  const revealIntervalRef = useRef(null);   // 2-second sequential reveal interval
-  const scrollTimeoutRef = useRef(null);    // short debounce for active-scroll CSS class
+
+  const scrollIdleTimerRef = useRef(null);
+  const revealIntervalRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // On Mobile: Rotate one character every 13 seconds so all 12 gang members are featured cleanly
+  useEffect(() => {
+    if (!isMobile) return;
+    const interval = setInterval(() => {
+      setMobileSlots((prev) => {
+        const used = new Set(prev);
+        let nextChar = 0;
+        for (let i = 0; i < GANG_CHARACTERS.length; i++) {
+          const candidate = (prev[prev.length - 1] + 1 + i) % GANG_CHARACTERS.length;
+          if (!used.has(candidate)) {
+            nextChar = candidate;
+            break;
+          }
+        }
+        // Rotate the first slot to the end with the new character
+        return [...prev.slice(1), nextChar];
+      });
+    }, 13000);
+
+    return () => clearInterval(interval);
+  }, [isMobile]);
+
+  // Click on a mobile mascot cycles that slot to next character
+  const handleCycleSlot = (slotIdx) => {
+    if (!isMobile) return;
+    setMobileSlots((prev) => {
+      const used = new Set(prev);
+      let nextChar = 0;
+      for (let i = 0; i < GANG_CHARACTERS.length; i++) {
+        const candidate = (prev[slotIdx] + 1 + i) % GANG_CHARACTERS.length;
+        if (!used.has(candidate)) {
+          nextChar = candidate;
+          break;
+        }
+      }
+      const updated = [...prev];
+      updated[slotIdx] = nextChar;
+      return updated;
+    });
+  };
+
+  // Dragging to another slot swaps the occupants to prevent touching
+  const handleSwapSlots = (fromSlotIdx, toSlotIdx) => {
+    if (fromSlotIdx === toSlotIdx) return;
+    if (isMobile) {
+      setMobileSlots((prev) => {
+        if (fromSlotIdx >= prev.length || toSlotIdx >= prev.length) return prev;
+        const updated = [...prev];
+        const temp = updated[fromSlotIdx];
+        updated[fromSlotIdx] = updated[toSlotIdx];
+        updated[toSlotIdx] = temp;
+        return updated;
+      });
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolling(true);
-      setScrollRevealCount(-1); // immediately hide all
+      setScrollRevealCount(-1);
 
-      // Clear any pending reveal sequences
       if (revealIntervalRef.current) {
         clearInterval(revealIntervalRef.current);
         revealIntervalRef.current = null;
@@ -737,7 +768,6 @@ const VeggieGangMascots = () => {
         clearTimeout(scrollIdleTimerRef.current);
         scrollIdleTimerRef.current = null;
       }
-      // Short debounce to clear the active-scrolling CSS state
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
@@ -745,7 +775,6 @@ const VeggieGangMascots = () => {
         setIsScrolling(false);
       }, 400);
 
-      // After 30 seconds of no scroll, begin sequential one-by-one reveal
       scrollIdleTimerRef.current = setTimeout(() => {
         let count = 0;
         setScrollRevealCount(0);
@@ -757,8 +786,8 @@ const VeggieGangMascots = () => {
             revealIntervalRef.current = null;
             setScrollRevealCount(12);
           }
-        }, 2000);
-      }, 30000);
+        }, 1500);
+      }, 25000);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });
@@ -773,21 +802,44 @@ const VeggieGangMascots = () => {
   return (
     <>
       <div className="veggie-gang-mascots-root" aria-live="polite">
-        {GANG_CHARACTERS.map((char, index) => (
-          <SingleMascot
-            key={char.id}
-            char={char}
-            index={index}
-            isScrolling={isScrolling}
-            revealedAfterScroll={
-              scrollRevealCount === 12
-                ? null
-                : scrollRevealCount >= 0
-                  ? index <= scrollRevealCount
-                  : false
-            }
-          />
-        ))}
+        {isMobile ? (
+          // Mobile: 6 spacious, collision-free slots that cycle through the full gang
+          mobileSlots.map((charIdx, slotIdx) => {
+            const char = GANG_CHARACTERS[charIdx];
+            return (
+              <SingleMascot
+                key={`${char.id}-${slotIdx}`}
+                char={char}
+                slotIndex={slotIdx}
+                isMobile={true}
+                isScrolling={isScrolling}
+                revealedAfterScroll={null}
+                onCycle={() => handleCycleSlot(slotIdx)}
+                onSwap={(targetIdx) => handleSwapSlots(slotIdx, targetIdx)}
+              />
+            );
+          })
+        ) : (
+          // Desktop: 12 perimeter slots with corner buffers
+          GANG_CHARACTERS.map((char, index) => (
+            <SingleMascot
+              key={char.id}
+              char={char}
+              slotIndex={index}
+              isMobile={false}
+              isScrolling={isScrolling}
+              revealedAfterScroll={
+                scrollRevealCount === 12
+                  ? null
+                  : scrollRevealCount >= 0
+                    ? index <= scrollRevealCount
+                    : false
+              }
+              onCycle={null}
+              onSwap={null}
+            />
+          ))
+        )}
       </div>
 
       <style>{`
@@ -801,8 +853,8 @@ const VeggieGangMascots = () => {
         /* Larger uniform size for lively visibility and crisp interaction */
         .veggie-mascot-card {
           position: fixed;
-          width: 106px !important;
-          height: 150px !important;
+          width: 108px !important;
+          height: 154px !important;
           pointer-events: auto;
           user-select: none;
           touch-action: none;
@@ -1044,43 +1096,43 @@ const VeggieGangMascots = () => {
           }
         }
 
-        /* Small screen responsive adjustments: Bigger stickers & readable speech boxes */
+        /* Small screen responsive adjustments: Light more bigger stickers & readable speech boxes */
         @media (max-width: 640px) {
           .veggie-mascot-card {
-            width: 92px !important;
-            height: 130px !important;
+            width: 100px !important;
+            height: 142px !important;
           }
           .mascot-arrow-badge {
-            width: 22px;
-            height: 22px;
+            width: 23px;
+            height: 23px;
             top: -5px;
             right: -5px;
           }
           .mascot-arrow-icon {
-            font-size: 10.5px;
+            font-size: 11px;
           }
           .mascot-text-msg {
-            padding: 5px 9px !important;
-            max-width: 145px;
+            padding: 6px 10px !important;
+            max-width: 150px;
             border-radius: 8px !important;
           }
           .mascot-msg-line {
-            font-size: 11px;
+            font-size: 11.5px;
             line-height: 1.25;
           }
         }
 
         @media (max-width: 380px) {
           .veggie-mascot-card {
-            width: 82px !important;
-            height: 116px !important;
+            width: 88px !important;
+            height: 126px !important;
           }
           .mascot-text-msg {
-            padding: 4px 8px !important;
-            max-width: 130px;
+            padding: 5px 9px !important;
+            max-width: 135px;
           }
           .mascot-msg-line {
-            font-size: 10px;
+            font-size: 10.5px;
           }
         }
       `}</style>

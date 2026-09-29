@@ -304,12 +304,12 @@ const SingleMascot = ({ char, index, isScrolling, revealedAfterScroll }) => {
   const entranceTimerRef = useRef(null);
   const quoteCycleTimerRef = useRef(null);
 
-  // Enlarged uniform dimensions for clear visibility
+  // Enlarged uniform dimensions for clear visibility across devices
   const getDimensions = () => {
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
     return {
-      width: isMobile ? 70 : 96,
-      height: isMobile ? 100 : 136
+      width: isMobile ? 92 : 106,
+      height: isMobile ? 130 : 150
     };
   };
 
@@ -801,13 +801,13 @@ const VeggieGangMascots = () => {
         /* Larger uniform size for lively visibility and crisp interaction */
         .veggie-mascot-card {
           position: fixed;
-          width: 96px !important;
-          height: 136px !important;
+          width: 106px !important;
+          height: 150px !important;
           pointer-events: auto;
           user-select: none;
           touch-action: none;
           cursor: grab;
-          filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.55));
+          filter: drop-shadow(0 5px 12px rgba(0, 0, 0, 0.6));
           transition: left 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.35s ease-out, transform 0.38s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s ease-out;
           animation: mascotEntrance 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, mascotFloat 3.4s ease-in-out infinite 0.65s;
         }
@@ -847,8 +847,8 @@ const VeggieGangMascots = () => {
           position: absolute;
           top: -6px;
           right: -5px;
-          width: 22px;
-          height: 22px;
+          width: 24px;
+          height: 24px;
           border-radius: 50%;
           border: 1.5px solid #ffffff;
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -861,7 +861,7 @@ const VeggieGangMascots = () => {
 
         .mascot-arrow-icon {
           color: #ffffff;
-          font-size: 11px;
+          font-size: 11.5px;
           font-weight: 900;
           line-height: 1;
         }
@@ -880,10 +880,10 @@ const VeggieGangMascots = () => {
           border: 1.5px solid var(--gold) !important;
           border-radius: 8px !important;
           box-shadow: 0 4px 18px rgba(0, 0, 0, 0.75), 0 0 12px rgba(255, 201, 60, 0.25) !important;
-          padding: 6px 10px !important;
+          padding: 6px 11px !important;
           margin: 0 !important;
           width: max-content;
-          max-width: 145px;
+          max-width: 155px;
           backdrop-filter: blur(8px);
           transition: opacity 0.2s, transform 0.2s;
           display: flex;
@@ -903,7 +903,7 @@ const VeggieGangMascots = () => {
           white-space: nowrap !important;
           font-family: 'Work Sans', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
           font-weight: 700;
-          font-size: 11px;
+          font-size: 11.5px;
           line-height: 1.25;
           color: #f4efe4;
           letter-spacing: 0;
@@ -1044,28 +1044,43 @@ const VeggieGangMascots = () => {
           }
         }
 
+        /* Small screen responsive adjustments: Bigger stickers & readable speech boxes */
         @media (max-width: 640px) {
           .veggie-mascot-card {
-            width: 70px !important;
-            height: 100px !important;
+            width: 92px !important;
+            height: 130px !important;
           }
           .mascot-arrow-badge {
-            width: 18px;
-            height: 18px;
-            top: -4px;
-            right: -4px;
+            width: 22px;
+            height: 22px;
+            top: -5px;
+            right: -5px;
           }
           .mascot-arrow-icon {
-            font-size: 9px;
+            font-size: 10.5px;
+          }
+          .mascot-text-msg {
+            padding: 5px 9px !important;
+            max-width: 145px;
+            border-radius: 8px !important;
+          }
+          .mascot-msg-line {
+            font-size: 11px;
+            line-height: 1.25;
+          }
+        }
+
+        @media (max-width: 380px) {
+          .veggie-mascot-card {
+            width: 82px !important;
+            height: 116px !important;
           }
           .mascot-text-msg {
             padding: 4px 8px !important;
-            max-width: 120px;
-            border-radius: 6px !important;
+            max-width: 130px;
           }
           .mascot-msg-line {
-            font-size: 9.5px;
-            line-height: 1.2;
+            font-size: 10px;
           }
         }
       `}</style>

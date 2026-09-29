@@ -762,9 +762,10 @@ const VeggieGangMascots = () => {
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
+      // Give 10 seconds of clean screen time after scrolling stops before reappearing
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
-      }, 400);
+      }, 10000);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true, capture: true });

@@ -3,24 +3,15 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 
-export default function Footer() {
+export default function Footer({ initialSettings = null }) {
   const year = new Date().getFullYear();
-  const [settings, setSettings] = useState(() => {
-    // Read from cache synchronously to avoid any flash
-    if (typeof window !== 'undefined') {
-      try {
-        const raw = localStorage.getItem('palu_settings_cache');
-        if (raw) return JSON.parse(raw);
-      } catch {}
-    }
-    return null;
-  });
+  const [settings, setSettings] = useState(initialSettings);
 
   useEffect(() => {
-    api.getSettings()
-      .then(res => { if (res?.success && res.data) setSettings(res.data); })
-      .catch(() => {});
-  }, []);
+    if (initialSettings) {
+      setSettings(initialSettings);
+    }
+  }, [initialSettings]);
 
   const channelName = settings?.channelName || 'Palu Vlogs';
   const bio = settings?.bio || 'Four friends, one camera, and a vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.';

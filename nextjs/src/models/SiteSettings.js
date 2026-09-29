@@ -15,11 +15,11 @@ const siteSettingsSchema = new mongoose.Schema({
   },
   profileImage: {
     type: String,
-    default: '/assets/images/logo.jpg'
+    default: ''
   },
   coverImage: {
     type: String,
-    default: '/assets/images/hero_team.jpg'
+    default: ''
   },
   youtubeUrl: {
     type: String,

@@ -465,7 +465,7 @@ export default function HeroSquadDP({ profileImage, coverImage, fallback }) {
     setParticles(list);
   };
 
-  const imageSrc = coverImage || profileImage || fallback || '/assets/images/hero_team.jpg';
+  const imageSrc = coverImage || profileImage || fallback || '';
 
   return (
     <div className="hero-dp-interactive-container">
@@ -504,12 +504,28 @@ export default function HeroSquadDP({ profileImage, coverImage, fallback }) {
         onTouchStart={handleTap}
         title="Tap Squad DP for 5 Crazy Animations! 💥"
       >
-        <img
-          src={imageSrc}
-          alt="Palu Vlogs Squad DP"
-          className="hero-badge"
-          draggable="false"
-        />
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt="Palu Vlogs Squad DP"
+            className="hero-badge"
+            draggable="false"
+          />
+        ) : (
+          <div
+            className="hero-badge"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'radial-gradient(circle, #2a2b36 0%, #15161c 100%)',
+              fontSize: '52px',
+              border: '3px solid var(--gold)'
+            }}
+          >
+            🎬
+          </div>
+        )}
       </div>
 
       {/* Dynamic Blast/Confetti Particle Layer */}

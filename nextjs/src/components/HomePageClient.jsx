@@ -99,7 +99,7 @@ export default function HomePageClient({
               <HeroSquadDP
                 coverImage={settings?.coverImage}
                 profileImage={settings?.profileImage}
-                fallback={settings?.coverImage || settings?.profileImage || '/assets/images/hero_team.jpg'}
+                fallback=""
               />
             </div>
           </div>

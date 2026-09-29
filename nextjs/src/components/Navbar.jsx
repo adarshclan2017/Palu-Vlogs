@@ -130,38 +130,38 @@ const playWelcomeFanfare = () => {
 
 const WELCOME_SPARKLES = ['✨', '⭐', '🎉', '🍉', '🌴', '🎬', '💫', '🔥'];
 
-export default function Navbar() {
+export default function Navbar({ initialSettings = null }) {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const channelName = initialSettings?.channelName || 'Palu Vlogs';
 
   // Welcome Animation State
   const [isWelcomeActive, setIsWelcomeActive] = useState(false);
   const [sparkles, setSparkles] = useState([]);
   const welcomeTimeoutRef = useRef(null);
+
+  // Initialize directly from server MongoDB data — ZERO default fallback image flash!
   const [profileLogo, setProfileLogo] = useState(() => {
+    if (initialSettings?.profileImage) return initialSettings.profileImage;
     if (typeof window !== 'undefined') {
       try {
         const raw = localStorage.getItem('palu_settings_cache');
         if (raw) {
           const parsed = JSON.parse(raw);
-          return parsed.profileImage || '/assets/images/logo.jpg';
+          if (parsed.profileImage) return parsed.profileImage;
         }
       } catch {}
     }
-    return '/assets/images/logo.jpg';
+    return '';
   });
 
+  // Sync if initialSettings change
   useEffect(() => {
-    fetch('/api/settings')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.success && data?.data?.profileImage) {
-          setProfileLogo(data.data.profileImage);
-        }
-      })
-      .catch(() => {});
-  }, []);
+    if (initialSettings?.profileImage) {
+      setProfileLogo(initialSettings.profileImage);
+    }
+  }, [initialSettings?.profileImage]);
 
   // Preload and cache speech voices on component mount
   useEffect(() => {
@@ -237,18 +237,39 @@ export default function Navbar() {
             title="Tap Palu Vlogs for Welcome Voice & Animation! 🎉"
           >
             <div className="nav-brand-logo-wrap">
-              <img
-                src={profileLogo}
-                alt="Palu Vlogs Logo"
-                className="nav-brand-logo-img"
-                style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover' }}
-              />
+              {profileLogo ? (
+                <img
+                  src={profileLogo}
+                  alt={channelName}
+                  className="nav-brand-logo-img"
+                  style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover' }}
+                />
+              ) : (
+                <div
+                  className="nav-brand-logo-img"
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: '50%',
+                    background: 'var(--gold, #e6af2e)',
+                    color: '#12100e',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 900,
+                    fontSize: '20px',
+                    fontFamily: 'Anton, sans-serif'
+                  }}
+                >
+                  {(initialSettings?.channelName || 'Palu Vlogs').charAt(0)}
+                </div>
+              )}
               {isWelcomeActive && <div className="nav-brand-halo" />}
             </div>
 
             <div className="nav-brand-text-col">
               <div className="nav-brand-title">
-                {'Palu Vlogs'.split('').map((char, idx) => (
+                {(initialSettings?.channelName || 'Palu Vlogs').split('').map((char, idx) => (
                   <span
                     key={idx}
                     className="brand-letter"
@@ -258,7 +279,7 @@ export default function Navbar() {
                   </span>
                 ))}
               </div>
-              <div className="nav-brand-sub">Vegetable Gang</div>
+              <div className="nav-brand-sub">{initialSettings?.tagline ? 'Vegetable Gang' : 'Official Channel'}</div>
             </div>
 
             {/* Floating Sparkle Particles */}

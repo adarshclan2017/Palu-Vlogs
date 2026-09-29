@@ -1,4 +1,6 @@
 import './globals.css';
+import { connectDB } from '@/lib/db';
+import dataStore from '@/lib/dataStore';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WatermelonMascot from '@/components/WatermelonMascot';
@@ -14,13 +16,17 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  await connectDB(8000).catch(() => {});
+  const rawSettings = await dataStore.getSettings().catch(() => null);
+  const initialSettings = rawSettings ? JSON.parse(JSON.stringify(rawSettings)) : null;
+
   return (
     <html lang="en">
       <body>
-        <Navbar />
+        <Navbar initialSettings={initialSettings} />
         <main>{children}</main>
-        <Footer />
+        <Footer initialSettings={initialSettings} />
         <WatermelonMascot />
       </body>
     </html>

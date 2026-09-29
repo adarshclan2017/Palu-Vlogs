@@ -280,88 +280,75 @@ const playPopSound = () => {
 };
 
 /**
- * Calculate 100% collision-free slots with wide clearances.
- * Small screens (<640px) use 6 spacious slots so stickers NEVER touch or crowd each other.
- * Large screens (>=640px) use 12 perimeter slots with corner safety margins.
+ * Calculate 100% collision-free slots along the LEFT and RIGHT edges ONLY.
+ * NO stickers on top edge, NO stickers on bottom edge!
+ * Provides massive vertical clearance so stickers never touch each other.
  */
 const getSafeSlots = (w, h, width, height, isMobile) => {
   if (isMobile) {
+    // Mobile: 4 spacious slots EXCLUSIVELY on LEFT and RIGHT edges
+    // High top clearance (avoiding header/notch) and high bottom clearance (avoiding footer)
     return [
-      // 0: Top Center (far from left & right sides)
+      // 0: Left Upper
       {
-        slotId: 'mobile-top',
-        edge: 'top',
-        x: Math.max(6, Math.min(w - width - 6, Math.round((w - width) / 2))),
-        y: 8,
-        face: 'left',
-        angle: 90
-      },
-      // 1: Left Upper (safely below top card, high on left)
-      {
-        slotId: 'mobile-left-u',
+        slotId: 'mobile-left-1',
         edge: 'left',
         x: 6,
-        y: Math.round(Math.max(height + 26, h * 0.32 - height / 2)),
+        y: Math.round(h * 0.26 - height / 2),
         face: 'right',
         angle: 0
       },
-      // 2: Left Lower (generous gap below upper card, above bottom)
+      // 1: Left Lower
       {
-        slotId: 'mobile-left-l',
+        slotId: 'mobile-left-2',
         edge: 'left',
         x: 6,
-        y: Math.round(Math.min(h - height - 28, Math.max(height + 26 + height + 24, h * 0.68 - height / 2))),
+        y: Math.round(h * 0.70 - height / 2),
         face: 'right',
         angle: 0
       },
-      // 3: Bottom Center (far from left & right sides)
+      // 2: Right Upper
       {
-        slotId: 'mobile-bottom',
-        edge: 'bottom',
-        x: Math.max(6, Math.min(w - width - 6, Math.round((w - width) / 2))),
-        y: Math.max(6, Math.round(h - height - 8)),
-        face: 'left',
-        angle: 270
-      },
-      // 4: Right Upper (safely below top card, high on right)
-      {
-        slotId: 'mobile-right-u',
+        slotId: 'mobile-right-1',
         edge: 'right',
         x: Math.max(6, Math.round(w - width - 6)),
-        y: Math.round(Math.max(height + 26, h * 0.32 - height / 2)),
+        y: Math.round(h * 0.26 - height / 2),
         face: 'left',
         angle: 180
       },
-      // 5: Right Lower (generous gap below upper card, above bottom)
+      // 3: Right Lower
       {
-        slotId: 'mobile-right-l',
+        slotId: 'mobile-right-2',
         edge: 'right',
         x: Math.max(6, Math.round(w - width - 6)),
-        y: Math.round(Math.min(h - height - 28, Math.max(height + 26 + height + 24, h * 0.68 - height / 2))),
+        y: Math.round(h * 0.70 - height / 2),
         face: 'left',
         angle: 180
       }
     ];
   }
 
-  // Desktop 12 perimeter slots (cleanly separated from all 4 corners and each other)
-  return [
-    { slotId: 'd-top-1', edge: 'top', x: Math.round(w * 0.22 - width / 2), y: 8, face: 'right', angle: 90 },
-    { slotId: 'd-top-2', edge: 'top', x: Math.round(w * 0.50 - width / 2), y: 8, face: 'left', angle: 90 },
-    { slotId: 'd-top-3', edge: 'top', x: Math.round(w * 0.78 - width / 2), y: 8, face: 'left', angle: 90 },
+  // Desktop: 12 perimeter slots distributed STRICTLY on LEFT (6) and RIGHT (6) edges
+  // ZERO stickers on top, ZERO stickers on bottom
+  const desktopPcts = [0.10, 0.25, 0.40, 0.55, 0.72, 0.87];
+  const leftSlots = desktopPcts.map((pct, idx) => ({
+    slotId: `d-left-${idx + 1}`,
+    edge: 'left',
+    x: 8,
+    y: Math.round(h * pct - height / 2),
+    face: 'right',
+    angle: 0
+  }));
+  const rightSlots = desktopPcts.map((pct, idx) => ({
+    slotId: `d-right-${idx + 1}`,
+    edge: 'right',
+    x: Math.max(8, Math.round(w - width - 8)),
+    y: Math.round(h * pct - height / 2),
+    face: 'left',
+    angle: 180
+  }));
 
-    { slotId: 'd-right-1', edge: 'right', x: Math.round(w - width - 8), y: Math.round(h * 0.22 - height / 2), face: 'left', angle: 180 },
-    { slotId: 'd-right-2', edge: 'right', x: Math.round(w - width - 8), y: Math.round(h * 0.50 - height / 2), face: 'left', angle: 180 },
-    { slotId: 'd-right-3', edge: 'right', x: Math.round(w - width - 8), y: Math.round(h * 0.78 - height / 2), face: 'left', angle: 180 },
-
-    { slotId: 'd-bottom-1', edge: 'bottom', x: Math.round(w * 0.78 - width / 2), y: Math.round(h - height - 8), face: 'left', angle: 270 },
-    { slotId: 'd-bottom-2', edge: 'bottom', x: Math.round(w * 0.50 - width / 2), y: Math.round(h - height - 8), face: 'left', angle: 270 },
-    { slotId: 'd-bottom-3', edge: 'bottom', x: Math.round(w * 0.22 - width / 2), y: Math.round(h - height - 8), face: 'right', angle: 270 },
-
-    { slotId: 'd-left-1', edge: 'left', x: 8, y: Math.round(h * 0.78 - height / 2), face: 'right', angle: 0 },
-    { slotId: 'd-left-2', edge: 'left', x: 8, y: Math.round(h * 0.50 - height / 2), face: 'right', angle: 0 },
-    { slotId: 'd-left-3', edge: 'left', x: 8, y: Math.round(h * 0.22 - height / 2), face: 'right', angle: 0 }
-  ];
+  return [...leftSlots, ...rightSlots];
 };
 
 /**
@@ -675,15 +662,16 @@ const SingleMascot = ({
 /**
  * Vegetable Gang Mascots Root Component for Next.js
  * - GUARANTEED NON-OVERLAPPING: Stickers never touch each other or screen corners.
- * - On Mobile: 6 spacious, collision-free safety slots with squad rotation so all 12 characters are shown.
- * - On Desktop: 12 perimeter slots with corner buffers.
+ * - Stickers stick strictly to LEFT and RIGHT edges ONLY (never top or bottom).
+ * - On Mobile: 4 spacious, collision-free safety slots (2 on left, 2 on right) with squad rotation.
+ * - On Desktop: 12 perimeter slots (6 on left, 6 on right).
  * - Auto-closes when scrolling, reappears gracefully when scroll stops.
  */
 const VeggieGangMascots = () => {
   const [isScrolling, setIsScrolling] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  // Mobile active characters in 6 slots: [0, 1, 2, 3, 4, 5] initially
-  const [mobileSlots, setMobileSlots] = useState([0, 1, 2, 3, 4, 5]);
+  // Mobile active characters in 4 slots: [0, 1, 2, 3] initially (2 on left, 2 on right)
+  const [mobileSlots, setMobileSlots] = useState([0, 1, 2, 3]);
   const [scrollRevealCount, setScrollRevealCount] = useState(12);
 
   const scrollIdleTimerRef = useRef(null);

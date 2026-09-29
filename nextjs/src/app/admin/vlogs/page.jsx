@@ -8,7 +8,6 @@ const EMPTY_FORM = {
   title: '',
   youtubeUrl: '',
   description: '',
-  tags: 'Vegetable Gang, Kanniyakumari',
   locationName: 'Kanniyakumari, Tamil Nadu',
   duration: '',
   views: '',
@@ -57,7 +56,6 @@ export default function ManageVlogsPage() {
       title: vlog.title,
       youtubeUrl: vlog.youtubeUrl || `https://www.youtube.com/watch?v=${vlog.youtubeId}`,
       description: vlog.description,
-      tags: Array.isArray(vlog.tags) ? vlog.tags.join(', ') : vlog.tags || '',
       locationName: vlog.locationName || 'Kanniyakumari, Tamil Nadu',
       duration: vlog.duration || '',
       views: vlog.views || '',
@@ -342,28 +340,15 @@ export default function ManageVlogsPage() {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div className="form-group">
-                  <label className="form-label">Location</label>
-                  <input
-                    type="text"
-                    value={formData.locationName}
-                    onChange={(e) => setFormData({ ...formData, locationName: e.target.value })}
-                    placeholder="Kanniyakumari, Tamil Nadu"
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Tags (comma-separated)</label>
-                  <input
-                    type="text"
-                    value={formData.tags}
-                    onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                    placeholder="Kanniyakumari, RoadTrip, Food"
-                    className="form-input"
-                  />
-                </div>
+              <div className="form-group">
+                <label className="form-label">Location</label>
+                <input
+                  type="text"
+                  value={formData.locationName}
+                  onChange={(e) => setFormData({ ...formData, locationName: e.target.value })}
+                  placeholder="Kanniyakumari, Tamil Nadu"
+                  className="form-input"
+                />
               </div>
 
               <ImageUploader

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ isOpen, onClose }) {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -27,6 +27,7 @@ export default function AdminSidebar() {
       localStorage.removeItem('palu_user');
       document.cookie = 'palu_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     }
+    if (onClose) onClose();
     router.push('/admin/login');
   };
 
@@ -40,16 +41,26 @@ export default function AdminSidebar() {
   ];
 
   return (
-    <aside className="admin-sidebar">
+    <aside className={`admin-sidebar ${isOpen ? 'open' : ''}`}>
       <div className="admin-sidebar-header">
-        <img src="/assets/images/logo.jpg" alt="Palu Vlogs" style={{ width: 38, height: 38, borderRadius: '50%', border: '2px solid var(--gold)' }} />
-        <div>
-          <div style={{ fontFamily: 'Anton', fontSize: '18px', color: 'var(--cream)', lineHeight: 1 }}>PALU VLOGS</div>
-          <div style={{ fontSize: '11px', color: 'var(--gold)', fontWeight: 700, textTransform: 'uppercase' }}>Admin Portal</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img src="/assets/images/logo.jpg" alt="Palu Vlogs" style={{ width: 38, height: 38, borderRadius: '50%', border: '2px solid var(--gold)' }} />
+          <div>
+            <div style={{ fontFamily: 'Anton', fontSize: '18px', color: 'var(--cream)', lineHeight: 1 }}>PALU VLOGS</div>
+            <div style={{ fontSize: '11px', color: 'var(--gold)', fontWeight: 700, textTransform: 'uppercase' }}>Admin Portal</div>
+          </div>
         </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="admin-sidebar-close"
+          aria-label="Close admin menu"
+        >
+          ✕
+        </button>
       </div>
 
-      <div style={{ padding: '0 8px' }}>
+      <div style={{ padding: '0 8px 16px', borderBottom: '1px solid var(--line)', marginBottom: '16px' }}>
         <div style={{ fontSize: '12px', color: 'var(--stone)' }}>Logged in as:</div>
         <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--cream)' }}>{user?.name || 'Administrator'}</div>
       </div>
@@ -62,6 +73,7 @@ export default function AdminSidebar() {
               key={item.href}
               href={item.href}
               className={`admin-nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => { if (onClose) onClose(); }}
             >
               <span>{item.icon}</span>
               <span>{item.label}</span>
@@ -70,8 +82,13 @@ export default function AdminSidebar() {
         })}
       </nav>
 
-      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <Link href="/" className="btn-ghost" style={{ justifyContent: 'center', fontSize: '13px', padding: '10px' }}>
+      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '20px' }}>
+        <Link
+          href="/"
+          className="btn-ghost"
+          style={{ justifyContent: 'center', fontSize: '13px', padding: '10px' }}
+          onClick={() => { if (onClose) onClose(); }}
+        >
           👁️ View Public Site
         </Link>
         <button

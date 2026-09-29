@@ -91,7 +91,7 @@ export default function AdminSettingsPage() {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
+      <form onSubmit={handleSubmit} className="admin-settings-grid">
         {/* Brand Information */}
         <div style={{ background: 'var(--panel)', border: '1px solid var(--line)', borderRadius: 'var(--radius-md)', padding: '24px' }}>
           <h3 style={{ fontSize: '18px', color: 'var(--gold)', marginBottom: '18px' }}>

@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import AdminSidebar from '@/components/AdminSidebar';
 
@@ -7,6 +8,7 @@ export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (pathname === '/admin/login') {
@@ -22,7 +24,12 @@ export default function AdminLayout({ children }) {
     }
   }, [pathname, router]);
 
-  // If login page, don't show admin sidebar
+  // Close mobile drawer whenever pathname changes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
+  // If login page, don't show admin layout
   if (pathname === '/admin/login') {
     return <>{children}</>;
   }
@@ -37,7 +44,42 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="admin-layout">
-      <AdminSidebar />
+      {/* Mobile Top Header */}
+      <header className="admin-mobile-header">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <button
+            type="button"
+            className="admin-hamburger"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label="Toggle admin navigation menu"
+          >
+            ☰
+          </button>
+          <img src="/assets/images/logo.jpg" alt="Palu Vlogs" style={{ width: 30, height: 30, borderRadius: '50%', border: '1.5px solid var(--gold)' }} />
+          <span style={{ fontFamily: 'Anton', fontSize: '18px', color: 'var(--cream)', letterSpacing: '0.02em' }}>
+            PALU STUDIO
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Link href="/" className="btn-ghost" style={{ fontSize: '12px', padding: '6px 10px' }}>
+            👁️ Site
+          </Link>
+        </div>
+      </header>
+
+      {/* Backdrop for mobile drawer */}
+      <div
+        className={`admin-backdrop ${sidebarOpen ? 'open' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+        aria-hidden="true"
+      />
+
+      <AdminSidebar
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+
       <main className="admin-main">
         {children}
       </main>

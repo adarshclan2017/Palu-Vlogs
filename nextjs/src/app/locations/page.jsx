@@ -38,20 +38,7 @@ export default function LocationsPage() {
 
         {/* Interactive Highlight Bar */}
         {selectedLoc && (
-          <div
-            style={{
-              background: 'var(--panel)',
-              border: '1px solid var(--gold)',
-              borderRadius: 'var(--radius-lg)',
-              padding: '28px',
-              marginBottom: '48px',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '32px',
-              alignItems: 'center',
-              boxShadow: '0 14px 40px rgba(0,0,0,0.6)'
-            }}
-          >
+          <div className="location-spotlight">
             <div>
               <span className="badge">Featured Destination</span>
               <h3 style={{ fontSize: '32px', color: 'var(--gold)', marginTop: '8px', marginBottom: '6px' }}>

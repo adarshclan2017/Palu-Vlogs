@@ -138,19 +138,7 @@ export default function Home() {
               <p>The episode that defined our season. Click below to stream directly on our custom player!</p>
             </div>
 
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: '40px',
-                alignItems: 'center',
-                background: 'var(--panel-2)',
-                border: '1px solid var(--line)',
-                borderRadius: 'var(--radius-lg)',
-                overflow: 'hidden',
-                padding: '24px'
-              }}
-            >
+            <div className="featured-vlog-spotlight">
               <div
                 className="vlog-thumb-wrap"
                 style={{ borderRadius: 'var(--radius-md)', aspectRatio: '16/9' }}

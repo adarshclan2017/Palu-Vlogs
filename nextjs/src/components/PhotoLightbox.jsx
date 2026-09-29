@@ -49,14 +49,7 @@ export default function PhotoLightbox({ photos, currentIndex, onClose, onIndexCh
         <img
           src={currentPhoto.imageUrl}
           alt={currentPhoto.title}
-          style={{
-            maxWidth: '82vw',
-            maxHeight: '72vh',
-            objectFit: 'contain',
-            borderRadius: '6px',
-            border: '3px solid var(--cream)',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.9)'
-          }}
+          className="lightbox-img"
         />
 
         <div style={{ marginTop: '18px', textAlign: 'center', maxWidth: '640px' }}>

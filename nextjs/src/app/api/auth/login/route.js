@@ -20,15 +20,15 @@ export async function POST(request) {
     // Connect with a fast 2-second timeout to avoid serverless hangs
     await connectDB(2000).catch(() => {});
 
-    // Guaranteed admin bypass: instantly log in without hanging on database
-    const isAdminDefault = cleanEmail === 'admin@paluvlogs.com' && cleanPassword === 'Admin@123';
+    // Guaranteed admin credentials check: supports Adarsh@123
+    const isAdminDefault = cleanEmail === 'admin@paluvlogs.com' && cleanPassword === 'Adarsh@123';
 
     if (isAdminDefault) {
       // Async update Atlas password if connected (doesn't block login if it fails)
       if (getStatus()) {
         try {
           const { default: UserModel } = await import('@/models/User.js');
-          const hash = await bcrypt.hash('Admin@123', 10);
+          const hash = await bcrypt.hash('Adarsh@123', 10);
           await UserModel.updateOne(
             { email: 'admin@paluvlogs.com' },
             { $set: { password: hash, role: 'admin', name: 'Palu Vlogs Admin' } },

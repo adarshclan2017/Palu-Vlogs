@@ -1,15 +1,28 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
 import Toast from '@/components/Toast';
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('admin@paluvlogs.com');
-  const [password, setPassword] = useState('Admin@123');
+  const [password, setPassword] = useState('');
+  const [logo, setLogo] = useState('');
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('palu_settings_cache');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed.profileImage) setLogo(parsed.profileImage);
+        }
+      } catch {}
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -51,16 +64,38 @@ export default function AdminLoginPage() {
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <img
-            src="/assets/images/logo.jpg"
-            alt="Palu Vlogs"
-            style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 14px', border: '3px solid var(--gold)' }}
-          />
+          {logo ? (
+            <img
+              src={logo}
+              alt="Palu Vlogs"
+              style={{ width: 64, height: 64, borderRadius: '50%', margin: '0 auto 14px', border: '3px solid var(--gold)', objectFit: 'cover' }}
+            />
+          ) : (
+            <div
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: '50%',
+                margin: '0 auto 14px',
+                border: '3px solid var(--gold)',
+                background: 'var(--gold)',
+                color: '#12100e',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '28px',
+                fontWeight: 900,
+                fontFamily: 'Anton, sans-serif'
+              }}
+            >
+              P
+            </div>
+          )}
           <h2 style={{ fontFamily: 'Anton', fontSize: '28px', color: 'var(--gold)', letterSpacing: '0.02em' }}>
             Admin Portal
           </h2>
           <p style={{ color: 'var(--stone)', fontSize: '13.5px', marginTop: '4px' }}>
-            Sign in to manage vlogs, gallery, and inquiries
+            Sign in to manage vlogs, gallery, and channel settings
           </p>
         </div>
 
@@ -76,6 +111,7 @@ export default function AdminLoginPage() {
               autoCorrect="off"
               spellCheck="false"
               className="form-input"
+              placeholder="admin@paluvlogs.com"
             />
           </div>
 
@@ -86,6 +122,7 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              placeholder="Enter your password"
               className="form-input"
             />
           </div>
@@ -94,28 +131,11 @@ export default function AdminLoginPage() {
             type="submit"
             disabled={loading}
             className="btn-primary"
-            style={{ width: '100%', justifyContent: 'center', marginTop: '8px' }}
+            style={{ width: '100%', justifyContent: 'center', marginTop: '12px' }}
           >
             {loading ? 'Authenticating...' : 'Sign In 🔐'}
           </button>
         </form>
-
-        <div
-          style={{
-            marginTop: '24px',
-            padding: '14px',
-            background: 'var(--panel-2)',
-            borderRadius: 'var(--radius-sm)',
-            border: '1px solid var(--line)',
-            fontSize: '12px',
-            color: 'var(--stone)',
-            textAlign: 'center'
-          }}
-        >
-          <strong style={{ color: 'var(--gold)' }}>Seeded Admin Credentials:</strong><br />
-          Email: <code>admin@paluvlogs.com</code><br />
-          Password: <code>Admin@123</code>
-        </div>
       </div>
 
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}

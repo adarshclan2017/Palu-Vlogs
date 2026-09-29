@@ -35,7 +35,7 @@ function initLocalStore() {
     }
   }
 
-  const hash = bcrypt.hashSync('Admin@123', 10);
+  const hash = bcrypt.hashSync('Adarsh@123', 10);
   localDb = {
     ...SEED,
     users: [{

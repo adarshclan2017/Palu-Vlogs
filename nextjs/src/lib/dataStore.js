@@ -912,11 +912,11 @@ export const dataStore = {
       } catch {}
     }
     const db = initLocalStore();
-    return db.settings?.visitorCount || 14820;
+    return db.settings?.visitorCount != null ? db.settings.visitorCount : 0;
   },
 
   incrementVisitors: async () => {
-    let count = 14820;
+    let count = 1;
     if (getStatus()) {
       try {
         const { default: SSModel } = await import('../models/SiteSettings.js');
@@ -930,7 +930,7 @@ export const dataStore = {
     }
     const db = initLocalStore();
     if (db.settings) {
-      db.settings.visitorCount = (db.settings.visitorCount || 14820) + 1;
+      db.settings.visitorCount = (db.settings.visitorCount || 0) + 1;
       count = db.settings.visitorCount;
       saveLocalStore();
     }

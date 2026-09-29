@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 
 export default function VisitorBadge({ className = '' }) {
-  const [count, setCount] = useState(14820);
+  const [count, setCount] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {

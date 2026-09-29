@@ -147,7 +147,8 @@
     "subscriberCount": "125K",
     "totalViews": "4.8M",
     "featuredVlogSlug": "great-eggplant-market-heist",
-    "_id": "settings_1"
+    "_id": "settings_1",
+    "visitorCount": 0
   },
   "messages": [
     {

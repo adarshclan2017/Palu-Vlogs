@@ -51,7 +51,7 @@ const siteSettingsSchema = new mongoose.Schema({
   },
   visitorCount: {
     type: Number,
-    default: 14820
+    default: 0
   },
   updatedAt: {
     type: Date,

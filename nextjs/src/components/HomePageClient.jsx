@@ -64,11 +64,6 @@ export default function HomePageClient({
         <div className="wrap">
           <div className="hero-grid">
             <div>
-              <div className="hero-eyebrow">
-                <span className="pulse-dot"></span>
-                Fresh Episode Every Sunday
-              </div>
-
               <MountainSnowText />
 
               <p className="hero-tag">

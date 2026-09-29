@@ -16,7 +16,7 @@ export default function VlogCard({ vlog, onPlay }) {
     <article className="vlog-card">
       <div className="vlog-thumb-wrap" onClick={handlePlayClick} style={{ cursor: onPlay ? 'pointer' : 'default' }}>
         <img
-          src={vlog.thumbnailUrl || '/assets/images/about_roadtrip.jpg'}
+          src={vlog.thumbnailUrl || (vlog.youtubeId ? `https://img.youtube.com/vi/${vlog.youtubeId}/hqdefault.jpg` : '/assets/images/hero_team.jpg')}
           alt={vlog.title}
           className="vlog-thumb"
           loading="lazy"

@@ -262,28 +262,33 @@ export default function Home() {
         </section>
       )}
 
-      {/* ---------- PLACES VISITED PREVIEW ---------- */}
+      {/* ---------- LOCATIONS VISITED PREVIEW ---------- */}
       {locations.length > 0 && (
         <section className="section-pad" style={{ background: 'var(--panel-2)', borderTop: '1px solid var(--line)' }}>
           <div className="wrap">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '36px', flexWrap: 'wrap', gap: '16px' }}>
               <div className="section-head" style={{ marginBottom: 0 }}>
-                <span className="kicker">Adventures</span>
-                <h2>Places We've Explored</h2>
-                <p>The destinations across Kerala and Southern India where our cameras rolled.</p>
+                <h2>Locations Visited</h2>
+                <p>The destinations across Kerala and beyond where our cameras rolled.</p>
               </div>
               <Link href="/locations" className="btn-ghost">
-                Explore All Destinations →
+                View All Locations ({locations.length}) →
               </Link>
             </div>
 
             <div className="locations-grid">
               {locations.map((loc, idx) => (
                 <div key={loc._id || idx} className="location-card">
-                  <div className="location-img-frame">
-                    <img src={loc.coverImage} alt="" className="location-bg-blur" aria-hidden="true" />
-                    <img src={loc.coverImage} alt={loc.name} className="location-cover" loading="lazy" />
-                  </div>
+                  {loc.coverImage ? (
+                    <div className="location-img-frame">
+                      <img src={loc.coverImage} alt="" className="location-bg-blur" aria-hidden="true" />
+                      <img src={loc.coverImage} alt={loc.name} className="location-cover" loading="lazy" />
+                    </div>
+                  ) : (
+                    <div style={{ height: '140px', background: 'var(--panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px' }}>
+                      📍
+                    </div>
+                  )}
                   <div className="location-body">
                     <div className="location-coords">
                       📍 {loc.state}, {loc.country} · {loc.visitedDate}
@@ -303,24 +308,18 @@ export default function Home() {
       {/* ---------- ABOUT PREVIEW ---------- */}
       <section className="section-pad">
         <div className="wrap">
-          <div className="about-hero-grid">
-            <div className="about-img-frame">
-              <img src="/assets/images/about_roadtrip.jpg" alt="Palu Vlogs Highway Squad" />
-            </div>
-
-            <div>
-              <span className="kicker">The Story</span>
-              <h2 style={{ fontSize: '38px', marginBottom: '16px' }}>Four Friends. One Camera. Zero Plan.</h2>
-              <p style={{ color: 'var(--stone)', fontSize: '16px', lineHeight: 1.7, marginBottom: '16px' }}>
-                We started filming our weekend scooter trips across Kerala with no script and no budget. One day, Potato Star showed up in a vegetable suit as a prank — and our audience loved it so much that every member received a vegetable persona.
-              </p>
-              <p style={{ color: 'var(--cream)', fontSize: '16px', fontWeight: 600, lineHeight: 1.7, marginBottom: '24px' }}>
-                Today, Palu Vlogs is a family of 125,000+ subscribers who ride along with us on every hairpin turn and roadside food stop.
-              </p>
-              <Link href="/about" className="btn-primary">
-                Read Our Full Story →
-              </Link>
-            </div>
+          <div style={{ background: 'var(--panel)', padding: '48px 36px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--line)', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+            <span className="kicker">The Story</span>
+            <h2 style={{ fontSize: '36px', marginBottom: '16px' }}>Four Friends. One Camera. Zero Plan.</h2>
+            <p style={{ color: 'var(--stone)', fontSize: '16px', lineHeight: 1.7, marginBottom: '16px', maxWidth: '720px', margin: '0 auto 16px' }}>
+              We started filming our weekend scooter trips across Kerala with no script and no budget. One day, Potato Star showed up in a vegetable suit as a prank — and our audience loved it so much that every member received a vegetable persona.
+            </p>
+            <p style={{ color: 'var(--cream)', fontSize: '16px', fontWeight: 600, lineHeight: 1.7, marginBottom: '28px', maxWidth: '720px', margin: '0 auto 28px' }}>
+              Today, Palu Vlogs is a family of 125,000+ subscribers who ride along with us on every hairpin turn and roadside food stop.
+            </p>
+            <Link href="/about" className="btn-primary" style={{ display: 'inline-flex' }}>
+              Read Our Full Story →
+            </Link>
           </div>
         </div>
       </section>

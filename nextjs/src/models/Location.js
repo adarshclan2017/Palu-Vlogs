@@ -20,7 +20,7 @@ const locationSchema = new mongoose.Schema({
   },
   coverImage: {
     type: String,
-    default: '/assets/images/about_roadtrip.jpg'
+    default: ''
   },
   coordinates: {
     lat: { type: Number, default: 9.9312 },

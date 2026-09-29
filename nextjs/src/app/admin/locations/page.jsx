@@ -67,7 +67,7 @@ export default function ManageLocationsPage() {
         state: state.trim(),
         country: country.trim(),
         description: description.trim(),
-        coverImage: coverImage || '/assets/images/about_roadtrip.jpg',
+        coverImage: coverImage ? coverImage.trim() : '',
         visitedDate: visitedDate.trim()
       };
 
@@ -148,11 +148,17 @@ export default function ManageLocationsPage() {
               {locations.map(loc => (
                 <tr key={loc._id}>
                   <td>
-                    <img
-                      src={loc.coverImage}
-                      alt={loc.name}
-                      style={{ width: '80px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
-                    />
+                    {loc.coverImage ? (
+                      <img
+                        src={loc.coverImage}
+                        alt={loc.name}
+                        style={{ width: '80px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
+                      />
+                    ) : (
+                      <div style={{ width: '80px', height: '50px', background: 'var(--panel-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '4px', fontSize: '20px' }}>
+                        📍
+                      </div>
+                    )}
                   </td>
                   <td>
                     <div style={{ fontWeight: 700, color: 'var(--cream)' }}>{loc.name}</div>

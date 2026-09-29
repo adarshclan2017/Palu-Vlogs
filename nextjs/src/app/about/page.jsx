@@ -17,22 +17,18 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="about-hero-grid" style={{ marginBottom: '60px' }}>
-          <div className="about-img-frame">
-            <img src="/assets/images/about_roadtrip.jpg" alt="Palu Vlogs Squad on NH 66" />
-          </div>
-
+        <div style={{ background: 'var(--panel)', padding: '44px', borderRadius: 'var(--radius-lg)', border: '1px solid var(--line)', marginBottom: '60px' }}>
           <div>
-            <h3 style={{ fontSize: '32px', color: 'var(--gold)', marginBottom: '14px' }}>
+            <h3 style={{ fontSize: '32px', color: 'var(--gold)', marginBottom: '16px' }}>
               How It All Began
             </h3>
-            <p style={{ color: 'var(--stone)', fontSize: '16px', lineHeight: 1.7, marginBottom: '14px' }}>
+            <p style={{ color: 'var(--stone)', fontSize: '16px', lineHeight: 1.8, marginBottom: '14px' }}>
               Back in 2024, our road trips were just casual weekends exploring Munnar, Wayanad, and the backwaters on two secondhand scooters. We mounted a budget action camera on a helmet and uploaded the raw footage to YouTube under the name <strong>Oru Palu Vlogs</strong> ("Palu" meaning chaotic/broken plans that somehow work out).
             </p>
-            <p style={{ color: 'var(--stone)', fontSize: '16px', lineHeight: 1.7, marginBottom: '14px' }}>
+            <p style={{ color: 'var(--stone)', fontSize: '16px', lineHeight: 1.8, marginBottom: '14px' }}>
               During a trip to an Ernakulam festival, Potato Star bought an eggplant suit as a dare. When we stopped at a roadside tea stall in full costume, the reactions from the locals were so hilarious and wholesome that we made a vow: <em>every member gets a vegetable persona</em>.
             </p>
-            <p style={{ color: 'var(--cream)', fontSize: '16px', fontWeight: 600, lineHeight: 1.7 }}>
+            <p style={{ color: 'var(--cream)', fontSize: '16px', fontWeight: 600, lineHeight: 1.8 }}>
               Today, the Vegetable Gang has grown to 11 characters, 125,000+ subscribers, and over 4.8 million views across our episodes.
             </p>
           </div>

@@ -146,7 +146,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
             boxShadow: '0 0 12px rgba(255, 71, 87, 0.3)'
           }}
         >
-          💥 Shatter &amp; Break UI
+          💥 Shatter & Break UI
         </button>
 
         <Link

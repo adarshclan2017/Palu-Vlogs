@@ -54,7 +54,7 @@ const playBrokenUiAudio = () => {
     boomOsc.start(now);
     boomOsc.stop(now + 0.75);
 
-    // 2. Electrical Glitch Sparks (0.3s, 0.7s, 1.2s)
+    // 2. Electrical Glitch Sparks (0.3s, 0.75s, 1.25s)
     [0.3, 0.75, 1.25].forEach((delay) => {
       const sparkOsc = ctx.createOscillator();
       const sparkGain = ctx.createGain();
@@ -103,7 +103,7 @@ const playBrokenUiAudio = () => {
 
 const GLITCH_PARTICLES = ['💥', '⚡', '⚠️', '🔥', '💻', '🧱', '🚨', '🔩'];
 
-export default function AdminBrokenUI({ onTrigger }) {
+export default function AdminBrokenUI() {
   const [isBroken, setIsBroken] = useState(false);
   const [particles, setParticles] = useState([]);
   const [statusText, setStatusText] = useState('');
@@ -111,26 +111,53 @@ export default function AdminBrokenUI({ onTrigger }) {
   const timerRef = useRef(null);
   const countIntervalRef = useRef(null);
 
-  // Trigger automatically after login if flag is set in sessionStorage
+  // Apply or remove the broken class directly on document.body for instant, global CSS impact
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const justLoggedIn = sessionStorage.getItem('palu_trigger_broken_ui');
-      if (justLoggedIn === 'true') {
+    if (isBroken) {
+      document.body.classList.add('admin-is-broken-mode');
+    } else {
+      document.body.classList.remove('admin-is-broken-mode');
+    }
+    return () => {
+      document.body.classList.remove('admin-is-broken-mode');
+    };
+  }, [isBroken]);
+
+  // Check login flag on mount (sessionStorage, localStorage, or query param ?break_ui=true)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const checkTrigger = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasParam = urlParams.get('break_ui') === 'true' || urlParams.has('broken');
+      const hasLocal = localStorage.getItem('palu_trigger_broken_ui') === 'true';
+      const hasSession = sessionStorage.getItem('palu_trigger_broken_ui') === 'true';
+
+      if (hasParam || hasLocal || hasSession) {
+        localStorage.removeItem('palu_trigger_broken_ui');
         sessionStorage.removeItem('palu_trigger_broken_ui');
-        // Give the page 400ms to render, then shatter everything!
+
+        if (hasParam && window.history.replaceState) {
+          window.history.replaceState({}, '', window.location.pathname);
+        }
+
+        // Start broken animation immediately
         setTimeout(() => {
           triggerBrokenEffect();
-        }, 400);
+        }, 150);
       }
+    };
 
-      const handleCustomTrigger = () => {
-        triggerBrokenEffect();
-      };
-      window.addEventListener('palu_trigger_broken_ui', handleCustomTrigger);
-      return () => {
-        window.removeEventListener('palu_trigger_broken_ui', handleCustomTrigger);
-      };
-    }
+    checkTrigger();
+
+    // Listen for custom trigger event
+    const handleCustomTrigger = () => {
+      triggerBrokenEffect();
+    };
+    window.addEventListener('palu_trigger_broken_ui', handleCustomTrigger);
+    return () => {
+      window.removeEventListener('palu_trigger_broken_ui', handleCustomTrigger);
+    };
   }, []);
 
   const triggerBrokenEffect = () => {
@@ -163,7 +190,7 @@ export default function AdminBrokenUI({ onTrigger }) {
       }
     }, 1000);
 
-    // Complete repair & restore at 4.2 seconds
+    // Complete repair & restore at 4.4 seconds
     timerRef.current = setTimeout(() => {
       restoreSystem();
     }, 4400);
@@ -175,14 +202,8 @@ export default function AdminBrokenUI({ onTrigger }) {
     setIsBroken(false);
     setParticles([]);
     setStatusText('');
+    document.body.classList.remove('admin-is-broken-mode');
   };
-
-  // Expose trigger to parent if needed
-  useEffect(() => {
-    if (onTrigger) {
-      onTrigger.current = triggerBrokenEffect;
-    }
-  }, [onTrigger]);
 
   return (
     <>
@@ -203,23 +224,23 @@ export default function AdminBrokenUI({ onTrigger }) {
           {/* Glass Cracks SVG Pattern */}
           <svg className="glass-cracks-svg" viewBox="0 0 1000 700" preserveAspectRatio="none">
             {/* Center impact crater */}
-            <circle cx="500" cy="350" r="14" fill="#ffffff" opacity="0.9" />
-            <circle cx="500" cy="350" r="42" fill="none" stroke="#ffffff" strokeWidth="2" opacity="0.75" />
-            <circle cx="500" cy="350" r="110" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeDasharray="12 8" />
+            <circle cx="500" cy="350" r="16" fill="#ffffff" opacity="0.95" />
+            <circle cx="500" cy="350" r="48" fill="none" stroke="#ffffff" strokeWidth="2.5" opacity="0.8" />
+            <circle cx="500" cy="350" r="120" fill="none" stroke="rgba(255,255,255,0.45)" strokeWidth="1.8" strokeDasharray="14 8" />
 
             {/* Fracture lines spreading across the entire screen */}
             <path
               d="M500,350 L200,80 L80,0 M500,350 L750,110 L940,30 M500,350 L860,420 L1000,510 M500,350 L640,620 L720,700 M500,350 L320,590 L180,700 M500,350 L120,410 L0,450 M500,350 L420,180 L380,0"
               stroke="#ffffff"
-              strokeWidth="2.5"
+              strokeWidth="3"
               fill="none"
-              opacity="0.85"
+              opacity="0.9"
             />
             {/* Secondary web branches */}
             <path
               d="M320,190 L180,260 M200,80 L280,30 M750,110 L680,40 M860,420 L920,330 M640,620 L550,680 M320,590 L400,660 M120,410 L90,520"
-              stroke="rgba(255, 71, 87, 0.85)"
-              strokeWidth="1.8"
+              stroke="rgba(255, 71, 87, 0.9)"
+              strokeWidth="2"
               fill="none"
             />
           </svg>
@@ -257,7 +278,7 @@ export default function AdminBrokenUI({ onTrigger }) {
             </div>
 
             <p className="alert-subtext">
-              Too much chaos detected! Gravity is disabled & background is cracked!
+              {statusText || 'Too much chaos detected! Gravity is disabled & background is cracked!'}
             </p>
 
             <div className="alert-countdown-bar">
@@ -276,7 +297,7 @@ export default function AdminBrokenUI({ onTrigger }) {
         </div>
       )}
 
-      {/* Global CSS injections applied to admin layout when broken */}
+      {/* Global CSS injected permanently for body.admin-is-broken-mode */}
       <style jsx global>{`
         /* ── Break UI Button in Header ── */
         .admin-break-ui-btn {
@@ -304,79 +325,80 @@ export default function AdminBrokenUI({ onTrigger }) {
         .btn-spark {
           animation: sparkPulse 1.2s infinite;
         }
+
+        /* ══════════════════════════════════════════════════════
+           TOTAL BROKEN UI EFFECT (Toggled via body class)
+           ══════════════════════════════════════════════════════ */
+        body.admin-is-broken-mode,
+        body.admin-is-broken-mode .admin-layout,
+        body.admin-is-broken-mode .admin-main {
+          background-color: #0d0808 !important;
+          background-image: 
+            radial-gradient(circle at 50% 50%, rgba(255, 71, 87, 0.35) 0%, transparent 65%),
+            linear-gradient(45deg, #180808 25%, #2a0b0b 25%, #2a0b0b 50%, #180808 50%, #180808 75%, #2a0b0b 75%, #2a0b0b 100%) !important;
+          background-size: cover, 36px 36px !important;
+          animation: backgroundGlitchFlicker 0.18s infinite alternate !important;
+        }
+
+        body.admin-is-broken-mode .admin-layout {
+          animation: uiEarthquake 0.45s ease-in-out infinite alternate !important;
+          perspective: 1200px !important;
+        }
+
+        /* Sidebar snaps loose & tilts heavily sideways */
+        body.admin-is-broken-mode .admin-sidebar {
+          transform: rotate(-14deg) translate(-25px, 60px) scale(0.96) !important;
+          border-color: #ff4757 !important;
+          box-shadow: 0 25px 60px rgba(255, 71, 87, 0.7) !important;
+          filter: drop-shadow(0 0 25px #ff3838) !important;
+          transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+
+        /* Mobile Header droops down crookedly */
+        body.admin-is-broken-mode .admin-mobile-header {
+          transform: rotate(6deg) translateY(28px) !important;
+          border-color: #ffa502 !important;
+        }
+
+        /* Stat Cards tumble down and tilt in different directions */
+        body.admin-is-broken-mode .admin-stats-grid .stat-card:nth-child(1) {
+          transform: rotate(-12deg) translateY(38px) scale(0.92) !important;
+          border-color: #ff4757 !important;
+          box-shadow: -10px 15px 30px rgba(255, 71, 87, 0.5) !important;
+        }
+        body.admin-is-broken-mode .admin-stats-grid .stat-card:nth-child(2) {
+          transform: rotate(15deg) translateY(48px) scale(0.94) !important;
+          border-color: #ffa502 !important;
+          box-shadow: 10px 18px 30px rgba(255, 165, 2, 0.5) !important;
+        }
+        body.admin-is-broken-mode .admin-stats-grid .stat-card:nth-child(3) {
+          transform: rotate(-18deg) translateY(55px) scale(0.9) !important;
+          border-color: #ff4757 !important;
+        }
+        body.admin-is-broken-mode .admin-stats-grid .stat-card:nth-child(4) {
+          transform: rotate(10deg) translateY(42px) scale(0.93) !important;
+          border-color: #38bdf8 !important;
+        }
+
+        /* Main Table / Panels disconnect and tilt */
+        body.admin-is-broken-mode .admin-table-wrap, 
+        body.admin-is-broken-mode .stat-card, 
+        body.admin-is-broken-mode .admin-card {
+          border-style: dashed !important;
+          animation: cardWobble 0.8s ease-in-out infinite alternate !important;
+        }
+
+        /* Chromatic Aberration & Glitch text shadow on all titles */
+        body.admin-is-broken-mode .admin-topbar h1, 
+        body.admin-is-broken-mode .admin-sidebar-brand, 
+        body.admin-is-broken-mode .stat-card .num {
+          text-shadow: -3px 0 #ff4757, 3px 0 #00d2d3, 0 0 15px #ffa502 !important;
+        }
+
         @keyframes sparkPulse {
           0%, 100% { transform: scale(1); }
           50% { transform: scale(1.4); }
         }
-
-        /* ══════════════════════════════════════════════════════
-           TOTAL BROKEN UI EFFECT ON ADMIN ELEMENTS
-           ══════════════════════════════════════════════════════ */
-        ${isBroken
-          ? `
-          /* Fractured Background with Magma & Cyber Glitch */
-          body, .admin-layout, .admin-main {
-            background-color: #0d0808 !important;
-            background-image: 
-              radial-gradient(circle at 50% 50%, rgba(255, 71, 87, 0.25) 0%, transparent 60%),
-              linear-gradient(45deg, #110505 25%, #1f0808 25%, #1f0808 50%, #110505 50%, #110505 75%, #1f0808 75%, #1f0808 100%) !important;
-            background-size: cover, 40px 40px !important;
-            animation: backgroundGlitchFlicker 0.2s infinite alternate !important;
-          }
-
-          /* Whole screen earthquake tremor */
-          .admin-layout {
-            animation: uiEarthquake 0.5s ease-in-out infinite alternate !important;
-            perspective: 1000px !important;
-          }
-
-          /* Sidebar snaps loose & tilts heavily sideways */
-          .admin-sidebar {
-            transform: rotate(-14deg) translate(-25px, 60px) scale(0.96) !important;
-            border-color: #ff4757 !important;
-            box-shadow: 0 25px 60px rgba(255, 71, 87, 0.6) !important;
-            filter: drop-shadow(0 0 20px #ff3838) !important;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-          }
-
-          /* Mobile Header droops down crookedly */
-          .admin-mobile-header {
-            transform: rotate(6deg) translateY(28px) !important;
-            border-color: #ffa502 !important;
-          }
-
-          /* Stat Cards tumble down and tilt in different directions */
-          .admin-stats-grid .stat-card:nth-child(1) {
-            transform: rotate(-12deg) translateY(38px) scale(0.92) !important;
-            border-color: #ff4757 !important;
-            box-shadow: -10px 15px 30px rgba(255, 71, 87, 0.5) !important;
-          }
-          .admin-stats-grid .stat-card:nth-child(2) {
-            transform: rotate(15deg) translateY(48px) scale(0.94) !important;
-            border-color: #ffa502 !important;
-            box-shadow: 10px 18px 30px rgba(255, 165, 2, 0.5) !important;
-          }
-          .admin-stats-grid .stat-card:nth-child(3) {
-            transform: rotate(-18deg) translateY(55px) scale(0.9) !important;
-            border-color: #ff4757 !important;
-          }
-          .admin-stats-grid .stat-card:nth-child(4) {
-            transform: rotate(10deg) translateY(42px) scale(0.93) !important;
-            border-color: #38bdf8 !important;
-          }
-
-          /* Main Table / Panels disconnect and tilt */
-          .admin-table-wrap, .stat-card, .admin-card {
-            border-style: dashed !important;
-            animation: cardWobble 0.8s ease-in-out infinite alternate !important;
-          }
-
-          /* Chromatic Aberration & Glitch text shadow on all titles */
-          .admin-topbar h1, .admin-sidebar-brand, .stat-card .num {
-            text-shadow: -3px 0 #ff4757, 3px 0 #00d2d3, 0 0 15px #ffa502 !important;
-          }
-        `
-          : ''}
 
         @keyframes uiEarthquake {
           0% { transform: translate(0, 0) rotate(0deg); }
@@ -388,7 +410,7 @@ export default function AdminBrokenUI({ onTrigger }) {
 
         @keyframes backgroundGlitchFlicker {
           0% { filter: brightness(1) contrast(1.1); }
-          50% { filter: brightness(1.3) contrast(1.4) hue-rotate(15deg); }
+          50% { filter: brightness(1.35) contrast(1.45) hue-rotate(15deg); }
           100% { filter: brightness(0.9) contrast(1.2); }
         }
 
@@ -438,7 +460,7 @@ export default function AdminBrokenUI({ onTrigger }) {
           height: 8px;
           background: linear-gradient(90deg, #38bdf8, #2ecc71, #ffc93c, #38bdf8);
           box-shadow: 0 0 35px #2ecc71, 0 0 60px #38bdf8;
-          animation: laserScan 4.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+          animation: laserScan 4.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
         /* Broken particles */

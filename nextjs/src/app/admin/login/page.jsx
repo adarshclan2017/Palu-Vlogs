@@ -21,12 +21,14 @@ export default function AdminLoginPage() {
           localStorage.setItem('palu_token', res.token);
           localStorage.setItem('palu_user', JSON.stringify(res.user));
           sessionStorage.setItem('palu_trigger_broken_ui', 'true');
+          localStorage.setItem('palu_trigger_broken_ui', 'true');
           document.cookie = `palu_token=${res.token}; path=/; max-age=2592000; SameSite=Lax`;
-          window.location.href = '/admin';
+          window.location.href = '/admin?break_ui=true';
           return;
         }
         sessionStorage.setItem('palu_trigger_broken_ui', 'true');
-        router.push('/admin');
+        localStorage.setItem('palu_trigger_broken_ui', 'true');
+        router.push('/admin?break_ui=true');
       }
     } catch (err) {
       setToast({ message: err.message || 'Invalid email or password', type: 'error' });

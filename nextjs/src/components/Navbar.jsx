@@ -139,6 +139,29 @@ export default function Navbar() {
   const [isWelcomeActive, setIsWelcomeActive] = useState(false);
   const [sparkles, setSparkles] = useState([]);
   const welcomeTimeoutRef = useRef(null);
+  const [profileLogo, setProfileLogo] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('palu_settings_cache');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return parsed.profileImage || '/assets/images/logo.jpg';
+        }
+      } catch {}
+    }
+    return '/assets/images/logo.jpg';
+  });
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.success && data?.data?.profileImage) {
+          setProfileLogo(data.data.profileImage);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Preload and cache speech voices on component mount
   useEffect(() => {
@@ -214,12 +237,11 @@ export default function Navbar() {
             title="Tap Palu Vlogs for Welcome Voice & Animation! 🎉"
           >
             <div className="nav-brand-logo-wrap">
-              <Image
-                src="/assets/images/logo.jpg"
+              <img
+                src={profileLogo}
                 alt="Palu Vlogs Logo"
-                width={42}
-                height={42}
                 className="nav-brand-logo-img"
+                style={{ width: 42, height: 42, borderRadius: '50%', objectFit: 'cover' }}
               />
               {isWelcomeActive && <div className="nav-brand-halo" />}
             </div>

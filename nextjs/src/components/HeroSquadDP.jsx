@@ -465,7 +465,7 @@ export default function HeroSquadDP({ profileImage, coverImage, fallback }) {
     setParticles(list);
   };
 
-  const imageSrc = profileImage || coverImage || fallback;
+  const imageSrc = coverImage || profileImage || fallback || '/assets/images/hero_team.jpg';
 
   return (
     <div className="hero-dp-interactive-container">

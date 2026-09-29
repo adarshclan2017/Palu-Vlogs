@@ -49,6 +49,10 @@ const siteSettingsSchema = new mongoose.Schema({
     type: String,
     default: 'great-eggplant-market-heist'
   },
+  visitorCount: {
+    type: Number,
+    default: 14820
+  },
   updatedAt: {
     type: Date,
     default: Date.now

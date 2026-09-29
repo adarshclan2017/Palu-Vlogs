@@ -122,6 +122,16 @@ export const api = {
 
   // Upload
   uploadImage: (formData) => request('/upload', { method: 'POST', body: formData }),
+
+  // Reactions
+  reactToPhoto: (id, reaction) =>
+    request(`/gallery/${id}/react`, { method: 'POST', body: { reaction } }),
+  reactToVlog: (slug, reaction) =>
+    request(`/vlogs/${slug}/react`, { method: 'POST', body: { reaction } }),
+
+  // Visitors
+  getVisitors: () => request('/visitors'),
+  recordVisit: () => request('/visitors', { method: 'POST' }),
 };
 
 export default api;

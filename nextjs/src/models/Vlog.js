@@ -63,6 +63,11 @@ const vlogSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  reactions: {
+    type: Map,
+    of: Number,
+    default: () => ({ fire: 0, heart: 0, laugh: 0, shock: 0 })
+  },
   episodeNumber: {
     type: Number
   },

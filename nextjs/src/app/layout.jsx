@@ -5,6 +5,8 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WatermelonMascot from '@/components/WatermelonMascot';
 import IdleSleepAnimation from '@/components/IdleSleepAnimation';
+import CursorTrail from '@/components/CursorTrail';
+import EasterEgg from '@/components/EasterEgg';
 
 export const metadata = {
   title: 'Palu Vlogs — Unscripted Road Trips & Memories',
@@ -25,11 +27,13 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        <CursorTrail />
         <Navbar initialSettings={initialSettings} />
         <main>{children}</main>
         <Footer initialSettings={initialSettings} />
         <WatermelonMascot />
         <IdleSleepAnimation />
+        <EasterEgg />
       </body>
     </html>
   );

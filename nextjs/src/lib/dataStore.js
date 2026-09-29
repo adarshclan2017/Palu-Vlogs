@@ -353,6 +353,49 @@ export const dataStore = {
     }
   },
 
+  reactVlog: async (idOrSlug, reaction = 'fire') => {
+    const validReactions = ['fire', 'heart', 'laugh', 'shock'];
+    const rKey = validReactions.includes(reaction) ? reaction : 'fire';
+    let updatedReactions = null;
+
+    if (getStatus()) {
+      try {
+        const { default: VlogModel } = await import('../models/Vlog.js');
+        const query = isObjectId(idOrSlug)
+          ? { $or: [{ _id: idOrSlug }, { slug: idOrSlug }] }
+          : { slug: idOrSlug };
+        const updated = await VlogModel.findOneAndUpdate(
+          query,
+          { $inc: { [`reactions.${rKey}`]: 1 } },
+          { new: true }
+        );
+        if (updated && updated.reactions) {
+          updatedReactions = updated.reactions instanceof Map
+            ? Object.fromEntries(updated.reactions)
+            : updated.reactions;
+        }
+      } catch (err) {
+        console.warn('reactVlog mongo error:', err.message);
+      }
+    }
+
+    const db = initLocalStore();
+    const v = (db.vlogs || []).find(item => item.slug === idOrSlug || item._id === idOrSlug || item._id?.toString() === idOrSlug?.toString());
+    if (v) {
+      if (!v.reactions || typeof v.reactions !== 'object') {
+        v.reactions = { fire: 0, heart: 0, laugh: 0, shock: 0 };
+      }
+      v.reactions[rKey] = (v.reactions[rKey] || 0) + 1;
+      saveLocalStore();
+      if (!updatedReactions) updatedReactions = { ...v.reactions };
+    }
+
+    if (!updatedReactions) {
+      updatedReactions = { fire: 0, heart: 0, laugh: 0, shock: 0, [rKey]: 1 };
+    }
+    return updatedReactions;
+  },
+
   // Gallery
   getAlbums: async () => {
     if (getStatus()) {
@@ -490,6 +533,47 @@ export const dataStore = {
       return db.photos[i];
     }
     return null;
+  },
+
+  reactPhoto: async (id, reaction = 'love') => {
+    const validReactions = ['love', 'fire', 'wow', 'laugh', 'clap'];
+    const rKey = validReactions.includes(reaction) ? reaction : 'love';
+    let updatedReactions = null;
+
+    if (getStatus()) {
+      try {
+        const { default: PhotoModel } = await import('../models/Photo.js');
+        const query = isObjectId(id) ? { _id: id } : { title: id };
+        const updated = await PhotoModel.findOneAndUpdate(
+          query,
+          { $inc: { [`reactions.${rKey}`]: 1 } },
+          { new: true }
+        );
+        if (updated && updated.reactions) {
+          updatedReactions = updated.reactions instanceof Map
+            ? Object.fromEntries(updated.reactions)
+            : updated.reactions;
+        }
+      } catch (err) {
+        console.warn('reactPhoto mongo error:', err.message);
+      }
+    }
+
+    const db = initLocalStore();
+    const p = (db.photos || []).find(item => item._id === id || item._id?.toString() === id?.toString() || item.title === id);
+    if (p) {
+      if (!p.reactions || typeof p.reactions !== 'object') {
+        p.reactions = { love: 0, fire: 0, wow: 0, laugh: 0, clap: 0 };
+      }
+      p.reactions[rKey] = (p.reactions[rKey] || 0) + 1;
+      saveLocalStore();
+      if (!updatedReactions) updatedReactions = { ...p.reactions };
+    }
+
+    if (!updatedReactions) {
+      updatedReactions = { love: 0, fire: 0, wow: 0, laugh: 0, clap: 0, [rKey]: 1 };
+    }
+    return updatedReactions;
   },
 
   // Locations
@@ -817,6 +901,40 @@ export const dataStore = {
     db.settings = { ...db.settings, ...data, updatedAt: new Date().toISOString() };
     saveLocalStore();
     return db.settings;
+  },
+
+  getVisitors: async () => {
+    if (getStatus()) {
+      try {
+        const { default: SSModel } = await import('../models/SiteSettings.js');
+        const s = await SSModel.findOne();
+        if (s && s.visitorCount != null) return s.visitorCount;
+      } catch {}
+    }
+    const db = initLocalStore();
+    return db.settings?.visitorCount || 14820;
+  },
+
+  incrementVisitors: async () => {
+    let count = 14820;
+    if (getStatus()) {
+      try {
+        const { default: SSModel } = await import('../models/SiteSettings.js');
+        const s = await SSModel.findOneAndUpdate(
+          {},
+          { $inc: { visitorCount: 1 } },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+        if (s && s.visitorCount != null) count = s.visitorCount;
+      } catch {}
+    }
+    const db = initLocalStore();
+    if (db.settings) {
+      db.settings.visitorCount = (db.settings.visitorCount || 14820) + 1;
+      count = db.settings.visitorCount;
+      saveLocalStore();
+    }
+    return count;
   },
 
   getStats: async () => {

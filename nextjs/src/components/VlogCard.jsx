@@ -1,8 +1,27 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { api } from '@/lib/api';
+
+const VLOG_REACTIONS = [
+  { key: 'fire', emoji: '🔥' },
+  { key: 'heart', emoji: '❤️' },
+  { key: 'laugh', emoji: '😂' },
+  { key: 'shock', emoji: '🚀' }
+];
 
 export default function VlogCard({ vlog, onPlay }) {
+  const rawReactions = vlog?.reactions || {};
+  const initialMap = rawReactions instanceof Map ? Object.fromEntries(rawReactions) : rawReactions;
+
+  const [reactions, setReactions] = useState({
+    fire: Number(initialMap.fire || 0),
+    heart: Number(initialMap.heart || 0),
+    laugh: Number(initialMap.laugh || 0),
+    shock: Number(initialMap.shock || 0)
+  });
+  const [popKey, setPopKey] = useState(null);
+
   if (!vlog) return null;
 
   const handlePlayClick = (e) => {
@@ -10,6 +29,37 @@ export default function VlogCard({ vlog, onPlay }) {
       e.preventDefault();
       onPlay(vlog);
     }
+  };
+
+  const handleReact = async (e, rKey) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Optimistic UI update
+    setReactions((prev) => ({
+      ...prev,
+      [rKey]: (prev[rKey] || 0) + 1
+    }));
+    setPopKey(rKey);
+    setTimeout(() => setPopKey(null), 700);
+
+    try {
+      const res = await api.reactToVlog(vlog.slug, rKey);
+      if (res?.success && res.reactions) {
+        setReactions(res.reactions);
+      }
+    } catch (err) {
+      console.error('Vlog reaction error:', err);
+    }
+  };
+
+  const handleWhatsAppShare = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const shareText = `Watch this episode of Palu Vlogs: "${vlog.title}" 🛵🎬\n${siteUrl}/vlogs/${vlog.slug}`;
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
+    window.open(waUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -40,6 +90,39 @@ export default function VlogCard({ vlog, onPlay }) {
         </Link>
 
         <p className="vlog-desc">{vlog.description}</p>
+
+        {/* ── VLOG INTERACTION ROW ── */}
+        <div className="vlog-react-row">
+          <div className="vlog-emoji-group">
+            {VLOG_REACTIONS.map(({ key, emoji }) => {
+              const count = reactions[key] || 0;
+              const isPopping = popKey === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  className={`vlog-react-chip ${isPopping ? 'pop-active' : ''}`}
+                  onClick={(e) => handleReact(e, key)}
+                  title={`React ${emoji} (${count})`}
+                  aria-label={`${key}: ${count}`}
+                >
+                  <span className="vlog-emoji-icon">{emoji}</span>
+                  <span className="vlog-emoji-num">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            className="vlog-wa-btn"
+            onClick={handleWhatsAppShare}
+            title="Share vlog on WhatsApp"
+            aria-label="Share on WhatsApp"
+          >
+            💬 Share
+          </button>
+        </div>
 
         <div className="vlog-footer">
           <span style={{ color: 'var(--stone)' }}>📍 {vlog.locationName || 'Kerala'}</span>

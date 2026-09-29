@@ -7,6 +7,7 @@ import VideoPlayerModal from '@/components/VideoPlayerModal';
 import PhotoLightbox from '@/components/PhotoLightbox';
 import HeroSquadDP from '@/components/HeroSquadDP';
 import MountainSnowText from '@/components/MountainSnowText';
+import VisitorBadge from '@/components/VisitorBadge';
 
 export default function HomePageClient({
   initialSettings = null,
@@ -29,6 +30,19 @@ export default function HomePageClient({
   // Modals state
   const [activeVideo, setActiveVideo] = useState(null);
   const [lightboxIndex, setLightboxIndex] = useState(-1);
+
+  const handleRandomVlog = () => {
+    const pool = initialVlogs.length > 0 ? initialVlogs : latestVlogs;
+    if (!pool || pool.length === 0) return;
+    const random = pool[Math.floor(Math.random() * pool.length)];
+    setActiveVideo(random);
+  };
+
+  const handlePhotoUpdate = (photoId, newReactions) => {
+    setPhotos((prev) =>
+      prev.map((p) => (p._id === photoId ? { ...p, reactions: newReactions } : p))
+    );
+  };
 
   // Background sync in case settings were updated while page was open
   useEffect(() => {
@@ -68,6 +82,14 @@ export default function HomePageClient({
                     ▶ Watch Latest Vlog
                   </button>
                 )}
+                <button
+                  type="button"
+                  className="btn-ghost"
+                  onClick={handleRandomVlog}
+                  title="Watch a random vlog from our channel"
+                >
+                  🎲 Surprise Me
+                </button>
                 <a
                   href="https://www.youtube.com/channel/UCoNA4nItu7DK9ziX2wi7VRg?sub_confirmation=1"
                   target="_blank"
@@ -75,7 +97,7 @@ export default function HomePageClient({
                   className="btn-gold"
                   title="Subscribe to Palu Vlogs on YouTube"
                 >
-                  Subscribe on YouTube 🔔
+                  Subscribe 🔔
                 </a>
               </div>
 
@@ -89,8 +111,8 @@ export default function HomePageClient({
                   <span>Channel Views</span>
                 </div>
                 <div>
-                  <b>100%</b>
-                  <span>Real Face · Real Vibes</span>
+                  <VisitorBadge />
+                  <span>Verified Visitors</span>
                 </div>
               </div>
             </div>
@@ -163,13 +185,25 @@ export default function HomePageClient({
                   {featuredVlog.description}
                 </p>
 
-                <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
                   <button className="btn-primary" onClick={() => setActiveVideo(featuredVlog)}>
                     ▶ Watch Now
                   </button>
                   <Link href={`/vlogs/${featuredVlog.slug}`} className="btn-ghost">
                     Episode Details →
                   </Link>
+                  <button
+                    type="button"
+                    className="vlog-wa-btn"
+                    onClick={() => {
+                      const siteUrl = typeof window !== 'undefined' ? window.location.origin : '';
+                      const text = `Watch the featured episode of Palu Vlogs: "${featuredVlog.title}" 🛵🎬\n${siteUrl}/vlogs/${featuredVlog.slug}`;
+                      window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, '_blank');
+                    }}
+                    style={{ padding: '8px 16px', fontSize: '13px' }}
+                  >
+                    💬 WhatsApp
+                  </button>
                 </div>
               </div>
             </div>
@@ -241,12 +275,25 @@ export default function HomePageClient({
             </div>
 
             <div className="gallery-grid">
-              {photos.slice(0, 8).map((photo, idx) => (
-                <div key={photo._id || idx} className="gallery-card" onClick={() => setLightboxIndex(idx)}>
-                  <img src={photo.imageUrl} alt={photo.title} className="gallery-img" loading="lazy" />
-                  <div className="gallery-caption">{photo.title}</div>
-                </div>
-              ))}
+              {photos.slice(0, 8).map((photo, idx) => {
+                const raw = photo.reactions || {};
+                const r = raw instanceof Map ? Object.fromEntries(raw) : raw;
+                const totalReactions = Object.values(r).reduce((acc, c) => acc + (Number(c) || 0), 0);
+                return (
+                  <div key={photo._id || idx} className="gallery-card" onClick={() => setLightboxIndex(idx)}>
+                    <div className="gallery-img-container">
+                      <img src={photo.imageUrl} alt={photo.title} className="gallery-img" loading="lazy" />
+                      {totalReactions > 0 && (
+                        <div className="gallery-reaction-pill">
+                          <span>❤️</span>
+                          <span className="gallery-pill-total">{totalReactions}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="gallery-caption">{photo.title}</div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -325,6 +372,7 @@ export default function HomePageClient({
           currentIndex={lightboxIndex}
           onClose={() => setLightboxIndex(-1)}
           onIndexChange={setLightboxIndex}
+          onPhotoUpdate={handlePhotoUpdate}
         />
       )}
     </div>

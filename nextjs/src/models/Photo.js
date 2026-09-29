@@ -33,6 +33,11 @@ const photoSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  reactions: {
+    type: Map,
+    of: Number,
+    default: () => ({ love: 0, fire: 0, wow: 0, laugh: 0, clap: 0 })
+  },
   createdAt: {
     type: Date,
     default: Date.now

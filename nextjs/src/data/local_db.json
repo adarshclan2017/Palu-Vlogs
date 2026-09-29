@@ -114,24 +114,7 @@
       "_id": "alb_4"
     }
   ],
-  "locations": [
-    {
-      "name": "Wayanad Ghats",
-      "state": "Kerala",
-      "country": "India",
-      "description": "Curves and tea plantations",
-      "coverImage": "/assets/images/about_roadtrip.jpg",
-      "coordinates": {
-        "lat": 9.9312,
-        "lng": 76.2673
-      },
-      "visitedDate": "2026",
-      "vlogs": [],
-      "_id": "6abb595ffcc96fb512db1e6a",
-      "createdAt": "2026-09-29T06:23:27.708Z",
-      "__v": 0
-    }
-  ],
+  "locations": [],
   "vlogs": [],
   "photos": [],
   "settings": {

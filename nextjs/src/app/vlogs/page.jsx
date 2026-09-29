@@ -4,20 +4,12 @@ import { api } from '@/lib/api';
 import VlogCard from '@/components/VlogCard';
 import VideoPlayerModal from '@/components/VideoPlayerModal';
 
-const categories = [
-  'All',
-  'Road Trips',
-  'Pranks & Comedy',
-  'Street Food',
-  'Backwater Adventures',
-  'Behind the Scenes'
-];
+
 
 export default function VlogsPage() {
   const [vlogs, setVlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('All');
   const [sortBy, setSortBy] = useState('newest');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -33,7 +25,6 @@ export default function VlogsPage() {
         limit: 9,
         sort: sortBy === 'views' ? 'views' : 'newest'
       };
-      if (activeCategory !== 'All') params.category = activeCategory;
       if (search.trim()) params.search = search.trim();
 
       const res = await api.getVlogs(params);
@@ -51,7 +42,7 @@ export default function VlogsPage() {
 
   useEffect(() => {
     fetchVlogs();
-  }, [activeCategory, sortBy, page]);
+  }, [sortBy, page]);
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -114,24 +105,7 @@ export default function VlogsPage() {
             </div>
           </div>
 
-          {/* Category Chips */}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            {categories.map(cat => (
-              <button
-                key={cat}
-                onClick={() => { setActiveCategory(cat); setPage(1); }}
-                className={activeCategory === cat ? 'btn-gold' : 'btn-ghost'}
-                style={{
-                  padding: '6px 16px',
-                  fontSize: '13px',
-                  borderRadius: 'var(--radius-full)',
-                  border: activeCategory === cat ? 'none' : '1px solid var(--line)'
-                }}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+
         </div>
 
         {/* Count */}
@@ -147,13 +121,13 @@ export default function VlogsPage() {
         ) : vlogs.length === 0 ? (
           <div style={{ padding: '60px', textAlign: 'center', background: 'var(--panel)', borderRadius: 'var(--radius-md)', border: '1px dashed var(--line)' }}>
             <h3 style={{ color: 'var(--gold)', fontSize: '22px', marginBottom: '8px' }}>No Vlogs Found</h3>
-            <p style={{ color: 'var(--stone)' }}>Try clearing your search query or selecting a different category.</p>
+            <p style={{ color: 'var(--stone)' }}>Try clearing your search query.</p>
             <button
-              onClick={() => { setSearch(''); setActiveCategory('All'); }}
+              onClick={() => { setSearch(''); setPage(1); }}
               className="btn-ghost"
               style={{ marginTop: '16px' }}
             >
-              Reset Filters
+              Reset Search
             </button>
           </div>
         ) : (

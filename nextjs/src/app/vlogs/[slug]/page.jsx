@@ -90,7 +90,6 @@ export default function VlogDetailsPage({ params }) {
           <div className="vlog-detail-header">
             <div>
               <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px' }}>
-                <span className="badge">{vlog.category}</span>
                 {vlog.season && <span className="badge badge-red">Season {vlog.season}</span>}
               </div>
 
@@ -156,7 +155,7 @@ export default function VlogDetailsPage({ params }) {
           {related.length > 0 && (
             <div style={{ marginTop: '60px' }}>
               <h3 style={{ fontSize: '26px', color: 'var(--cream)', marginBottom: '24px' }}>
-                More {vlog.category} Episodes
+                More Episodes
               </h3>
               <div className="vlogs-grid">
                 {related.map(rel => (

@@ -47,7 +47,6 @@ export default function VideoPlayerModal({ vlog, onClose }) {
 
         <div style={{ padding: '24px', background: 'var(--panel)' }}>
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '8px' }}>
-            <span className="badge">{vlog.category}</span>
             <span style={{ fontSize: '13px', color: 'var(--stone)' }}>📍 {vlog.locationName || 'Kerala'}</span>
           </div>
           <h3 style={{ fontSize: '24px', color: 'var(--gold)', marginBottom: '10px' }}>{vlog.title}</h3>

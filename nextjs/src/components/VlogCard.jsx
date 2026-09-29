@@ -21,7 +21,7 @@ export default function VlogCard({ vlog, onPlay }) {
           className="vlog-thumb"
           loading="lazy"
         />
-        <div className="vlog-badge">{vlog.category || 'Road Trip'}</div>
+        {vlog.duration && <div className="vlog-badge">{vlog.duration}</div>}
         <div className="vlog-duration">{vlog.duration || '15:00'}</div>
         <div className="vlog-play-overlay">
           <div className="play-circle">▶</div>

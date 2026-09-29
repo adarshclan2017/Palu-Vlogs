@@ -4,7 +4,7 @@ import { api } from '@/lib/api';
 import Toast from '@/components/Toast';
 import ImageUploader from '@/components/ImageUploader';
 
-const categories = ['Road Trips', 'Pranks & Comedy', 'Street Food', 'Backwater Adventures', 'Behind the Scenes'];
+
 
 export default function ManageVlogsPage() {
   const [vlogs, setVlogs] = useState([]);
@@ -17,7 +17,6 @@ export default function ManageVlogsPage() {
     title: '',
     youtubeUrl: '',
     description: '',
-    category: 'Road Trips',
     tags: 'Vegetable Gang, Kerala',
     locationName: 'Kerala, India',
     duration: '18:00',
@@ -48,7 +47,6 @@ export default function ManageVlogsPage() {
       title: '',
       youtubeUrl: '',
       description: '',
-      category: 'Road Trips',
       tags: 'Vegetable Gang, Kerala',
       locationName: 'Kerala, India',
       duration: '18:00',
@@ -64,7 +62,6 @@ export default function ManageVlogsPage() {
       title: vlog.title,
       youtubeUrl: vlog.youtubeUrl || `https://www.youtube.com/watch?v=${vlog.youtubeId}`,
       description: vlog.description,
-      category: vlog.category || 'Road Trips',
       tags: Array.isArray(vlog.tags) ? vlog.tags.join(', ') : vlog.tags || '',
       locationName: vlog.locationName || 'Kerala, India',
       duration: vlog.duration || '18:00',
@@ -141,7 +138,6 @@ export default function ManageVlogsPage() {
             <thead>
               <tr>
                 <th>Video</th>
-                <th>Category</th>
                 <th>Views</th>
                 <th>Status</th>
                 <th>Date</th>
@@ -161,9 +157,6 @@ export default function ManageVlogsPage() {
                       <div style={{ fontWeight: 700, color: 'var(--cream)', maxWidth: '300px' }}>{vlog.title}</div>
                       <div style={{ fontSize: '12px', color: 'var(--stone)' }}>Duration: {vlog.duration}</div>
                     </div>
-                  </td>
-                  <td>
-                    <span className="badge">{vlog.category}</span>
                   </td>
                   <td>{(vlog.views || 0).toLocaleString()}</td>
                   <td>
@@ -248,29 +241,18 @@ export default function ManageVlogsPage() {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                <div className="form-group">
-                  <label className="form-label">Category</label>
-                  <select
-                    value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="form-select"
-                  >
-                    {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
 
-                <div className="form-group">
-                  <label className="form-label">Duration</label>
-                  <input
-                    type="text"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                    placeholder="18:30"
-                    className="form-input"
-                  />
-                </div>
+              <div className="form-group">
+                <label className="form-label">Duration</label>
+                <input
+                  type="text"
+                  value={formData.duration}
+                  onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
+                  placeholder="18:30"
+                  className="form-input"
+                />
               </div>
+
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div className="form-group">

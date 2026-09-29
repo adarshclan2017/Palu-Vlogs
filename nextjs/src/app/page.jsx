@@ -159,7 +159,6 @@ export default function Home() {
 
               <div>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '10px' }}>
-                  <span className="badge">{featuredVlog.category}</span>
                   <span style={{ fontSize: '13px', color: 'var(--stone)' }}>
                     👀 {(featuredVlog.views || 0).toLocaleString()} views
                   </span>

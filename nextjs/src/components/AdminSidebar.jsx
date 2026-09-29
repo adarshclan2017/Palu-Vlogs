@@ -121,7 +121,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
         })}
       </nav>
 
-      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '20px' }}>
+      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '20px', borderTop: '1px solid var(--line)' }}>
         <button
           type="button"
           onClick={() => {
@@ -146,16 +146,28 @@ export default function AdminSidebar({ isOpen, onClose }) {
             boxShadow: '0 0 12px rgba(255, 71, 87, 0.3)'
           }}
         >
-          💥 Shatter & Break UI
+          💥 Shatter &amp; Break UI
         </button>
+
+        <Link
+          href="/admin/settings"
+          className={`admin-nav-item ${pathname.startsWith('/admin/settings') ? 'active' : ''}`}
+          style={{ justifyContent: 'center', fontSize: '13px', padding: '10px', marginTop: '4px' }}
+          onClick={() => { if (onClose) onClose(); }}
+        >
+          ⚙️ Channel Settings
+        </Link>
+
         <Link
           href="/"
           className="btn-ghost"
           style={{ justifyContent: 'center', fontSize: '13px', padding: '10px' }}
           onClick={() => { if (onClose) onClose(); }}
+          target="_blank"
         >
           👁️ View Public Site
         </Link>
+
         <button
           onClick={handleLogout}
           className="btn-primary"

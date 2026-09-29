@@ -61,12 +61,24 @@ export default function AdminSettingsPage() {
     try {
       const res = await api.updateSettings(formData);
       if (res?.success) {
-        setToast({ message: '✅ Channel settings updated successfully!', type: 'success' });
+        setToast({
+          title: 'Saved Successfully!',
+          message: 'Channel settings and branding images have been updated and saved to the database. Your changes are live across the site!',
+          type: 'success'
+        });
       } else {
-        setToast({ message: res?.message || 'Failed to update settings', type: 'error' });
+        setToast({
+          title: 'Update Failed',
+          message: res?.message || 'Failed to update settings. Please check your network and try again.',
+          type: 'error'
+        });
       }
     } catch (err) {
-      setToast({ message: err.message || 'Error updating settings', type: 'error' });
+      setToast({
+        title: 'Error',
+        message: err.message || 'Error updating settings. Please try again.',
+        type: 'error'
+      });
     } finally {
       setSaving(false);
     }
@@ -267,7 +279,7 @@ export default function AdminSettingsPage() {
         </div>
       </form>
 
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      {toast && <Toast title={toast.title} message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   );
 }

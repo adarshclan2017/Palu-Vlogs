@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 /**
  * Vegetable Gang Mascot Configuration for Next.js
@@ -702,6 +703,9 @@ const SingleMascot = ({
  * - Auto-closes when scrolling, reappears gracefully when scroll stops.
  */
 const VeggieGangMascots = () => {
+  const pathname = usePathname();
+  const isAdmin = Boolean(pathname && pathname.startsWith('/admin'));
+
   const [isScrolling, setIsScrolling] = useState(false);
   // 8 active slots: 4 on LEFT (0..3), 4 on RIGHT (4..7)
   const [activeSlots, setActiveSlots] = useState([0, 1, 2, 3, 4, 5, 6, 7]);
@@ -732,6 +736,7 @@ const VeggieGangMascots = () => {
   // Continuous "One In and One Out" squad rotation every 7.5 seconds
   // Alternates between left and right sides so all 12 characters are shown
   useEffect(() => {
+    if (isAdmin) return;
     const slotCycleSequence = [0, 4, 1, 5, 2, 6, 3, 7];
     const timer = setInterval(() => {
       lastRotatedSlotRef.current = (lastRotatedSlotRef.current + 1) % slotCycleSequence.length;
@@ -740,7 +745,7 @@ const VeggieGangMascots = () => {
     }, 7500);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [isAdmin]);
 
   // Dragging to another slot swaps occupants so no two stickers ever collide
   const handleSwapSlots = (fromSlotIdx, toSlotIdx) => {
@@ -756,6 +761,7 @@ const VeggieGangMascots = () => {
   };
 
   useEffect(() => {
+    if (isAdmin) return;
     const handleScroll = () => {
       setIsScrolling(true);
 
@@ -773,7 +779,9 @@ const VeggieGangMascots = () => {
       window.removeEventListener('scroll', handleScroll, { capture: true });
       if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
-  }, []);
+  }, [isAdmin]);
+
+  if (isAdmin) return null;
 
   return (
     <>

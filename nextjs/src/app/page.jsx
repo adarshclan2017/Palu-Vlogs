@@ -5,6 +5,7 @@ import { api } from '@/lib/api';
 import VlogCard from '@/components/VlogCard';
 import VideoPlayerModal from '@/components/VideoPlayerModal';
 import PhotoLightbox from '@/components/PhotoLightbox';
+import HeroSquadDP from '@/components/HeroSquadDP';
 
 export default function Home() {
   const [settings, setSettings] = useState(null);
@@ -106,13 +107,11 @@ export default function Home() {
             </div>
 
             <div className="hero-art">
-              <div className="hero-badge-wrap">
-                <img
-                  src={settings?.profileImage || settings?.coverImage || '/assets/images/hero_team.jpg'}
-                  alt="Palu Vlogs Squad"
-                  className="hero-badge"
-                />
-              </div>
+              <HeroSquadDP
+                profileImage={settings?.profileImage}
+                coverImage={settings?.coverImage}
+                fallback="/assets/images/hero_team.jpg"
+              />
             </div>
           </div>
         </div>

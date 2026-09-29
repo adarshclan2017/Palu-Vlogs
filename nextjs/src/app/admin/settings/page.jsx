@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import Toast from '@/components/Toast';
+import ImageUploader from '@/components/ImageUploader';
 
 export default function AdminSettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -230,27 +231,19 @@ export default function AdminSettingsPage() {
             🖼️ Logo & Cover Images
           </h3>
 
-          <div className="form-group">
-            <label className="form-label">Profile / Logo Image URL</label>
-            <input
-              type="text"
-              name="profileImage"
-              value={formData.profileImage || ''}
-              onChange={handleChange}
-              className="form-input"
-            />
-          </div>
+          <ImageUploader
+            value={formData.profileImage}
+            onChange={(url) => setFormData((prev) => ({ ...prev, profileImage: url }))}
+            label="Channel Profile / Logo"
+            helpText="Click to select logo from device or drag & drop"
+          />
 
-          <div className="form-group">
-            <label className="form-label">Cover Banner Image URL</label>
-            <input
-              type="text"
-              name="coverImage"
-              value={formData.coverImage || ''}
-              onChange={handleChange}
-              className="form-input"
-            />
-          </div>
+          <ImageUploader
+            value={formData.coverImage}
+            onChange={(url) => setFormData((prev) => ({ ...prev, coverImage: url }))}
+            label="Cover / Banner Image"
+            helpText="Click to select hero banner from device or drag & drop"
+          />
 
           <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
             <button

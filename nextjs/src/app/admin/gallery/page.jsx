@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import Toast from '@/components/Toast';
+import ImageUploader from '@/components/ImageUploader';
 
 export default function ManageGalleryPage() {
   const [photos, setPhotos] = useState([]);
@@ -38,17 +39,18 @@ export default function ManageGalleryPage() {
   const handleUpload = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('caption', caption);
-      formData.append('albumSlug', albumSlug);
-      formData.append('location', location);
-      if (imageUrl) formData.append('imageUrl', imageUrl);
-      else throw new Error('Please enter an image URL');
+      if (!imageUrl) throw new Error('Please select an image to upload');
 
-      const res = await api.createPhoto(formData);
+      const res = await api.createPhoto({
+        title,
+        caption,
+        albumSlug,
+        location,
+        imageUrl
+      });
+
       if (res?.success) {
-        setToast({ message: 'Photo uploaded successfully!', type: 'success' });
+        setToast({ message: '🎉 Photo uploaded successfully!', type: 'success' });
         setModalOpen(false);
         setTitle('');
         setCaption('');
@@ -163,17 +165,12 @@ export default function ManageGalleryPage() {
                 />
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Image URL *</label>
-                <input
-                  type="text"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://... or /assets/images/..."
-                  required
-                  className="form-input"
-                />
-              </div>
+              <ImageUploader
+                value={imageUrl}
+                onChange={setImageUrl}
+                label="Photo File *"
+                helpText="Select JPG, PNG, WebP from your device or drop it here"
+              />
 
               <div className="form-group">
                 <label className="form-label">Caption / Memory</label>

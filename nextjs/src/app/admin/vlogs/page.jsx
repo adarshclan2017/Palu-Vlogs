@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import Toast from '@/components/Toast';
+import ImageUploader from '@/components/ImageUploader';
 
 const categories = ['Road Trips', 'Pranks & Comedy', 'Street Food', 'Backwater Adventures', 'Behind the Scenes'];
 
@@ -289,6 +290,13 @@ export default function ManageVlogsPage() {
                   />
                 </div>
               </div>
+
+              <ImageUploader
+                value={formData.thumbnailUrl}
+                onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
+                label="Custom Thumbnail (Optional — auto-generated from YouTube by default)"
+                helpText="Upload a custom cover photo or leave empty to use YouTube thumbnail"
+              />
 
               <div style={{ display: 'flex', gap: '24px', margin: '16px 0' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>

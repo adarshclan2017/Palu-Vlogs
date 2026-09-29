@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '@/lib/api';
 import Toast from '@/components/Toast';
+import ImageUploader from '@/components/ImageUploader';
 
 export default function ManageLocationsPage() {
   const [locations, setLocations] = useState([]);
@@ -182,16 +183,12 @@ export default function ManageLocationsPage() {
                 </div>
               </div>
 
-              <div className="form-group">
-                <label className="form-label">Cover Image URL</label>
-                <input
-                  type="text"
-                  value={coverImage}
-                  onChange={(e) => setCoverImage(e.target.value)}
-                  placeholder="https://... or /assets/images/..."
-                  className="form-input"
-                />
-              </div>
+              <ImageUploader
+                value={coverImage}
+                onChange={setCoverImage}
+                label="Destination Cover Image"
+                helpText="Select scenic cover photo from device or drag & drop"
+              />
 
               <div className="form-group">
                 <label className="form-label">Visited Period</label>

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import AdminSidebar from '@/components/AdminSidebar';
+import AdminBrokenUI from '@/components/AdminBrokenUI';
 
 import { api } from '@/lib/api';
 
@@ -90,6 +91,7 @@ export default function AdminLayout({ children }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <AdminBrokenUI />
           <Link href="/" className="btn-ghost" style={{ fontSize: '12px', padding: '6px 10px' }}>
             👁️ Site
           </Link>

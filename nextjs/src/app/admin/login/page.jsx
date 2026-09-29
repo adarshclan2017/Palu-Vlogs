@@ -20,10 +20,12 @@ export default function AdminLoginPage() {
         if (typeof window !== 'undefined') {
           localStorage.setItem('palu_token', res.token);
           localStorage.setItem('palu_user', JSON.stringify(res.user));
+          sessionStorage.setItem('palu_trigger_broken_ui', 'true');
           document.cookie = `palu_token=${res.token}; path=/; max-age=2592000; SameSite=Lax`;
           window.location.href = '/admin';
           return;
         }
+        sessionStorage.setItem('palu_trigger_broken_ui', 'true');
         router.push('/admin');
       }
     } catch (err) {

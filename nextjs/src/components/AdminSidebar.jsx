@@ -122,6 +122,32 @@ export default function AdminSidebar({ isOpen, onClose }) {
       </nav>
 
       <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '20px' }}>
+        <button
+          type="button"
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('palu_trigger_broken_ui'));
+            }
+          }}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            background: 'linear-gradient(135deg, rgba(255, 71, 87, 0.22), rgba(255, 165, 2, 0.22))',
+            border: '1px solid rgba(255, 71, 87, 0.5)',
+            color: '#ffc93c',
+            fontFamily: 'Anton, sans-serif',
+            fontSize: '13px',
+            letterSpacing: '0.04em',
+            padding: '10px',
+            borderRadius: 'var(--radius-sm)',
+            cursor: 'pointer',
+            boxShadow: '0 0 12px rgba(255, 71, 87, 0.3)'
+          }}
+        >
+          💥 Shatter & Break UI
+        </button>
         <Link
           href="/"
           className="btn-ghost"

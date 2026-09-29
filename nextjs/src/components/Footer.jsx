@@ -5,7 +5,16 @@ import { api } from '@/lib/api';
 
 export default function Footer() {
   const year = new Date().getFullYear();
-  const [settings, setSettings] = useState(null);
+  const [settings, setSettings] = useState(() => {
+    // Read from cache synchronously to avoid any flash
+    if (typeof window !== 'undefined') {
+      try {
+        const raw = localStorage.getItem('palu_settings_cache');
+        if (raw) return JSON.parse(raw);
+      } catch {}
+    }
+    return null;
+  });
 
   useEffect(() => {
     api.getSettings()

@@ -9,7 +9,7 @@ export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState(null);
 
-  const [formData, setFormData] = useState({
+  const DEFAULTS = {
     channelName: 'Palu Vlogs',
     tagline: 'Oru Palu Vlogs — Vegetable Gang | Fun · Vibes · Memories · Chaos',
     bio: 'Four friends, one camera, and a running vegetable-costume joke that got completely out of hand. Unscripted Kerala road trips, street food runs, and high-energy laughter.',
@@ -22,6 +22,15 @@ export default function AdminSettingsPage() {
     subscriberCount: '125K',
     totalViews: '4.8M',
     featuredVlogSlug: 'great-eggplant-market-heist'
+  };
+
+  const [formData, setFormData] = useState(() => {
+    // Use cached settings immediately so the form never shows wrong defaults
+    try {
+      const raw = typeof window !== 'undefined' ? localStorage.getItem('palu_settings_cache') : null;
+      if (raw) return { ...DEFAULTS, ...JSON.parse(raw) };
+    } catch {}
+    return DEFAULTS;
   });
 
   useEffect(() => {

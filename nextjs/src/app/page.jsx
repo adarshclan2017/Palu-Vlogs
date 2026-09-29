@@ -22,6 +22,11 @@ export default function Home() {
   const [lightboxIndex, setLightboxIndex] = useState(-1);
 
   useEffect(() => {
+    // Step 1: Show cached settings IMMEDIATELY (no flash, no wait)
+    const cached = api.getCachedSettings();
+    if (cached) setSettings(cached);
+
+    // Step 2: Fetch fresh data from MongoDB in background
     const fetchData = async () => {
       try {
         const [settingsRes, vlogsRes, photosRes, locsRes] = await Promise.all([

@@ -91,8 +91,33 @@ export const api = {
     request('/newsletter', { method: 'POST', body: { email } }),
 
   // Settings
-  getSettings: () => request('/settings'),
-  updateSettings: (data) => request('/settings', { method: 'PUT', body: data }),
+  getSettings: async () => {
+    const result = await request('/settings');
+    // Save to localStorage so next page load is instant (no flash)
+    if (result?.success && result.data && typeof window !== 'undefined') {
+      try { localStorage.setItem('palu_settings_cache', JSON.stringify(result.data)); } catch {}
+    }
+    return result;
+  },
+  // Read last-known settings from localStorage instantly (no network)
+  getCachedSettings: () => {
+    if (typeof window === 'undefined') return null;
+    try {
+      const raw = localStorage.getItem('palu_settings_cache');
+      return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+  },
+  updateSettings: (data) => {
+    // Also update localStorage cache immediately when saving
+    if (typeof window !== 'undefined') {
+      try {
+        const existing = localStorage.getItem('palu_settings_cache');
+        const merged = existing ? { ...JSON.parse(existing), ...data } : data;
+        localStorage.setItem('palu_settings_cache', JSON.stringify(merged));
+      } catch {}
+    }
+    return request('/settings', { method: 'PUT', body: data });
+  },
   getStats: () => request('/settings/stats'),
 
   // Upload

@@ -9,13 +9,28 @@ async function request(endpoint, options = {}) {
   const headers = { ...options.headers };
 
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+
+  let body = options.body;
+  if (body instanceof FormData) {
+    // Let browser calculate multipart boundary
+    delete headers['Content-Type'];
+  } else if (body && typeof body === 'object') {
+    headers['Content-Type'] = 'application/json';
+    body = JSON.stringify(body);
+  } else if (body && typeof body === 'string') {
+    if (!headers['Content-Type']) headers['Content-Type'] = 'application/json';
+  }
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 8000);
+  const timeoutId = setTimeout(() => controller.abort(), 12000);
 
   try {
-    const res = await fetch(`${BASE}${endpoint}`, { ...options, headers, signal: controller.signal });
+    const res = await fetch(`${BASE}${endpoint}`, {
+      ...options,
+      headers,
+      body,
+      signal: controller.signal
+    });
     clearTimeout(timeoutId);
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.message || `Request failed: ${res.status}`);
@@ -32,7 +47,7 @@ async function request(endpoint, options = {}) {
 export const api = {
   // Auth
   login: (email, password) =>
-    request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    request('/auth/login', { method: 'POST', body: { email, password } }),
   getMe: () => request('/auth/me'),
   logout: () => request('/auth/logout', { method: 'POST' }),
 
@@ -42,8 +57,8 @@ export const api = {
     return request(`/vlogs${q ? `?${q}` : ''}`);
   },
   getVlogBySlug: (slug) => request(`/vlogs/${slug}`),
-  createVlog: (data) => request('/vlogs', { method: 'POST', body: JSON.stringify(data) }),
-  updateVlog: (id, data) => request(`/vlogs/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  createVlog: (data) => request('/vlogs', { method: 'POST', body: data }),
+  updateVlog: (id, data) => request(`/vlogs/${id}`, { method: 'PUT', body: data }),
   deleteVlog: (id) => request(`/vlogs/${id}`, { method: 'DELETE' }),
 
   // Gallery
@@ -52,28 +67,28 @@ export const api = {
     return request(`/gallery${q ? `?${q}` : ''}`);
   },
   getAlbums: () => request('/gallery/albums'),
-  createPhoto: (formData) => request('/gallery', { method: 'POST', body: formData }),
+  createPhoto: (data) => request('/gallery', { method: 'POST', body: data }),
   deletePhoto: (id) => request(`/gallery/${id}`, { method: 'DELETE' }),
 
   // Locations
   getLocations: () => request('/locations'),
-  createLocation: (data) => request('/locations', { method: 'POST', body: JSON.stringify(data) }),
-  updateLocation: (id, data) => request(`/locations/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  createLocation: (data) => request('/locations', { method: 'POST', body: data }),
+  updateLocation: (id, data) => request(`/locations/${id}`, { method: 'PUT', body: data }),
   deleteLocation: (id) => request(`/locations/${id}`, { method: 'DELETE' }),
 
   // Contact
-  sendMessage: (data) => request('/contact', { method: 'POST', body: JSON.stringify(data) }),
+  sendMessage: (data) => request('/contact', { method: 'POST', body: data }),
   getMessages: () => request('/contact'),
   toggleMessageRead: (id) => request(`/contact/${id}/read`, { method: 'PUT' }),
   deleteMessage: (id) => request(`/contact/${id}`, { method: 'DELETE' }),
 
   // Newsletter
   subscribeNewsletter: (email) =>
-    request('/newsletter', { method: 'POST', body: JSON.stringify({ email }) }),
+    request('/newsletter', { method: 'POST', body: { email } }),
 
   // Settings
   getSettings: () => request('/settings'),
-  updateSettings: (data) => request('/settings', { method: 'PUT', body: JSON.stringify(data) }),
+  updateSettings: (data) => request('/settings', { method: 'PUT', body: data }),
   getStats: () => request('/settings/stats'),
 
   // Upload

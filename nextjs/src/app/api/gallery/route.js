@@ -30,7 +30,7 @@ export async function POST(request) {
     const contentType = request.headers.get('content-type') || '';
 
     if (contentType.includes('application/json')) {
-      const body = await request.json();
+      const body = await request.json().catch(() => ({}));
       title = body.title || 'Untitled Photo';
       caption = body.caption || '';
       albumSlug = body.albumSlug || 'road-trips';

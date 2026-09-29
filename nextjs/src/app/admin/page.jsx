@@ -75,21 +75,35 @@ export default function AdminDashboardPage() {
           <span style={{ fontSize: '12px', color: 'var(--stone)' }}>Travel destinations</span>
         </div>
 
-        <div className="stat-card">
-          <h4>📬 Inquiries</h4>
+        <Link href="/admin/messages" className="stat-card" style={{ display: 'block', textDecoration: 'none', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <h4>📬 Inquiries</h4>
+            {stats.unreadMessages > 0 && (
+              <span className="badge badge-red" style={{ fontSize: '11px', padding: '3px 8px' }}>
+                ● {stats.unreadMessages} NEW
+              </span>
+            )}
+          </div>
           <div className="stat-num" style={{ color: stats.unreadMessages > 0 ? 'var(--red)' : 'var(--gold)' }}>
             {stats.totalMessages}
           </div>
-          <span style={{ fontSize: '12px', color: 'var(--stone)' }}>
-            {stats.unreadMessages} unread messages
+          <span style={{ fontSize: '12px', color: stats.unreadMessages > 0 ? '#ff604c' : 'var(--stone)', fontWeight: stats.unreadMessages > 0 ? 700 : 400 }}>
+            {stats.unreadMessages > 0 ? `${stats.unreadMessages} new message${stats.unreadMessages > 1 ? 's' : ''}` : 'All inquiries read'}
           </span>
-        </div>
+        </Link>
       </div>
 
       {/* Recent Contact Inquiries */}
       <div style={{ background: 'var(--panel)', border: '1px solid var(--line)', borderRadius: 'var(--radius-md)', padding: '24px', marginBottom: '36px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-          <h3 style={{ fontSize: '20px', color: 'var(--gold)' }}>Recent Contact Messages</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h3 style={{ fontSize: '20px', color: 'var(--gold)', margin: 0 }}>Recent Contact Messages</h3>
+            {stats.unreadMessages > 0 && (
+              <span className="badge badge-red" style={{ fontSize: '11px', padding: '3px 8px' }}>
+                {stats.unreadMessages} Unread
+              </span>
+            )}
+          </div>
           <Link href="/admin/messages" style={{ fontSize: '13px', color: 'var(--stone)', fontWeight: 700 }}>
             View All ({recentMessages.length}) →
           </Link>
@@ -111,7 +125,13 @@ export default function AdminDashboardPage() {
               </thead>
               <tbody>
                 {recentMessages.map(msg => (
-                  <tr key={msg._id}>
+                  <tr
+                    key={msg._id}
+                    style={{
+                      background: !msg.isRead ? 'rgba(229, 64, 42, 0.05)' : 'transparent',
+                      borderLeft: !msg.isRead ? '3px solid var(--red)' : '3px solid transparent'
+                    }}
+                  >
                     <td>
                       <div style={{ fontWeight: 700, color: 'var(--cream)' }}>{msg.name}</div>
                       <div style={{ fontSize: '12px', color: 'var(--stone)' }}>{msg.email}</div>
@@ -127,12 +147,12 @@ export default function AdminDashboardPage() {
                     </td>
                     <td>
                       <span className={msg.isRead ? 'badge' : 'badge badge-red'}>
-                        {msg.isRead ? 'Read' : 'New'}
+                        {msg.isRead ? '✓ Read' : '● NEW'}
                       </span>
                     </td>
                     <td>
                       <Link href="/admin/messages" className="vlog-link-btn" style={{ fontSize: '12px' }}>
-                        Manage →
+                        Open →
                       </Link>
                     </td>
                   </tr>

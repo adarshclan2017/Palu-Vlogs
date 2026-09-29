@@ -8,6 +8,16 @@ export default function AdminSidebar({ isOpen, onClose }) {
   const pathname = usePathname();
   const router = useRouter();
   const [user, setUser] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const fetchUnread = async () => {
+    try {
+      const res = await api.getStats();
+      if (res?.success && typeof res.data?.unreadMessages === 'number') {
+        setUnreadCount(res.data.unreadMessages);
+      }
+    } catch (e) {}
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -17,6 +27,24 @@ export default function AdminSidebar({ isOpen, onClose }) {
       }
     }
   }, []);
+
+  useEffect(() => {
+    fetchUnread();
+    // Poll every 25 seconds for new message notifications
+    const timer = setInterval(fetchUnread, 25000);
+
+    // Listen for custom event when messages are updated in admin/messages page
+    const handleUpdate = () => fetchUnread();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('palu_messages_updated', handleUpdate);
+    }
+    return () => {
+      clearInterval(timer);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('palu_messages_updated', handleUpdate);
+      }
+    };
+  }, [pathname]);
 
   const handleLogout = async () => {
     try {
@@ -36,7 +64,7 @@ export default function AdminSidebar({ isOpen, onClose }) {
     { href: '/admin/vlogs', label: 'Manage Vlogs', icon: '🎬' },
     { href: '/admin/gallery', label: 'Photo Gallery', icon: '🖼️' },
     { href: '/admin/locations', label: 'Adventures & Maps', icon: '📍' },
-    { href: '/admin/messages', label: 'Contact Inquiries', icon: '📬' },
+    { href: '/admin/messages', label: 'Contact Inquiries', icon: '📬', badge: unreadCount },
     { href: '/admin/settings', label: 'Site Settings', icon: '⚙️' },
   ];
 
@@ -74,9 +102,20 @@ export default function AdminSidebar({ isOpen, onClose }) {
               href={item.href}
               className={`admin-nav-item ${isActive ? 'active' : ''}`}
               onClick={() => { if (onClose) onClose(); }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
             >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span>{item.icon}</span>
+                <span>{item.label}</span>
+              </div>
+              {item.badge > 0 && (
+                <span
+                  className="admin-unread-badge"
+                  title={`${item.badge} new message${item.badge > 1 ? 's' : ''}`}
+                >
+                  {item.badge > 99 ? '99+' : item.badge}
+                </span>
+              )}
             </Link>
           );
         })}

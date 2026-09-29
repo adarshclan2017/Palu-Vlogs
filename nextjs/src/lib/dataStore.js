@@ -280,6 +280,18 @@ export const dataStore = {
     msg.isRead = !msg.isRead; saveLocalStore(); return msg;
   },
 
+  markAllMessagesAsRead: async () => {
+    if (getStatus()) {
+      const { default: CMModel } = await import('../models/ContactMessage.js');
+      await CMModel.updateMany({ isRead: false }, { $set: { isRead: true } });
+      return true;
+    }
+    const db = initLocalStore();
+    (db.messages || []).forEach(m => { m.isRead = true; });
+    saveLocalStore();
+    return true;
+  },
+
   deleteContactMessage: async (id) => {
     if (getStatus()) {
       const { default: CMModel } = await import('../models/ContactMessage.js');

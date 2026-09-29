@@ -338,6 +338,32 @@ button,input,textarea,select { font-family: inherit; }
 .admin-nav-item.active {
   border-left: 3px solid var(--gold);
 }
+.admin-unread-badge {
+  background: var(--red);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  line-height: 1.2;
+  box-shadow: 0 0 10px var(--red-glow);
+  animation: pulse 1.8s infinite;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+}
+.mobile-unread-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red);
+  animation: pulse 1.6s infinite;
+}
 .admin-main {
   padding: 36px;
   overflow-x: hidden;

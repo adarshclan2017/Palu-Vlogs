@@ -64,6 +64,20 @@ export async function GET(request) {
   }
 }
 
+export async function PUT(request) {
+  try {
+    await connectDB().catch(() => {});
+    const user = getUserFromRequest(request);
+    if (!user || user.role !== 'admin') {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+    await dataStore.markAllMessagesAsRead();
+    return NextResponse.json({ success: true, message: 'All messages marked as read' });
+  } catch (err) {
+    return NextResponse.json({ success: false, message: err.message }, { status: 500 });
+  }
+}
+
 export async function POST(request) {
   try {
     await connectDB().catch(() => {});

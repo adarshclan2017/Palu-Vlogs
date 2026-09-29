@@ -79,7 +79,8 @@ export const api = {
   // Contact
   sendMessage: (data) => request('/contact', { method: 'POST', body: data }),
   getMessages: () => request('/contact'),
-  toggleMessageRead: (id) => request(`/contact/${id}/read`, { method: 'PUT' }),
+  toggleMessageRead: (id) => request(`/contact/${id}`, { method: 'PUT' }),
+  markAllMessagesAsRead: () => request('/contact', { method: 'PUT' }),
   deleteMessage: (id) => request(`/contact/${id}`, { method: 'DELETE' }),
 
   // Newsletter

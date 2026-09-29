@@ -4,11 +4,14 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import AdminSidebar from '@/components/AdminSidebar';
 
+import { api } from '@/lib/api';
+
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (pathname === '/admin/login') {
@@ -23,6 +26,29 @@ export default function AdminLayout({ children }) {
       setAuthorized(true);
     }
   }, [pathname, router]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await api.getStats();
+        if (res?.success && typeof res.data?.unreadMessages === 'number') {
+          setUnreadCount(res.data.unreadMessages);
+        }
+      } catch (e) {}
+    };
+    fetchStats();
+    const interval = setInterval(fetchStats, 25000);
+    const handleUpdate = () => fetchStats();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('palu_messages_updated', handleUpdate);
+    }
+    return () => {
+      clearInterval(interval);
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('palu_messages_updated', handleUpdate);
+      }
+    };
+  }, [pathname]);
 
   // Close mobile drawer whenever pathname changes
   useEffect(() => {
@@ -52,8 +78,10 @@ export default function AdminLayout({ children }) {
             className="admin-hamburger"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             aria-label="Toggle admin navigation menu"
+            style={{ position: 'relative' }}
           >
             ☰
+            {unreadCount > 0 && <span className="mobile-unread-dot" />}
           </button>
           <img src="/assets/images/logo.jpg" alt="Palu Vlogs" style={{ width: 30, height: 30, borderRadius: '50%', border: '1.5px solid var(--gold)' }} />
           <span style={{ fontFamily: 'Anton', fontSize: '18px', color: 'var(--cream)', letterSpacing: '0.02em' }}>
